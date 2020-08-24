@@ -499,7 +499,7 @@ class BlynkWifi
         digitalWrite(LED_BUILTIN, LED_OFF);
       }
 
-      if (connected())
+      //if (connected())
       {
         Base::run();
       }
