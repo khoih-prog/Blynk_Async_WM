@@ -16,7 +16,7 @@
 - When you send the response, you are **immediately ready** to handle other connections while the server is taking care of sending the response in the background
 - **Speed is OMG**
 - **Easy to use API, HTTP Basic and Digest MD5 Authentication (default), ChunkedResponse**
-- Easily extendible to handle **any type of content**
+- Easily extensible to handle **any type of content**
 - Supports Continue 100
 - Async WebSocket plugin offering different locations without extra servers or ports
 - Async EventSource (Server-Sent Events) plugin to send events to the browser
@@ -30,7 +30,7 @@ This is a Blynk and WiFiManager Library, using [ESPAsyncWebServer](https://githu
  
 This library is designed to help you to eliminate `hardcoding` your Wifi and Blynk credentials for ESP8266 and ESP32 (with/without SSL), and updating/reflashing every time you need to change them.
 
-Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_Async_WM) is based on and sync'ed with [`Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM), all the features currently supported by [`Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM) will be available. Please have a look at [`Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM) for those too-many-to-list features.
+Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_Async_WM) is based on and sync'ed with [`Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM), all the features currently supported by [`Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM) will be available. Please have a look at [`DONE`](https://github.com/khoih-prog/Blynk_Async_WM#done) or [`DONE in Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM#done) for those too-many-to-list features.
 
 ---
 
@@ -148,7 +148,7 @@ EEPROM_SIZE can be specified from 512 to 4096 (2048 for ESP32) bytes.
 
 ---
 
-See examples [Async_ESP32WM_Config](examples/Async_ESP32WM_Config) and [Async_ESP8266WM_Config](examples/ESP8266WM_Config).
+See examples [Async_ESP32WM_Config](examples/Async_ESP32WM_Config) and [Async_ESP8266WM_Config](examples/Async_ESP8266WM_Config).
 
 
 ```cpp
