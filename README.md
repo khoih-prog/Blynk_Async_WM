@@ -89,7 +89,16 @@ Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_
 
 ---
 
-### How to use
+### How to migrate from [Blynk_WiFiManager library](https://github.com/khoih-prog/Blynk_WM) 
+
+In your code, just replacing
+
+1. `BlynkSimpleEsp8266_WM.h`     with `BlynkSimpleEsp8266_Async_WM.h`      for ESP8266 `without SSL`
+2. `BlynkSimpleEsp8266_SSL_WM.h` with `BlynkSimpleEsp8266_SSL_Async_WM.h`  for ESP8266 `with SSL`
+3. `BlynkSimpleEsp32_WM.h`       with `BlynkSimpleEsp32_Async_WM.h`        for ESP32 `without SSL`
+4. `BlynkSimpleEsp32_SSL_WM.h`   with `BlynkSimpleEsp32_SSL_Async_WM.h`    for ESP32 `with SSL`
+
+### How to to migrate from Blynk
 
 In your code, replace
 1. `BlynkSimpleEsp8266.h`     with `BlynkSimpleEsp8266_Async_WM.h`      for ESP8266 `without SSL`
@@ -97,7 +106,9 @@ In your code, replace
 3. `BlynkSimpleEsp32.h`       with `BlynkSimpleEsp32_Async_WM.h`        for ESP32 `without SSL`
 4. `BlynkSimpleEsp32_SSL.h`   with `BlynkSimpleEsp32_SSL_Async_WM.h`    for ESP32 `with SSL`
 
-5. For EP8266, add
+---
+
+1. For EP8266, add
 
 ```
 #define USE_LITTLEFS    true
@@ -118,7 +129,7 @@ to use SPIFFS or
 ```
 to use EEPROM.
 
-6. For EP32, add
+2. For EP32, add
 
 ```
 #define USE_SPIFFS      true
@@ -133,7 +144,9 @@ to use EEPROM.
 
 Currently, data size, with DRD and not including dynamic params, is 380  bytes from address EEPROM_START ) to save your configuration data.
 
-EEPROM_SIZE can be specified from 512 to 4096 (2048 for ESP32) bytes. 
+EEPROM_SIZE can be specified from 512 to 4096 (2048 for ESP32) bytes.
+
+---
 
 See examples [Async_ESP32WM_Config](examples/Async_ESP32WM_Config) and [Async_ESP8266WM_Config](examples/ESP8266WM_Config).
 
@@ -179,6 +192,8 @@ or to have a personalized hostname `(RFC952-conformed,- 24 chars max,- only a..z
 in your code. Keep `Blynk.run()` intact.
 
 That's it.
+
+---
 
 Also see examples: 
  1. [Async_AM2315_ESP32_SSL](examples/Async_AM2315_ESP32_SSL)
@@ -227,6 +242,8 @@ Enter your WiFi and Blynk Credentials:
 </p>
 
 Then click ***Save***. The system will auto-restart. You will see the board's built-in LED turned OFF. That means, it's already connected to your Blynk server successfully.
+
+---
 
 ### Important notes
 1. Now you can use special chars such as ***~, !, @, #, $, %, ^, &, _, -, space,etc.*** thanks to [brondolin](https://github.com/brondolin) to provide the amazing fix to permit input special chars such as ***%*** and ***#*** into data fields. See [Issue 3](https://github.com/khoih-prog/Blynk_WM/issues/3).
