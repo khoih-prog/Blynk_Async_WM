@@ -54,7 +54,9 @@ Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_
 
 ---
 
-### Installation
+## Installation
+
+### I) For Arduino IDE:
 
 1. Be certain you have installed the most up to date version of Arduino IDE.
 2. Be certain you have installed the most up-to-date Blynk library.
