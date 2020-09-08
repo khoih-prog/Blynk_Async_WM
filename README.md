@@ -87,6 +87,13 @@ Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_
    
 5. **Open Arduino IDE.** Your library is installed.
 
+### II) For VS Code & PlatformIO:
+
+1. Install [VS Code](https://code.visualstudio.com/)
+2. Install [PlatformIO](https://platformio.org/platformio-ide)
+3. Install **Blynk_Async_WM** library by using [Library Manager](https://docs.platformio.org/en/latest/librarymanager/). Search for **Blynk_Async_WM** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
+4. Use included [platformio.ini](platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically. Please visit documentation for the other options and examples at [Project Configuration File](https://docs.platformio.org/page/projectconf.html)
+
 ---
 
 ### How to migrate from [Blynk_WiFiManager library](https://github.com/khoih-prog/Blynk_WM) 
@@ -219,7 +226,7 @@ First, connect your (PC, Laptop, Tablet, phone, etc.) WiFi to Config Portal AP, 
     <img src="https://github.com/khoih-prog/Blynk_Async_WM/blob/master/pics/PortalAuth.jpg">
 </p>
 
-1. If you choose ***not to load*** default Credentials and Dynamic Parameters
+1. If you choose **not to load** default Credentials and Dynamic Parameters
 
 After you connected, please, go to http://192.168.4.1 or the configured AP IP. The following Config Portal screen will appear:
 
@@ -227,7 +234,7 @@ After you connected, please, go to http://192.168.4.1 or the configured AP IP. T
     <img src="https://github.com/khoih-prog/Blynk_Async_WM/blob/master/pics/Main.png">
 </p>
 
-2. If you choose ***to load*** default Credentials and Dynamic Parameters
+2. If you choose **to load** default Credentials and Dynamic Parameters
 
 After you connected, please, go to http://192.168.4.1 or the configured AP IP. The following  Config Portal screen will appear:
 
@@ -241,15 +248,15 @@ Enter your WiFi and Blynk Credentials:
     <img src="https://github.com/khoih-prog/Blynk_Async_WM/blob/master/pics/ConfigPortal.png">
 </p>
 
-Then click ***Save***. The system will auto-restart. You will see the board's built-in LED turned OFF. That means, it's already connected to your Blynk server successfully.
+Then click **Save**. The system will auto-restart. You will see the board's built-in LED turned OFF. That means, it's already connected to your Blynk server successfully.
 
 ---
 
 ### Important notes
-1. Now you can use special chars such as ***~, !, @, #, $, %, ^, &, _, -, space,etc.*** thanks to [brondolin](https://github.com/brondolin) to provide the amazing fix to permit input special chars such as ***%*** and ***#*** into data fields. See [Issue 3](https://github.com/khoih-prog/Blynk_WM/issues/3).
-2. The SSIDs, Passwords, BlynkServers and Tokens must be input (or to make them different from ***nothing***). Otherwise, the Config Portal will re-open until those fields have been changed. If you don't need any field, just input anything or use duplicated data from similar field.
+1. Now you can use special chars such as **~, !, @, #, $, %, ^, &, _, -, space,etc.** thanks to [brondolin](https://github.com/brondolin) to provide the amazing fix to permit input special chars such as **%** and **#** into data fields. See [Issue 3](https://github.com/khoih-prog/Blynk_WM/issues/3).
+2. The SSIDs, Passwords, BlynkServers and Tokens must be input (or to make them different from **nothing**). Otherwise, the Config Portal will re-open until those fields have been changed. If you don't need any field, just input anything or use duplicated data from similar field.
 3. WiFi password max length now is 63 chars according to WPA2 standard.
-4. Sometimes, it's hard or not possible to connect to Config Portal WiFi AP, the majority cases are caused by WiFi channel conflict if there are too many WiFi APs running around. Please use ***random ConfigPortal WiFi AP channel*** in sketch (see code snippet below) and reset the board so that another channel is used. Repeat until connection is OK
+4. Sometimes, it's hard or not possible to connect to Config Portal WiFi AP, the majority cases are caused by WiFi channel conflict if there are too many WiFi APs running around. Please use **random ConfigPortal WiFi AP channel** in sketch (see code snippet below) and reset the board so that another channel is used. Repeat until connection is OK
 
 ```cpp
 // Set config portal channel, default = 1. Use 0 => random channel from 1-13 to avoid conflict
@@ -435,9 +442,9 @@ uint16_t NUM_MENU_ITEMS = 0;
 
 ### Important Notes for using Dynamic Parameters' ids
 
-1. These ids (such as "mqtt" in example) must be ***unique***.
+1. These ids (such as "mqtt" in example) must be **unique**.
 
-Please be noted that the following ***reserved names are already used in library***:
+Please be noted that the following **reserved names are already used in library**:
 
 ```
 "id"    for WiFi SSID
@@ -456,7 +463,7 @@ Please be noted that the following ***reserved names are already used in library
 
 The following is the sample terminal output when running example [Async_ESP8266WM_Config](examples/Async_ESP8266WM_Config)
 
-1. No Config Data with ***LOAD_DEFAULT_CONFIG_DATA = true*** => Config Portal loads default Credentials and dynamic Params
+1. No Config Data with **LOAD_DEFAULT_CONFIG_DATA = true** => Config Portal loads default Credentials and dynamic Params
 cpp
 ```
 Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
@@ -517,7 +524,7 @@ Pubs Topics = default-mqtt-PubTopic
 RF
 ```
 
-2. Input valid credentials with ***LOAD_DEFAULT_CONFIG_DATA = true*** => reboot
+2. Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = true** => reboot
 
 ```cpp
 Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
@@ -581,7 +588,7 @@ Subs Topics = Sub-Topics
 Pubs Topics = Pub-Topics
 ```
 
-3. No Config Data with ***LOAD_DEFAULT_CONFIG_DATA = false*** => Config Portal loads "blank" to all fields
+3. No Config Data with **LOAD_DEFAULT_CONFIG_DATA = false** => Config Portal loads "blank" to all fields
 
 ```
 Starting Async_ESP32WM_Config using EEPROM without SSL on ESP32_DEV
@@ -672,7 +679,7 @@ RFRFRF
 [206370] h:Rst
 ```
 
-4. Input valid credentials with ***LOAD_DEFAULT_CONFIG_DATA = false*** => reboot
+4. Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = false** => reboot
 
 ```cpp
 Starting Async_ESP32WM_Config using EEPROM without SSL on ESP32_DEV
@@ -732,7 +739,7 @@ Subs Topics = Sub-Topics
 Pubs Topics = Pub-Topics
 ```
 
-5. ***No DRD detected*** => no Config Portal with valid Credentials
+5. **No DRD detected** => no Config Portal with valid Credentials
 
 ```
 Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
@@ -796,7 +803,7 @@ Subs Topics = Sub-Topics
 Pubs Topics = Pub-Topics
 ```
 
-6. ***DRD detected*** => Config Portal even with valid Credentials
+6. **DRD detected** => Config Portal even with valid Credentials
 
 ```
 
@@ -932,7 +939,7 @@ Pubs Topics = Pub-Topics
 
 You can see that the system automatically detects and connects to the best or avaiable WiFi APs and/or Blynk Servers, whenever interruption happens. This feature is very useful for systems requiring high degree of reliability.
 
-Moreover, this `Blynk.begin()` is ***not a blocking call***, so you can use it for critical functions requiring in loop(). 
+Moreover, this `Blynk.begin()` is **not a blocking call**, so you can use it for critical functions requiring in loop(). 
 Anyway, this is better for projects using Blynk just for GUI (graphical user interface).
 
 In operation, if WiFi or Blynk connection is lost, `Blynk.run()` will try reconnecting automatically. Therefore, `Blynk.run()` must be called in the `loop()` function. Don't use:
@@ -1368,13 +1375,13 @@ Blynk_WM_Configuration defaultConfig =
 11. Add MultiWiFi feature to enable reconnect to the best / available WiFi AP.
 12. Add MultiBlynk feature to enable reconnect to the best / available Blynk Server.
 13. WiFi Password max length is 63, as in WPA2 standards
-14. Permit to input special chars such as ***%*** and ***#*** into data fields.
+14. Permit to input special chars such as **%** and **#** into data fields.
 15. Add Dynamic Parameters with checksum
 16. Default Credentials and dynamic parameters
-17. ***DoubleDetectDetector*** to force Config Portal when double reset is detected within predetermined time, default 10s.
+17. **DoubleDetectDetector** to force Config Portal when double reset is detected within predetermined time, default 10s.
 18. Configurable Config Portal Title
 19. Re-structure all examples to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
-20. Add ***LittleFS*** support to ESP8266 as SPIFFS deprecated since ***ESP8266 core 2.7.1.***
+20. Add **LittleFS** support to ESP8266 as SPIFFS deprecated since **ESP8266 core 2.7.1.**
 21. Using [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) instead of (ESP8266)WebServer.
 
 ---
@@ -1412,6 +1419,8 @@ If you want to contribute to this project:
 - Ask for enhancements
 - Create issues and pull requests
 - Tell other people about this library
+
+---
 
 ## Copyright
 
