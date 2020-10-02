@@ -5,7 +5,6 @@
 [![GitHub](https://img.shields.io/github/license/mashape/apistatus.svg)](https://github.com/khoih-prog/Blynk_Async_WM/blob/master/LICENSE)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](#Contributing)
 [![GitHub issues](https://img.shields.io/github/issues/khoih-prog/Blynk_Async_WM.svg)](http://github.com/khoih-prog/Blynk_Async_WM/issues)
-[![star this repo](https://githubbadges.com/star.svg?user=khoih-prog&repo=Blynk_Async_WM&style=default)](https://github.com/khoih-prog/Blynk_Async_WM)
 
 ---
 ---
