@@ -8,7 +8,6 @@
    Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
    Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
    Licensed under MIT license
-   Version: 1.0.16
 
    Original Blynk Library author:
    @file       BlynkSimpleEsp8266.h
@@ -18,18 +17,22 @@
    @date       Jan 2015
    @brief
 
+   Version: 1.1.0
+
    Version    Modified By   Date      Comments
    -------    -----------  ---------- -----------
     1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
                                       Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
+    1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
  *****************************************************************************************************************************/
 
-#ifndef BlynkSimpleEsp32_Async_WM_h
-#define BlynkSimpleEsp32_Async_WM_h
+#pragma once
 
 #ifndef ESP32
-#error This code is intended to run on the ESP32 platform! Please check your Tools->Board setting.
+  #error This code is intended to run on the ESP32 platform! Please check your Tools->Board setting.
 #endif
+
+#define BLYNK_ASYNC_WM_VERSION      "v1.1.0_ESP32"
 
 #define BLYNK_SEND_ATOMIC
 
@@ -1857,4 +1860,3 @@ BlynkWifi Blynk(_blynkTransport);
 
 #include <BlynkWidgets.h>
 
-#endif    // BlynkSimpleEsp32_Async_WM_h

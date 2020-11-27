@@ -35,6 +35,12 @@ Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_
 
 ---
 
+### Releases v1.1.0
+
+1. Add examples using RTOS MultiTask to avoid blocking in operation.
+2. Add Version String.
+
+
 ### Releases v1.0.16
 
 1. Initial coding to use [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) instead of (ESP8266)WebServer.
@@ -43,7 +49,7 @@ Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_
 ---
 ---
 
-## Prerequisite
+## Prerequisites
 
 1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
 2. [`Blynk library 0.6.1+`](https://github.com/blynkkk/blynk-library/releases)
@@ -95,7 +101,7 @@ Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_
 
 1. Install [VS Code](https://code.visualstudio.com/)
 2. Install [PlatformIO](https://platformio.org/platformio-ide)
-3. Install **Blynk_Async_WM** library by using [Library Manager](https://docs.platformio.org/en/latest/librarymanager/). Search for **Blynk_Async_WM** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
+3. Install [**Blynk_Async_WM** library](https://platformio.org/lib/show/11085/Blynk_Async_WM) by using [Library Manager](https://platformio.org/lib/show/11085/Blynk_Async_WM/installation). Search for **Blynk_Async_WM** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
 4. Use included [platformio.ini](platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically. Please visit documentation for the other options and examples at [Project Configuration File](https://docs.platformio.org/page/projectconf.html)
 
 ---
@@ -245,8 +251,12 @@ in your code. Keep `Blynk.run()` intact.
 That's it.
 
 ---
+---
 
-Also see examples: 
+### Examples
+
+#### Not using MultiTasking
+
  1. [Async_AM2315_ESP32_SSL](examples/Async_AM2315_ESP32_SSL)
  2. [Async_AM2315_ESP8266](examples/Async_AM2315_ESP8266)
  3. [Async_DHT11ESP32](examples/Async_DHT11ESP32) 
@@ -257,6 +267,14 @@ Also see examples:
  8. [Async_ESP32WM_Config](examples/Async_ESP32WM_Config)
  9. [Async_ESP8266WM_Config](examples/Async_ESP8266WM_Config)
 10. [Async_Blynk_WM_Template](examples/Async_Blynk_WM_Template)
+
+#### Using Free-RTOS MultiTasking for ESP32
+
+ 1. [Async_ESP32_MultiTask](examples/ESP32_MultiTask/Async_ESP32_MultiTask)
+ 2. [AsyncMT_AM2315_ESP32_SSL](examples/ESP32_MultiTask/AsyncMT_AM2315_ESP32_SSL)
+ 3. [AsyncMT_DHT11ESP32](examples/ESP32_MultiTask/AsyncMT_DHT11ESP32) 
+ 4. [AsyncMT_DHT11ESP32_SSL](examples/ESP32_MultiTask/AsyncMT_DHT11ESP32_SSL) 
+ 5. [AsyncMT_ESP32WM_Config](examples/ESP32_MultiTask/AsyncMT_ESP32WM_Config)
 
 ---
 
@@ -504,6 +522,7 @@ Please be noted that the following **reserved names are already used in library*
 ```
 
 ---
+---
 
 The following is the sample terminal output when running example [Async_ESP8266WM_Config](examples/Async_ESP8266WM_Config)
 
@@ -511,6 +530,7 @@ The following is the sample terminal output when running example [Async_ESP8266W
 cpp
 ```
 Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
+Version v1.1.0_ESP32_SSL
 [180] ======= Start Default Config Data =======
 [180] Hdr=SSL,BrdName=ESP32-Async-Blynk
 [180] SSID=SSID1,PW=password1
@@ -568,10 +588,13 @@ Pubs Topics = default-mqtt-PubTopic
 RF
 ```
 
+---
+
 2. Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = true** => reboot
 
 ```cpp
 Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
+Version v1.1.0_ESP32_SSL
 [276] Hostname=ESP32-Async-Controller
 [320] LoadCfgFile 
 [321] OK
@@ -632,10 +655,13 @@ Subs Topics = Sub-Topics
 Pubs Topics = Pub-Topics
 ```
 
+---
+
 3. No Config Data with **LOAD_DEFAULT_CONFIG_DATA = false** => Config Portal loads "blank" to all fields
 
 ```
 Starting Async_ESP32WM_Config using EEPROM without SSL on ESP32_DEV
+Version v1.1.0_ESP32
 [214] Hostname=ESP32-Async-Controller
 [220] EEPROMsz:2048
 [220] ======= Start Stored Config Data =======
@@ -722,11 +748,13 @@ RFRFRF
 [206305] CrWCSum=0x1379
 [206370] h:Rst
 ```
+---
 
 4. Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = false** => reboot
 
 ```cpp
 Starting Async_ESP32WM_Config using EEPROM without SSL on ESP32_DEV
+Version v1.1.0_ESP32
 [152] Hostname=ESP32-Async-Controller
 [158] EEPROMsz:2048
 [158] ======= Start Stored Config Data =======
@@ -783,10 +811,13 @@ Subs Topics = Sub-Topics
 Pubs Topics = Pub-Topics
 ```
 
+---
+
 5. **No DRD detected** => no Config Portal with valid Credentials
 
 ```
 Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
+Version v1.1.0_ESP32_SSL
 [276] Hostname=ESP32-Async-Controller
 [320] LoadCfgFile 
 [321] OK
@@ -847,11 +878,14 @@ Subs Topics = Sub-Topics
 Pubs Topics = Pub-Topics
 ```
 
+---
+
 6. **DRD detected** => Config Portal even with valid Credentials
 
 ```
 
 Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
+Version v1.1.0_ESP32_SSL
 [180] Double Reset Detected
 [328] Hostname=ESP32-Async-Controller
 [414] LoadCfgFile 
@@ -897,10 +931,13 @@ Pubs Topics = default-mqtt-PubTopic
 
 ```
 
+---
+
 7. Testing WiFi and Blynk Server lost to verify auto-reconnection
 
 ```
 Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
+Version v1.1.0_ESP32_SSL
 [275] Hostname=ESP32-Async-Controller
 [319] LoadCfgFile 
 [320] OK
@@ -1009,6 +1046,205 @@ void loop()
 ---
 ---
 
+The following is the sample terminal output when running example [Async_ESP32_MultiTask](examples/Async_ESP8266WM_Config)
+
+```
+Start Async_ESP32_MultiTask on ESP32_DEV
+Version v1.1.0_ESP32
+[1431] Hostname=ESP32-Async-MTask
+[1517] LoadCfgFile 
+[1518] OK
+[1518] ======= Start Stored Config Data =======
+[1518] Hdr=ESP32,BrdName=ESP32-Async-Blynk
+[1518] SSID=HueNet1,PW=12345678
+[1520] SSID1=HueNet1,PW1=12345678
+[1523] Server=account.ddns.net,Token=blynk_token
+[1529] Server1=account.duckdns.org,Token1=blynk_token
+[1535] Port=8080
+[1537] ======= End Config Data =======
+[1540] CCSum=0x3551,RCSum=0x3551
+[1544] LoadCredFile 
+[1545] CrR:pdata=default-mqtt-server,len=34
+[1549] CrR:pdata=1883,len=6
+[1552] CrR:pdata=default-mqtt-username,len=34
+[1556] CrR:pdata=default-mqtt-password,len=34
+[1560] CrR:pdata=default-mqtt-SubTopic,len=34
+[1564] CrR:pdata=default-mqtt-PubTopic,len=34
+[1568] OK
+[1569] CrCCsum=0x29a6,CrRCsum=0x29a6
+[1572] Valid Stored Dynamic Data
+[1575] Hdr=ESP32,BrdName=ESP32-Async-Blynk
+[1579] SSID=HueNet1,PW=12345678
+[1582] SSID1=HueNet1,PW1=12345678
+[1585] Server=account.ddns.net,Token=blynk_token
+[1591] Server1=account.duckdns.org,Token1=blynk_token
+[1597] Port=8080
+[1599] ======= End Config Data =======
+[1602] bg: noConfigPortal = true
+[1605] Connecting MultiWifi...
+[7893] WiFi connected after time: 1
+[7893] SSID:HueNet1,RSSI=-34
+[7893] Channel:2,IP address:192.168.2.101
+[7893] bg: WiFi OK. Try Blynk
+[7894] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ESP32
+
+[7907] BlynkArduinoClient.connect: Connecting to account.ddns.net:8080
+[7952] Ready (ping: 15ms).
+[8020] Connected to Blynk Server = account.ddns.net, Token = blynk_token
+[8020] bg: WiFi+Blynk OK
+
+Blynk ESP32 using SPIFFS connected. Board Name : ESP32-Async-Blynk
+=================
+Time = 8842 ms
+T0 = 25.09
+T1 = 26.07
+T2 = 27.06
+
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+=================
+Time = 8869 ms
+T0 = 25.09
+T1 = 26.07
+T2 = 27.06
+=================
+Time = 10022 ms
+T0 = 25.10
+T1 = 26.08
+T2 = 27.07
+...
+Blynk Online
+=================
+Time = 15911 ms
+T0 = 25.16
+T1 = 26.13
+T2 = 27.11
+=================
+Time = 16927 ms
+T0 = 25.17
+T1 = 26.14
+T2 = 27.11
+=================
+Time = 17942 ms
+T0 = 25.18
+T1 = 26.14
+T2 = 27.12
+...
+=================
+Time = 23894 ms
+T0 = 25.24
+T1 = 26.19
+T2 = 27.16
+[24848] run: WiFi lost. Reconnect WiFi+Blynk
+[24848] Connecting MultiWifi...
+=================
+Time = 24911 ms
+T0 = 25.25
+T1 = 26.20
+T2 = 27.17
+=================
+Time = 26534 ms
+T0 = 25.27
+T1 = 26.21
+T2 = 27.18
+=================
+Time = 27549 ms
+T0 = 25.28
+T1 = 26.22
+T2 = 27.18
+=================
+Time = 28564 ms
+T0 = 25.29
+T1 = 26.23
+T2 = 27.19
+...
+Time = 34574 ms
+T0 = 25.24
+T1 = 26.19
+T2 = 27.16
+Internet Offline
+...
+=================
+Time = 65106 ms
+T0 = 25.65
+T1 = 26.52
+T2 = 27.43
+=================
+Time = 66798 ms
+T0 = 25.67
+T1 = 26.53
+T2 = 27.45
+=================
+Time = 67813 ms
+T0 = 25.68
+T1 = 26.54
+T2 = 27.45
+=================
+Time = 68828 ms
+T0 = 25.69
+T1 = 26.55
+T2 = 27.46
+=================
+Time = 69843 ms
+T0 = 25.70
+T1 = 26.56
+T2 = 27.47
+[70647] WiFi connected after time: 10
+[70647] SSID:HueNet1,RSSI=-33
+[70647] Channel:2,IP address:192.168.2.101
+[70647] run: WiFi reconnected. Connect to Blynk
+[70650] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ESP32
+
+[70663] BlynkArduinoClient.connect: Connecting to account.ddns.net:8080
+[70712] Ready (ping: 12ms).
+[70781] Connected to Blynk Server = account.ddns.net, Token = blynk_token
+[70781] run: WiFi+Blynk reconnected
+=================
+Time = 70860 ms
+T0 = 25.71
+T1 = 26.57
+T2 = 27.47
+=================
+Time = 72618 ms
+T0 = 25.73
+T1 = 26.58
+T2 = 27.48
+=================
+Time = 73702 ms
+T0 = 25.74
+T1 = 26.59
+T2 = 27.49
+...
+=================
+Time = 93405 ms
+T0 = 25.93
+T1 = 26.75
+T2 = 27.62
+=================
+Time = 94422 ms
+T0 = 25.94
+T1 = 26.76
+T2 = 27.63
+```
+
+---
+---
+
 ## Example [Async_ESP32WM_Config](examples/Async_ESP32WM_Config)
 
 Please take a look at other examples, as well.
@@ -1113,6 +1349,8 @@ void setup()
 #else
   Serial.println(" without SSL on " + String(ARDUINO_BOARD));
 #endif
+
+  Serial.println("Version " + String(BLYNK_ASYNC_WM_VERSION));
 
   dht.begin();
 
@@ -1427,9 +1665,15 @@ Blynk_WM_Configuration defaultConfig =
 19. Re-structure all examples to separate Credentials / Defines / Dynamic Params / Code so that you can change Credentials / Dynamic Params quickly for each device.
 20. Add **LittleFS** support to ESP8266 as SPIFFS deprecated since **ESP8266 core 2.7.1.**
 21. Using [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) instead of (ESP8266)WebServer.
+22. Add examples using RTOS MultiTask to avoid blocking in operation.
 
 ---
 ---
+
+### Releases v1.1.0
+
+1. Add examples using RTOS MultiTask to avoid blocking in operation.
+2. Add Version String.
 
 ### Releases v1.0.16
 
@@ -1463,6 +1707,12 @@ If you want to contribute to this project:
 - Ask for enhancements
 - Create issues and pull requests
 - Tell other people about this library
+
+---
+
+### License and credits ###
+
+- The library is licensed under [MIT](https://github.com/khoih-prog/Blynk_Async_WM/blob/master/LICENSE)
 
 ---
 
