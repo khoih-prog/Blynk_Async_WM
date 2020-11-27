@@ -39,13 +39,13 @@
     {
       "owner": "me-no-dev",
       "name": "AsyncTCP",
-      "version": "*",
+      "version": "^1.1.1",
       "platforms": ["espressif32"]
     },
     {
       "owner": "me-no-dev",
-      "name": "ESP AsyncTCP",
-      "version": "*",
+      "name": "ESPAsyncTCP",
+      "version": "^1.2.2",
       "platforms": "espressif8266"
     },
     {
