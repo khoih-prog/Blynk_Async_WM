@@ -1046,7 +1046,7 @@ void loop()
 ---
 ---
 
-The following is the sample terminal output when running example [Async_ESP32_MultiTask](examples/Async_ESP8266WM_Config)
+The following is the sample terminal output when running example [Async_ESP32_MultiTask](examples/ESP32_MultiTask/Async_ESP32_MultiTask) to demonstrate the displaying and measuring tasks still work when the WiFi and Blynk are lost and the system is busy reconnecting to WiFi and Blynk. See the issue in [**Blynk + LCD + WiFi Manager**](https://community.blynk.cc/t/blynk-lcd-wifi-manager/49818) if not using MultiTask in that case.
 
 ```
 Start Async_ESP32_MultiTask on ESP32_DEV
