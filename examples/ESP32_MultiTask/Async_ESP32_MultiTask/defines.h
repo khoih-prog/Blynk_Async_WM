@@ -8,14 +8,15 @@
    Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
    Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
    Licensed under MIT license
-   Version: 1.1.0
+   Version: 1.2.0
 
    Version    Modified By   Date      Comments
    -------    -----------  ---------- -----------
     1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
                                       Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
     1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
- *****************************************************************************************************************************/
+    1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
+ ********************************************************************************************************************************/
 
 #ifndef defines_h
 #define defines_h
@@ -31,15 +32,28 @@
 
 #define BLYNK_WM_RTOS_DEBUG           1
 
-// Not use #define USE_SPIFFS  => using EEPROM for configuration data in WiFiManager
-// #define USE_SPIFFS    false => using EEPROM for configuration data in WiFiManager
-// #define USE_SPIFFS    true  => using SPIFFS for configuration data in WiFiManager
-// Be sure to define USE_SPIFFS before #include <BlynkSimpleEsp8266_Async_WM.h>
+// Not use #define USE_LITTLEFS and #define USE_SPIFFS  => using SPIFFS for configuration data in WiFiManager
+// (USE_LITTLEFS == false) and (USE_SPIFFS == false)    => using EEPROM for configuration data in WiFiManager
+// (USE_LITTLEFS == true) and (USE_SPIFFS == false)     => using LITTLEFS for configuration data in WiFiManager
+// (USE_LITTLEFS == true) and (USE_SPIFFS == true)      => using LITTLEFS for configuration data in WiFiManager
+// (USE_LITTLEFS == false) and (USE_SPIFFS == true)     => using SPIFFS for configuration data in WiFiManager
+// Those above #define's must be placed before #include <BlynkSimpleEsp32_WFM.h>
 
-#define USE_SPIFFS                  true
-//#define USE_SPIFFS                  false
+#define USE_LITTLEFS          true
+#define USE_SPIFFS            false
 
-#if (!USE_SPIFFS)
+#if USE_LITTLEFS
+  //LittleFS has higher priority
+  #define CurrentFileFS     "LittleFS"
+  #ifdef USE_SPIFFS
+    #undef USE_SPIFFS
+  #endif
+  #define USE_SPIFFS                  false
+#elif USE_SPIFFS
+  #define CurrentFileFS     "SPIFFS"
+#endif
+
+#if !( USE_SPIFFS || USE_LITTLEFS)
   // EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
   #define EEPROM_SIZE    (2 * 1024)
   // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE

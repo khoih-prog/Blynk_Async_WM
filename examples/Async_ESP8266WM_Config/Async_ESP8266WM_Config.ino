@@ -8,14 +8,15 @@
    Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
    Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
    Licensed under MIT license
-   Version: 1.1.0
+   Version: 1.2.0
 
    Version    Modified By   Date      Comments
    -------    -----------  ---------- -----------
     1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
                                       Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
     1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
- *****************************************************************************************************************************/
+    1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
+ ********************************************************************************************************************************/
 
 #include "defines.h"
 #include "Credentials.h"
@@ -48,7 +49,7 @@ void readAndSendData()
   }
 
   // Blynk Timer uses millis() and is still working even if WiFi/Blynk not connected
-  Serial.print("R");
+  Serial.print(F("R"));
 }
 
 void set_led(byte status)
@@ -56,7 +57,7 @@ void set_led(byte status)
   digitalWrite(LED_BUILTIN, status);
 }
 
-void heartBeatPrint(void)
+void heartBeatPrint()
 {
   static int num = 1;
 
@@ -64,11 +65,11 @@ void heartBeatPrint(void)
   {
     set_led(LOW);
     led_ticker.once_ms(111, set_led, (byte) HIGH);
-    Serial.print("B");
+    Serial.print(F("B"));
   }
   else
   {
-    Serial.print("F");
+    Serial.print(F("F"));
   }
 
   if (num == 40)
@@ -78,7 +79,7 @@ void heartBeatPrint(void)
   }
   else if (num++ % 10 == 0)
   {
-    Serial.print(" ");
+    Serial.print(F(" "));
   }
 }
 
@@ -100,26 +101,30 @@ void check_status()
 
 void setup()
 {
+  pinMode(PIN_LED, OUTPUT);
+  
   // Debug console
   Serial.begin(115200);
   while (!Serial);
 
-  pinMode(PIN_LED, OUTPUT);
+  delay(200);
 
 #if ( USE_LITTLEFS || USE_SPIFFS)
-  Serial.print("\nStarting Async_ESP8266WM_Config using " + String(CurrentFileFS));  
+  Serial.print(F("\nStarting Async_ESP8266WM_Config using "));
+  Serial.print(CurrentFileFS);
 #else
-  Serial.print("\nStarting Async_ESP8266WM_Config using EEPROM");
-#endif  
-
-#if USE_SSL
-  Serial.println(" with SSL on " + String(ARDUINO_BOARD));
-#else
-  Serial.println(" without SSL on " + String(ARDUINO_BOARD));
+  Serial.print(F("\nStarting Async_ESP8266WM_Config using EEPROM"));
 #endif
 
-  Serial.println("Version " + String(BLYNK_ASYNC_WM_VERSION));
-      
+#if USE_SSL
+  Serial.print(F(" with SSL on ")); Serial.println(ARDUINO_BOARD);
+#else
+  Serial.print(F(" without SSL on ")); Serial.println(ARDUINO_BOARD);
+#endif
+
+  Serial.println(BLYNK_ASYNC_WM_VERSION);
+  Serial.println(ESP_DOUBLE_RESET_DETECTOR_VERSION);
+       
   dht.begin();
 
   // From v1.0.5
@@ -148,24 +153,28 @@ void setup()
   if (Blynk.connected())
   {
 #if ( USE_LITTLEFS || USE_SPIFFS)
-    Serial.println("\nBlynk ESP8288 using " + String(CurrentFileFS) + " connected. Board Name : " + Blynk.getBoardName());
+    Serial.print(F("\nBlynk ESP8266 using "));
+    Serial.print(CurrentFileFS);
+    Serial.println(F(" connected."));
 #else
-    {
-      Serial.println("\nBlynk ESP8288 using EEPROM connected. Board Name : " + Blynk.getBoardName());
-      Serial.printf("EEPROM size = %d bytes, EEPROM start address = %d / 0x%X\n", EEPROM_SIZE, EEPROM_START, EEPROM_START);
-    }
+    Serial.println(F("\nBlynk ESP8266 using EEPROM connected."));
+    Serial.printf("EEPROM size = %d bytes, EEPROM start address = %d / 0x%X\n", EEPROM_SIZE, EEPROM_START, EEPROM_START);
 #endif
+
+    Serial.print(F("Board Name : ")); Serial.println(Blynk.getBoardName());
   }
 }
 
 #if USE_DYNAMIC_PARAMETERS
-void displayCredentials(void)
+void displayCredentials()
 {
-  Serial.println("\nYour stored Credentials :");
+  Serial.println(F("\nYour stored Credentials :"));
 
-  for (int i = 0; i < NUM_MENU_ITEMS; i++)
+  for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
   {
-    Serial.println(String(myMenuItems[i].displayName) + " = " + myMenuItems[i].pdata);
+    Serial.print(myMenuItems[i].displayName);
+    Serial.print(F(" = "));
+    Serial.println(myMenuItems[i].pdata);
   }
 }
 #endif
@@ -181,7 +190,7 @@ void loop()
 
   if (!displayedCredentials)
   {
-    for (int i = 0; i < NUM_MENU_ITEMS; i++)
+    for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
     {
       if (!strlen(myMenuItems[i].pdata))
       {

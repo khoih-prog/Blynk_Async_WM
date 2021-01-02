@@ -8,14 +8,15 @@
    Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
    Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
    Licensed under MIT license
-   Version: 1.1.0
+   Version: 1.2.0
 
    Version    Modified By   Date      Comments
    -------    -----------  ---------- -----------
     1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
                                       Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
     1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
- *****************************************************************************************************************************/
+    1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
+ ********************************************************************************************************************************/
 
 #include "defines.h"
 
@@ -48,7 +49,7 @@ void set_led(byte status)
   digitalWrite(LED_BUILTIN, status);
 }
 
-void heartBeatPrint(void)
+void heartBeatPrint()
 {
   static int num = 1;
 
@@ -92,24 +93,30 @@ void check_status()
 
 void setup()
 {
+  pinMode(LED_BUILTIN, OUTPUT);
+  
   Serial.begin(115200);
   while (!Serial);
-  
-  pinMode(LED_BUILTIN, OUTPUT);
 
-#if ( USE_SPIFFS)
-  Serial.print(F("\nStarting Async_DHT11ESP32_SSL using SPIFFS"));
+  delay(200);
+
+#if ( USE_LITTLEFS || USE_SPIFFS)
+  Serial.print(F("\nStarting Async_DHT11ESP32_SSL using "));
+  Serial.print(CurrentFileFS);
 #else
   Serial.print(F("\nStarting Async_DHT11ESP32_SSL using EEPROM"));
 #endif
 
 #if USE_SSL
-  Serial.println(" with SSL on " + String(ARDUINO_BOARD));
+  Serial.print(F(" with SSL on ")); Serial.println(ARDUINO_BOARD);
 #else
-  Serial.println(" without SSL on " + String(ARDUINO_BOARD));
+  Serial.print(F(" without SSL on ")); Serial.println(ARDUINO_BOARD);
 #endif  
 
-  Serial.println("Version " + String(BLYNK_ASYNC_WM_VERSION));
+#if USE_BLYNK_WM
+  Serial.println(BLYNK_ASYNC_WM_VERSION);
+  Serial.println(ESP_DOUBLE_RESET_DETECTOR_VERSION);
+#endif
   
   dht.begin();
 
@@ -150,28 +157,33 @@ void setup()
 
   timer.setInterval(60 * 1000, readAndSendData);
 
-#if USE_BLYNK_WM
   if (Blynk.connected())
   {
-#if USE_SPIFFS
-    Serial.print(F("\nBlynk ESP32 using SPIFFS connected. Board Name : "));
+#if ( USE_LITTLEFS || USE_SPIFFS)
+    Serial.print(F("\nBlynk ESP32 using "));
+    Serial.print(CurrentFileFS);
+    Serial.println(F(" connected."));
 #else
-    Serial.print(F("\nBlynk ESP32 using EEPROM connected. Board Name : "));
+    Serial.println(F("\nBlynk ESP32 using EEPROM connected."));
+    Serial.printf("EEPROM size = %d bytes, EEPROM start address = %d / 0x%X\n", EEPROM_SIZE, EEPROM_START, EEPROM_START);
 #endif
 
-    Serial.println(Blynk.getBoardName());
+#if USE_BLYNK_WM
+    Serial.print(F("Board Name : ")); Serial.println(Blynk.getBoardName());
+#endif    
   }
-#endif  
 }
 
 #if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
-void displayCredentials(void)
+void displayCredentials()
 {
   Serial.println(F("\nYour stored Credentials :"));
 
-  for (int i = 0; i < NUM_MENU_ITEMS; i++)
+  for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
   {
-    Serial.println(String(myMenuItems[i].displayName) + " = " + myMenuItems[i].pdata);
+    Serial.print(myMenuItems[i].displayName);
+    Serial.print(F(" = "));
+    Serial.println(myMenuItems[i].pdata);
   }
 }
 #endif
@@ -187,7 +199,7 @@ void loop()
 
   if (!displayedCredentials)
   {
-    for (int i = 0; i < NUM_MENU_ITEMS; i++)
+    for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
     {
       if (!strlen(myMenuItems[i].pdata))
       {

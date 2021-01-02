@@ -10,7 +10,99 @@
 ---
 ---
 
+## Table of Contents
+
+* [Why do we need this Blynk_Async_WM library](#why-do-we-need-this-blynk_async_wm-library)
+  * [Features](#features)
+  * [Why using Async](#why-using-async)
+  * [Currently supported Boards](#currently-supported-boards)
+* [Changelog](#changelog)
+  * [Major Releases v1.2.0](#major-releases-v120)
+  * [Releases v1.1.0](#releases-v110)
+  * [Releases v1.0.16](#releases-v1016)
+* [Prerequisites](#prerequisites)
+* [Installation](#installation)
+  * [I) For Arduino IDE](#i-for-arduino-ide)
+  * [II) For VS Code & PlatformIO:](#ii-for-vs-code--platformio)
+* [HOWTO Use analogRead() with ESP32 running WiFi and/or BlueTooth (BT/BLE)](#howto-use-analogread-with-esp32-running-wifi-andor-bluetooth-btble)
+  * [1. ESP32 has 2 ADCs, named ADC1 and ADC2](#1--esp32-has-2-adcs-named-adc1-and-adc2)
+  * [2. ESP32 ADCs functions](#2-esp32-adcs-functions)
+  * [3. ESP32 WiFi uses ADC2 for WiFi functions](#3-esp32-wifi-uses-adc2-for-wifi-functions)
+* [How to migrate from Blynk_WM library](#how-to-migrate-from-blynk_wm-library)
+* [How to migrate from Blynk](#how-to-migrate-from-blynk)
+* [How to use](#how-to-use)
+* [HOWTO use default Credentials and have them pre-loaded onto Config Portal](#howto-use-default-credentials-and-have-them-pre-loaded-onto-config-portal)
+  * [ 1. To load Default Credentials](#1-to-load-default-credentials)
+  * [ 2. To use system default to load "blank" when there is no valid Credentials](#2-to-use-system-default-to-load-blank-when-there-is-no-valid-credentials)
+  * [ 3. Example of Default Credentials](#3-example-of-default-credentials)
+  * [ 4. How to add dynamic parameters from sketch](#4-how-to-add-dynamic-parameters-from-sketch)
+  * [ 5. If you don't need to add dynamic parameters](#5-if-you-dont-need-to-add-dynamic-parameters)
+* [Important Notes for using Dynamic Parameters' ids](#important-notes-for-using-dynamic-parameters-ids)
+* [Important Notes](#important-notes)
+* [Why using this Blynk_WiFiManager with MultiWiFi-MultiBlynk features](#why-using-this-blynk_wifimanager-with-multiwifi-multiblynk-features)
+* [Examples](#examples)
+  * [Not using MultiTasking](#not-using-multitasking)
+    * [ 1. Async_AM2315_ESP32_SSL](examples/Async_AM2315_ESP32_SSL)
+    * [ 2. Async_AM2315_ESP8266](examples/Async_AM2315_ESP8266)
+    * [ 3. Async_DHT11ESP32](examples/Async_DHT11ESP32)
+    * [ 4. Async_DHT11ESP32_SSL](examples/Async_DHT11ESP32_SSL)
+    * [ 5. Async_DHT11ESP8266](examples/Async_DHT11ESP8266)
+    * [ 6. Async_DHT11ESP8266_Debug](examples/Async_DHT11ESP8266_Debug)
+    * [ 7. Async_DHT11ESP8266_SSL](examples/Async_DHT11ESP82662_SSL)
+    * [ 8. Async_ESP32WM_Config](examples/Async_ESP32WM_Config)
+    * [ 9. Async_ESP8266WM_Config](examples/Async_ESP8266WM_Config)
+    * [10. Async_Blynk_WM_Template](examples/Async_Blynk_WM_Template)
+    * [11. **Async_ESP32WM_MRD_Config**](examples/Async_ESP32WM_MRD_Config)
+    * [12. **Async_ESP8266WM_MRD_Config**](examples/Async_ESP8266WM_MRD_Config)
+  * [Using Free-RTOS MultiTasking for ESP32](#using-free-rtos-multitasking-for-esp32)
+    * [ 1. Async_ESP32_MultiTask](examples/ESP32_MultiTask/Async_ESP32_MultiTask)
+    * [ 2. AsyncMT_AM2315_ESP32_SSL](examples/ESP32_MultiTask/AsyncMT_AM2315_ESP32_SSL)
+    * [ 3. AsyncMT_DHT11ESP32](examples/ESP32_MultiTask/AsyncMT_DHT11ESP32)
+    * [ 4. AsyncMT_DHT11ESP32_SSL](examples/ESP32_MultiTask/AsyncMT_DHT11ESP32_SSL)
+    * [ 5. AsyncMT_ESP32WM_Config](examples/ESP32_MultiTask/AsyncMT_ESP32WM_Config)
+* [So, how it works?](#so-how-it-works)
+* [Example Async_ESP32WM_MRD_Config](#example-async_esp32wm_mrd_config)
+  * [1. File Async_ESP32WM_MRD_Config.ino](#1-file-async_esp32wm_mrd_configino)
+  * [2. File defines.h](#2-file-definesh) 
+  * [3. File Credentials.h](#3-file-credentialsh) 
+  * [4. File dynamicParams.h](#4-file-dynamicparamsh) 
+* [Debug Terminal Output Samples](#debug-terminal-output-samples)
+  * [1. ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU](#1-esp8266wm_mrd_config-using-littlefs-with-ssl-on-esp8266_nodemcu)
+    * [1.1. No MultiReset Detected => Running normally](#11-no-multireset-detected--running-normally)
+    * [1.2. MultiReset Detected => Enter Config Portal](#12-multireset-detected--enter-config-portal)
+  * [2. ESP32WM_MRD_Config using LITTLEFS without SSL on ESP32_DEV](#2-esp32wm_mrd_config-using-littlefs-without-ssl-on-esp32_dev)
+    * [2.1. No MultiReset Detected => Running normally](#21-no-multireset-detected--running-normally)
+    * [2.2. MultiReset Detected => Enter Config Portal](#22-multireset-detected--enter-config-portal)
+    * [2.3. Exit Config Portal with Data](#23-exit-config-portal-with-data)
+    * [2.4. WiFi Lost => AutoReconnect WiFi and Blynk.](#24-wifi-lost--autoreconnect-wifi-and-blynk)
+  * [3. Async_ESP32_MultiTask using LittleFS without SSL on ESP32_DEV](#3-async_esp32_multitask-using-littlefs-without-ssl-on-esp32_dev) 
+* [Debug](#debug)
+* [Troubleshooting](#troubleshooting)
+* [Releases](#releases)
+* [Issues](#issues)
+* [TO DO](#to-do)
+* [DONE](#done)
+* [Contributions and Thanks](#contributions-and-thanks)
+* [Contributing](#contributing)
+* [License](#license)
+* [Copyright](#copyright)
+
+
+---
+---
+
 ### Why do we need this [Blynk_Async_WM library](https://github.com/khoih-prog/Blynk_Async_WM)
+
+#### Features
+
+This is a Blynk and WiFiManager Library, using [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) instead of (ESP8266)WebServer, for configuring/auto(re)connecting ESP8266/ESP32 modules to the best or available MultiWiFi APs and MultiBlynk servers at runtime. Connection is with or without SSL. Configuration data to be saved in either LittleFS, SPIFFS or EEPROM. Default Credentials as well as Dynamic custom parameters can be added and modified easily without coding knowledge. DoubleResetDetector is used to force Config Portal opening even if the Credentials are still valid.
+
+This library is designed to help you to eliminate `hardcoding` your Wifi and Blynk credentials for ESP8266 and ESP32 (with/without SSL), and updating/reflashing every time you need to change them.
+
+Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_Async_WM) is based on and sync'ed with [`Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM), all the features currently supported by [`Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM) will be available. Please have a look at [`DONE`](https://github.com/khoih-prog/Blynk_Async_WM#done) or [`DONE in Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM#done) for those too-many-to-list features.
+
+
+#### Why using Async
 
 - Using asynchronous network means that you can handle **more than one connection at the same time**
 - You are called once the request is ready and parsed
@@ -25,15 +117,27 @@
 - ServeStatic plugin that supports cache, Last-Modified, default index and more
 - Simple template processing engine to handle templates
 
----
 
-This is a Blynk and WiFiManager Library, using [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) instead of (ESP8266)WebServer, for configuring/auto(re)connecting ESP8266/ESP32 modules to the best or available MultiWiFi APs and MultiBlynk servers at runtime. Connection is with or without SSL. Configuration data to be saved in either LittleFS, SPIFFS or EEPROM. Default Credentials as well as Dynamic custom parameters can be added and modified easily without coding knowledge. DoubleResetDetector is used to force Config Portal opening even if the Credentials are still valid.
+#### Currently supported Boards
+
+This [**BlynkESP32_BT_WF** library](https://github.com/khoih-prog/BlynkESP32_BT_WF) currently supports these following boards:
+
+ 1. **ESP8266 and ESP32-based boards using EEPROM, SPIFFS or LittleFS**.
  
-This library is designed to help you to eliminate `hardcoding` your Wifi and Blynk credentials for ESP8266 and ESP32 (with/without SSL), and updating/reflashing every time you need to change them.
-
-Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_Async_WM) is based on and sync'ed with [`Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM), all the features currently supported by [`Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM) will be available. Please have a look at [`DONE`](https://github.com/khoih-prog/Blynk_Async_WM#done) or [`DONE in Blynk_WM library`](https://github.com/khoih-prog/Blynk_WM#done) for those too-many-to-list features.
-
 ---
+---
+
+## Changelog
+
+### Major Releases v1.2.0
+
+1. Add support to LittleFS for ESP32 using [LITTLEFS](https://github.com/lorol/LITTLEFS) Library
+2. Add support to MultiDetectDetector. **MultiDetectDetector** feature to force Config Portal when configurable multi-reset is detected within predetermined time.
+3. Clean-up all compiler warnings possible.
+4. Add Table of Contents
+5. Modify Version String
+6. Add MRD-related examples.
+
 
 ### Releases v1.1.0
 
@@ -51,14 +155,16 @@ Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_
 
 ## Prerequisites
 
-1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
-2. [`Blynk library 0.6.1+`](https://github.com/blynkkk/blynk-library/releases)
-3. [`ESP32 core 1.0.4+`](https://github.com/espressif/arduino-esp32/releases) for ESP32 boards
-4. [`ESP8266 core 2.7.4+`](https://github.com/esp8266/Arduino#installing-with-boards-manager) for ESP8266 boards. To use ESP8266 core 2.7.1+ for LittleFS.
-5. [`ESP_DoubleResetDetector v1.0.3+`](https://github.com/khoih-prog/ESP_DoubleResetDetector) to use DRD feature. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_DoubleResetDetector.svg?)](https://www.ardu-badge.com/ESP_DoubleResetDetector).
-6. [`ESPAsyncWebServer v1.2.3+`](https://github.com/me-no-dev/ESPAsyncWebServer).
-7. [`ESPAsyncTCP v1.2.2+`](https://github.com/me-no-dev/ESPAsyncTCP) for ESP8266.
-8. [`AsyncTCP v1.1.1+`](https://github.com/me-no-dev/AsyncTCP) for ESP32.
+ 1. [`Arduino IDE 1.8.13+` for Arduino](https://www.arduino.cc/en/Main/Software)
+ 2. [`Blynk library 0.6.1+`](https://github.com/blynkkk/blynk-library/releases)
+ 3. [`ESP32 core 1.0.4+`](https://github.com/espressif/arduino-esp32/releases) for ESP32 boards
+ 4. [`ESP8266 core 2.7.4+`](https://github.com/esp8266/Arduino#installing-with-boards-manager) for ESP8266 boards. To use ESP8266 core 2.7.1+ for LittleFS.
+ 5. [`ESP_DoubleResetDetector v1.1.1+`](https://github.com/khoih-prog/ESP_DoubleResetDetector) to use DRD feature. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_DoubleResetDetector.svg?)](https://www.ardu-badge.com/ESP_DoubleResetDetector).
+ 6. [`ESP_MultiResetDetector library 1.1.1+`](https://github.com/khoih-prog/ESP_MultiResetDetector) to use MRD feature. To install, check [![arduino-library-badge](https://www.ardu-badge.com/badge/ESP_MultiResetDetector.svg?)](https://www.ardu-badge.com/ESP_MultiResetDetector).
+ 7. [`LittleFS_esp32 v1.0.5+`](https://github.com/lorol/LITTLEFS) to use ESP32 LittleFS.
+ 8. [`ESPAsyncWebServer v1.2.3+`](https://github.com/me-no-dev/ESPAsyncWebServer).
+ 9. [`ESPAsyncTCP v1.2.2+`](https://github.com/me-no-dev/ESPAsyncTCP) for ESP8266.
+10. [`AsyncTCP v1.1.1+`](https://github.com/me-no-dev/AsyncTCP) for ESP32.
 
 ---
 
@@ -146,7 +252,7 @@ Look in file [**adc_common.c**](https://github.com/espressif/esp-idf/blob/master
 ---
 ---
 
-### How to migrate from [Blynk_WiFiManager library](https://github.com/khoih-prog/Blynk_WM) 
+### How to migrate from [Blynk_WM library](https://github.com/khoih-prog/Blynk_WM) 
 
 In your code, just replacing
 
@@ -186,16 +292,28 @@ to use SPIFFS or
 ```
 to use EEPROM.
 
+---
+
 2. For EP32, add
 
 ```
-#define USE_SPIFFS      true
+#define USE_LITTLEFS          true
+#define USE_SPIFFS            false
+```
+
+to use LittleFS or
+
+
+```
+#define USE_LITTLEFS          false
+#define USE_SPIFFS            true
 ```
 
 to use SPIFFS or
 
 ```
-#define USE_SPIFFS    false
+#define USE_LITTLEFS          false
+#define USE_SPIFFS            false
 ```
 to use EEPROM.
 
@@ -253,6 +371,223 @@ That's it.
 ---
 ---
 
+### HOWTO Use default Credentials and have them pre-loaded onto Config Portal
+
+See this example and modify as necessary
+
+#### 1. To load [Default Credentials](examples/ESP32WM_Config/Credentials.h)
+
+```cpp
+bool LOAD_DEFAULT_CONFIG_DATA = true;
+```
+
+#### 2. To use system default to load "blank" when there is no valid Credentials
+
+```cpp
+bool LOAD_DEFAULT_CONFIG_DATA = false;
+```
+
+#### 3. Example of [Default Credentials](examples/ESP32WM_Config/Credentials.h)
+
+```cpp
+/// Start Default Config Data //////////////////
+
+/*
+  // Defined in <BlynkSimpleEsp32_WM.h> and <BlynkSimpleEsp32_SSL_WM.h>
+
+  #define SSID_MAX_LEN      32
+  #define PASS_MAX_LEN      64
+  
+  typedef struct
+  {
+  char wifi_ssid[SSID_MAX_LEN];
+  char wifi_pw  [PASS_MAX_LEN];
+  }  WiFi_Credentials;
+
+  #define BLYNK_SERVER_MAX_LEN      32
+  #define BLYNK_TOKEN_MAX_LEN       36
+
+  typedef struct
+  {
+  char blynk_server[BLYNK_SERVER_MAX_LEN];
+  char blynk_token [BLYNK_TOKEN_MAX_LEN];
+  }  Blynk_Credentials;
+
+  #define NUM_WIFI_CREDENTIALS      2
+  #define NUM_BLYNK_CREDENTIALS     2
+
+  typedef struct Configuration
+  {
+  char header         [16];
+  WiFi_Credentials  WiFi_Creds  [NUM_WIFI_CREDENTIALS];
+  Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
+  int  blynk_port;
+  char board_name     [24];
+  int  checkSum;
+  } Blynk_WM_Configuration;
+
+*/
+
+bool LOAD_DEFAULT_CONFIG_DATA = true;
+//bool LOAD_DEFAULT_CONFIG_DATA = false;
+
+Blynk_WM_Configuration defaultConfig =
+{
+  //char header[16], dummy, not used
+#if USE_SSL  
+  "SSL",
+#else
+  "NonSSL",
+#endif
+  //WiFi_Credentials  WiFi_Creds  [NUM_WIFI_CREDENTIALS]
+  //WiFi_Creds.wifi_ssid and WiFi_Creds.wifi_pw
+  "SSID1", "password1",
+  "SSID2", "password2",
+  // Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
+  // Blynk_Creds.blynk_server and Blynk_Creds.blynk_token
+  "account.ddns.net",     "token",
+  "account.duckdns.org",  "token1", 
+  //int  blynk_port;
+#if USE_SSL
+  9443,
+#else
+  8080,
+#endif
+  //char board_name     [24];
+  "Air-Control",
+  //int  checkSum, dummy, not used
+  0
+};
+
+/////////// End Default Config Data /////////////
+```
+
+### 4. How to add dynamic parameters from sketch
+
+- To add custom parameters, just modify the example below
+
+```cpp
+#define USE_DYNAMIC_PARAMETERS      true
+
+/////////////// Start dynamic Credentials ///////////////
+
+//Defined in <BlynkSimpleEsp32_WM.h> and <BlynkSimpleEsp32_SSL_WM.h>
+/**************************************
+  #define MAX_ID_LEN                5
+  #define MAX_DISPLAY_NAME_LEN      16
+
+  typedef struct
+  {
+  char id             [MAX_ID_LEN + 1];
+  char displayName    [MAX_DISPLAY_NAME_LEN + 1];
+  char *pdata;
+  uint8_t maxlen;
+  } MenuItem;
+**************************************/
+
+#if USE_DYNAMIC_PARAMETERS
+
+#define MAX_MQTT_SERVER_LEN      34
+char MQTT_Server  [MAX_MQTT_SERVER_LEN + 1]   = "default-mqtt-server";
+
+#define MAX_MQTT_PORT_LEN        6
+char MQTT_Port   [MAX_MQTT_PORT_LEN + 1]  = "1883";
+
+#define MAX_MQTT_USERNAME_LEN      34
+char MQTT_UserName  [MAX_MQTT_USERNAME_LEN + 1]   = "default-mqtt-username";
+
+#define MAX_MQTT_PW_LEN        34
+char MQTT_PW   [MAX_MQTT_PW_LEN + 1]  = "default-mqtt-password";
+
+#define MAX_MQTT_SUBS_TOPIC_LEN      34
+char MQTT_SubsTopic  [MAX_MQTT_SUBS_TOPIC_LEN + 1]   = "default-mqtt-SubTopic";
+
+#define MAX_MQTT_PUB_TOPIC_LEN       34
+char MQTT_PubTopic   [MAX_MQTT_PUB_TOPIC_LEN + 1]  = "default-mqtt-PubTopic";
+
+MenuItem myMenuItems [] =
+{
+  { "mqtt", "MQTT Server",      MQTT_Server,      MAX_MQTT_SERVER_LEN },
+  { "mqpt", "Port",             MQTT_Port,        MAX_MQTT_PORT_LEN   },
+  { "user", "MQTT UserName",    MQTT_UserName,    MAX_MQTT_USERNAME_LEN },
+  { "mqpw", "MQTT PWD",         MQTT_PW,          MAX_MQTT_PW_LEN },
+  { "subs", "Subs Topics",      MQTT_SubsTopic,   MAX_MQTT_SUBS_TOPIC_LEN },
+  { "pubs", "Pubs Topics",      MQTT_PubTopic,    MAX_MQTT_PUB_TOPIC_LEN },
+};
+
+uint16_t NUM_MENU_ITEMS = sizeof(myMenuItems) / sizeof(MenuItem);  //MenuItemSize;
+
+#else
+
+MenuItem myMenuItems [] = {};
+
+uint16_t NUM_MENU_ITEMS = 0;
+#endif
+
+
+/////// // End dynamic Credentials ///////////
+
+```
+#### 5. If you don't need to add dynamic parameters
+
+Use the following code snippet in sketch
+
+```cpp
+#define USE_DYNAMIC_PARAMETERS     false
+```
+
+or
+
+```cpp
+/////////////// Start dynamic Credentials ///////////////
+
+MenuItem myMenuItems [] = {};
+
+uint16_t NUM_MENU_ITEMS = 0;
+/////// // End dynamic Credentials ///////////
+
+```
+
+---
+---
+
+### Important Notes for using Dynamic Parameters' ids
+
+1. These ids (such as "mqtt" in example) must be **unique**.
+
+Please be noted that the following **reserved names are already used in library**:
+
+```
+"id"    for WiFi SSID
+"pw"    for WiFi PW
+"id1"   for WiFi1 SSID
+"pw1"   for WiFi1 PW
+"sv"    for Blynk Server
+"tk"    for Blynk Token
+"sv1"   for Blynk Server1
+"tk1"   for Blynk Token1
+"pt"    for Blynk Port
+"nm"    for Board Name
+```
+
+---
+
+### Important notes
+
+1. Now you can use special chars such as **~, !, @, #, $, %, ^, &, _, -, space,etc.** thanks to [brondolin](https://github.com/brondolin) to provide the amazing fix to permit input special chars such as **%** and **#** into data fields. See [Issue 3](https://github.com/khoih-prog/Blynk_WM/issues/3).
+2. The SSIDs, Passwords, BlynkServers and Tokens must be input (or to make them different from **nothing**). Otherwise, the Config Portal will re-open until those fields have been changed. If you don't need any field, just input anything or use duplicated data from similar field.
+3. WiFi password max length now is 63 chars according to WPA2 standard.
+4. Sometimes, it's hard or not possible to connect to Config Portal WiFi AP, the majority cases are caused by WiFi channel conflict if there are too many WiFi APs running around. Please use **random ConfigPortal WiFi AP channel** in sketch (see code snippet below) and reset the board so that another channel is used. Repeat until connection is OK
+
+```cpp
+// Set config portal channel, default = 1. Use 0 => random channel from 1-13 to avoid conflict
+  Blynk.setConfigPortalChannel(0);
+```
+
+---
+---
+
+
 ### Examples
 
 #### Not using MultiTasking
@@ -267,6 +602,8 @@ That's it.
  8. [Async_ESP32WM_Config](examples/Async_ESP32WM_Config)
  9. [Async_ESP8266WM_Config](examples/Async_ESP8266WM_Config)
 10. [Async_Blynk_WM_Template](examples/Async_Blynk_WM_Template)
+11. [**Async_ESP32WM_MRD_Config**](examples/Async_ESP32WM_MRD_Config)
+12. [**Async_ESP8266WM_MRD_Config**](examples/Async_ESP8266WM_MRD_Config)
 
 #### Using Free-RTOS MultiTasking for ESP32
 
@@ -313,39 +650,314 @@ Enter your WiFi and Blynk Credentials:
 Then click **Save**. The system will auto-restart. You will see the board's built-in LED turned OFF. That means, it's already connected to your Blynk server successfully.
 
 ---
-
-### Important notes
-1. Now you can use special chars such as **~, !, @, #, $, %, ^, &, _, -, space,etc.** thanks to [brondolin](https://github.com/brondolin) to provide the amazing fix to permit input special chars such as **%** and **#** into data fields. See [Issue 3](https://github.com/khoih-prog/Blynk_WM/issues/3).
-2. The SSIDs, Passwords, BlynkServers and Tokens must be input (or to make them different from **nothing**). Otherwise, the Config Portal will re-open until those fields have been changed. If you don't need any field, just input anything or use duplicated data from similar field.
-3. WiFi password max length now is 63 chars according to WPA2 standard.
-4. Sometimes, it's hard or not possible to connect to Config Portal WiFi AP, the majority cases are caused by WiFi channel conflict if there are too many WiFi APs running around. Please use **random ConfigPortal WiFi AP channel** in sketch (see code snippet below) and reset the board so that another channel is used. Repeat until connection is OK
-
-```cpp
-// Set config portal channel, default = 1. Use 0 => random channel from 1-13 to avoid conflict
-  Blynk.setConfigPortalChannel(0);
-```
-
 ---
 
-### How to use default Credentials and have them pre-loaded onto Config Portal
+## Example [Async_ESP32WM_MRD_Config](examples/Async_ESP32WM_MRD_Config)
 
-See this example and modify as necessary
+Please take a look at other examples, as well.
 
-1. To load [Default Credentials](examples/Async_ESP32WM_Config/Credentials.h)
+#### 1. File [Async_ESP32WM_MRD_Config.ino](examples/Async_ESP32WM_MRD_Config/Async_ESP32WM_MRD_Config.ino)
+
 
 ```cpp
-bool LOAD_DEFAULT_CONFIG_DATA = true;
+#include "defines.h"
+#include "Credentials.h"
+#include "dynamicParams.h"
+
+#include <Ticker.h>
+#include <DHT.h>
+
+DHT dht(DHT_PIN, DHT_TYPE);
+BlynkTimer timer;
+Ticker     led_ticker;
+
+void readAndSendData()
+{
+  float temperature = dht.readTemperature();
+  float humidity    = dht.readHumidity();
+
+  if (!isnan(temperature) && !isnan(humidity))
+  {
+    Blynk.virtualWrite(V17, String(temperature, 1));
+    Blynk.virtualWrite(V18, String(humidity, 1));
+  }
+  else
+  {
+    Blynk.virtualWrite(V17, "NAN");
+    Blynk.virtualWrite(V18, "NAN");
+  }
+
+  // Blynk Timer uses millis() and is still working even if WiFi/Blynk not connected
+  Serial.print(F("R"));
+}
+
+void set_led(byte status)
+{
+  digitalWrite(LED_BUILTIN, status);
+}
+
+void heartBeatPrint()
+{
+  static int num = 1;
+
+  if (Blynk.connected())
+  {
+    set_led(HIGH);
+    led_ticker.once_ms(111, set_led, (byte) LOW);
+    Serial.print(F("B"));
+  }
+  else
+  {
+    Serial.print(F("F"));
+  }
+
+  if (num == 40)
+  {
+    Serial.println();
+    num = 1;
+  }
+  else if (num++ % 10 == 0)
+  {
+    Serial.print(F(" "));
+  }
+}
+
+void check_status()
+{
+  static unsigned long checkstatus_timeout = 0;
+
+#define STATUS_CHECK_INTERVAL     60000L
+
+  // Send status report every STATUS_REPORT_INTERVAL (60) seconds: we don't need to send updates frequently if there is no status change.
+  if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
+  {
+    // report status to Blynk
+    heartBeatPrint();
+
+    checkstatus_timeout = millis() + STATUS_CHECK_INTERVAL;
+  }
+}
+
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT);
+  
+  Serial.begin(115200);
+  while (!Serial);
+
+  delay(200);
+
+#if ( USE_LITTLEFS || USE_SPIFFS)
+  Serial.print(F("\nStarting Async_ESP32WM_MRD_Config using "));
+  Serial.print(CurrentFileFS);
+#else
+  Serial.print(F("\nStarting Async_ESP32WM_MRD_Config using EEPROM"));
+#endif
+
+#if USE_SSL
+  Serial.print(F(" with SSL on ")); Serial.println(ARDUINO_BOARD);
+#else
+  Serial.print(F(" without SSL on ")); Serial.println(ARDUINO_BOARD);
+#endif  
+
+  Serial.println(BLYNK_ASYNC_WM_VERSION);
+  
+#if USING_MRD
+  Serial.println(ESP_MULTI_RESET_DETECTOR_VERSION);
+#else
+  Serial.println(ESP_DOUBLE_RESET_DETECTOR_VERSION);
+#endif
+  
+  dht.begin();
+
+  // Set config portal SSID and Password
+  Blynk.setConfigPortal("TestPortal-ESP32", "TestPortalPass");
+  // Set config portal IP address
+  Blynk.setConfigPortalIP(IPAddress(192, 168, 220, 1));
+  // Set config portal channel, default = 1. Use 0 => random channel from 1-13 to avoid conflict
+  Blynk.setConfigPortalChannel(0);
+
+  // From v1.0.5, select either one of these to set static IP + DNS
+  Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 230), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0));
+  //Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 220), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0),
+  //                           IPAddress(192, 168, 2, 1), IPAddress(8, 8, 8, 8));
+  //Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 220), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0),
+  //                           IPAddress(4, 4, 4, 4), IPAddress(8, 8, 8, 8));
+
+  // Use this to default DHCP hostname to ESP8266-XXXXXX or ESP32-XXXXXX
+  //Blynk.begin();
+  // Use this to personalize DHCP hostname (RFC952 conformed)
+  // 24 chars max,- only a..z A..Z 0..9 '-' and no '-' as last char
+  //Blynk.begin("ESP32-WM-Config");
+  Blynk.begin(HOST_NAME);
+
+  timer.setInterval(60 * 1000, readAndSendData);
+
+  if (Blynk.connected())
+  {
+#if ( USE_LITTLEFS || USE_SPIFFS)
+    Serial.print(F("\nBlynk ESP32 using "));
+    Serial.print(CurrentFileFS);
+    Serial.println(F(" connected."));
+#else
+    Serial.println(F("\nBlynk ESP32 using EEPROM connected."));
+    Serial.printf("EEPROM size = %d bytes, EEPROM start address = %d / 0x%X\n", EEPROM_SIZE, EEPROM_START, EEPROM_START);
+#endif
+
+    Serial.print(F("Board Name : ")); Serial.println(Blynk.getBoardName());
+  }
+}
+
+#if USE_DYNAMIC_PARAMETERS
+void displayCredentials()
+{
+  Serial.println(F("\nYour stored Credentials :"));
+
+  for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+  {
+    Serial.print(myMenuItems[i].displayName);
+    Serial.print(F(" = "));
+    Serial.println(myMenuItems[i].pdata);
+  }
+}
+#endif
+
+void loop()
+{
+  Blynk.run();
+  timer.run();
+  check_status();
+
+#if USE_DYNAMIC_PARAMETERS
+  static bool displayedCredentials = false;
+
+  if (!displayedCredentials)
+  {
+    for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+    {
+      if (!strlen(myMenuItems[i].pdata))
+      {
+        break;
+      }
+
+      if ( i == (NUM_MENU_ITEMS - 1) )
+      {
+        displayedCredentials = true;
+        displayCredentials();
+      }
+    }
+  }
+#endif
+}
 ```
 
-2. To use system default to load "blank" when there is no valid Credentials
+#### 2. File [defines.h](examples/Async_ESP32WM_MRD_Config/defines.h)
 
 ```cpp
-bool LOAD_DEFAULT_CONFIG_DATA = false;
+#ifndef defines_h
+#define defines_h
+
+#ifndef ESP32
+  #error This code is intended to run on the ESP32 platform! Please check your Tools->Board setting.
+#endif
+
+#define BLYNK_PRINT Serial
+
+#define BLYNK_WM_DEBUG                3
+
+#define USING_MRD     true
+
+#if USING_MRD
+  // These definitions must be placed before #include <ESP_MultiResetDetector.h> to be used
+  // Otherwise, default values (MRD_TIMES = 3, MRD_TIMEOUT = 10 seconds and MRD_ADDRESS = 0) will be used
+  // Number of subsequent resets during MRD_TIMEOUT to activate
+  #define MRD_TIMES               3
+  
+  // Number of seconds after reset during which a subseqent reset will be considered a mlti reset.
+  #define MRD_TIMEOUT             10
+  
+  // RTC/EEPPROM Address for the MultiResetDetector to use
+  #define MRD_ADDRESS             0
+
+  #define MULTIRESETDETECTOR_DEBUG       true 
+  
+  #warning Using MultiResetDetector MRD
+#else
+  // These definitions must be placed before #include <ESP_DoubleResetDetector.h> to be used
+  // Otherwise, default values (DRD_TIMEOUT = 10 seconds and DRD_ADDRESS = 0) will be used
+  // Number of subsequent resets during DRD_TIMEOUT to activate
+  
+  // Number of seconds after reset during which a subseqent reset will be considered a mlti reset.
+  #define DRD_TIMEOUT             10
+
+// RTC/EEPPROM Address for the DoubleResetDetector to use
+  #define DRD_ADDRESS             0
+
+  #define DOUBLERESETDETECTOR_DEBUG     false
+  
+  #warning Using DoubleResetDetector DRD 
+#endif
+
+// Not use #define USE_LITTLEFS and #define USE_SPIFFS  => using SPIFFS for configuration data in WiFiManager
+// (USE_LITTLEFS == false) and (USE_SPIFFS == false)    => using EEPROM for configuration data in WiFiManager
+// (USE_LITTLEFS == true) and (USE_SPIFFS == false)     => using LITTLEFS for configuration data in WiFiManager
+// (USE_LITTLEFS == true) and (USE_SPIFFS == true)      => using LITTLEFS for configuration data in WiFiManager
+// (USE_LITTLEFS == false) and (USE_SPIFFS == true)     => using SPIFFS for configuration data in WiFiManager
+// Those above #define's must be placed before #include <BlynkSimpleEsp32_WFM.h>
+
+#define USE_LITTLEFS          true
+#define USE_SPIFFS            false
+
+#if USE_LITTLEFS
+  //LittleFS has higher priority
+  #define CurrentFileFS     "LittleFS"
+  #ifdef USE_SPIFFS
+    #undef USE_SPIFFS
+  #endif
+  #define USE_SPIFFS                  false
+#elif USE_SPIFFS
+  #define CurrentFileFS     "SPIFFS"
+#endif
+
+#if !( USE_SPIFFS || USE_LITTLEFS)
+  // EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
+  #define EEPROM_SIZE    (2 * 1024)
+  // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
+  #define EEPROM_START   0
+#endif
+
+// Force some params in Blynk, only valid for library version 1.0.1 and later
+#define TIMEOUT_RECONNECT_WIFI                    10000L
+#define RESET_IF_CONFIG_TIMEOUT                   true
+#define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
+// Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
+
+#define USE_SSL   true
+//#define USE_SSL   false
+
+#if USE_SSL
+  #include <BlynkSimpleEsp32_SSL_Async_WM.h>      //https://github.com/khoih-prog/Blynk_Async_WM
+#else
+  #include <BlynkSimpleEsp32_Async_WM.h>          //https://github.com/khoih-prog/Blynk_Async_WM
+#endif
+
+#define PIN_D22   22            // Pin D22 mapped to pin GPIO22/SCL of ESP32
+
+#define DHT_PIN     PIN_D22     // pin DATA @ D22 / GPIO22
+#define DHT_TYPE    DHT11
+
+#define HOST_NAME   "ESP32-Async-Controller"
+
+#endif      //defines_h
 ```
 
-3. Example of [Default Credentials](examples/Async_ESP32WM_Config/Credentials.h)
+#### 3. File [Credentials.h](examples/Async_ESP32WM_MRD_Config/Credentials.h)
+
 
 ```cpp
+#ifndef Credentials_h
+#define Credentials_h
+
 /// Start Default Config Data //////////////////
 
 /*
@@ -416,13 +1028,18 @@ Blynk_WM_Configuration defaultConfig =
 };
 
 /////////// End Default Config Data /////////////
+
+
+#endif    //Credentials_h
 ```
 
-### How to add dynamic parameters from sketch
+#### 4. File [dynamicParams.h](examples/Async_ESP32WM_MRD_Config/dynamicParams.h)
 
-- To add custom parameters, just modify the example below
 
 ```cpp
+#ifndef dynamicParams_h
+#define dynamicParams_h
+
 #define USE_DYNAMIC_PARAMETERS      true
 
 /////////////// Start dynamic Credentials ///////////////
@@ -483,444 +1100,538 @@ Blynk_WM_Configuration defaultConfig =
 
 /////// // End dynamic Credentials ///////////
 
-```cpp
-- If you don't need to add dynamic parameters, use the following in sketch
-
-```
-#define USE_DYNAMIC_PARAMETERS     false
-```
-
-or
-
-```cpp
-/////////////// Start dynamic Credentials ///////////////
-
-MenuItem myMenuItems [] = {};
-
-uint16_t NUM_MENU_ITEMS = 0;
-/////// // End dynamic Credentials ///////////
-
-```
-
-### Important Notes for using Dynamic Parameters' ids
-
-1. These ids (such as "mqtt" in example) must be **unique**.
-
-Please be noted that the following **reserved names are already used in library**:
-
-```
-"id"    for WiFi SSID
-"pw"    for WiFi PW
-"id1"   for WiFi1 SSID
-"pw1"   for WiFi1 PW
-"sv"    for Blynk Server
-"tk"    for Blynk Token
-"sv1"   for Blynk Server1
-"tk1"   for Blynk Token1
-"pt"    for Blynk Port
-"nm"    for Board Name
+#endif      //dynamicParams_h
 ```
 
 ---
 ---
 
-The following is the sample terminal output when running example [Async_ESP8266WM_Config](examples/Async_ESP8266WM_Config)
+### Debug Terminal Output Samples
 
-1. No Config Data with **LOAD_DEFAULT_CONFIG_DATA = true** => Config Portal loads default Credentials and dynamic Params
-cpp
+### 1. Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
+
+The following is the sample terminal output when running example [Async_ESP8266WM_MRD_Config](examples/Async_ESP8266WM_MRD_Config) on **ESP8266_NODEMCU**
+
+#### 1.1 No MultiReset Detected => Running normally
+
+
 ```
-Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
-Version v1.1.0_ESP32_SSL
-[180] ======= Start Default Config Data =======
-[180] Hdr=SSL,BrdName=ESP32-Async-Blynk
-[180] SSID=SSID1,PW=password1
-[180] SSID1=SSID2,PW1=password2
-[182] Server=account.ddns.net,Token=token
-[186] Server1=account.duckdns.org,Token1=token1
-[190] Port=9443
-[192] ======= End Config Data =======
-[300] Hostname=ESP32-Async-Controller
-[345] SaveCfgFile 
-[345] WCSum=0x2585
-[349] OK
-[352] SaveBkUpCfgFile 
+Starting Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
+Blynk_Async_WM v1.2.0 for ESP8266 SSL
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[452] Hostname=ESP8266-Async-Config
+[508] LoadCfgFile 
+[508] OK
+[508] ======= Start Stored Config Data =======
+[508] Hdr=SSL_ESP8266,BrdName=Air-Control
+[508] SSID=HueNet1,PW=12345678
+[510] SSID1=HueNet2,PW1=12345678
+[513] Server=account.duckdns.org,Token=token1
+[519] Server1=account.duckdns.org,Token1=token2
+[526] Port=9443
+[527] ======= End Config Data =======
+[530] CCSum=0x36c8,RCSum=0x36c8
+[543] LoadCredFile 
+[543] CrR:pdata=new-mqtt-server,len=34
+[543] CrR:pdata=1883,len=6
+[543] CrR:pdata=new-mqtt-username,len=34
+[545] CrR:pdata=default-mqtt-password,len=34
+[549] CrR:pdata=default-mqtt-SubTopic,len=34
+[553] CrR:pdata=default-mqtt-PubTopic,len=34
+[557] OK
+[557] CrCCsum=0x2670,CrRCsum=0x2670
+[561] Valid Stored Dynamic Data
+[564] Hdr=SSL_ESP8266,BrdName=Air-Control
+[567] SSID=HueNet1,PW=12345678
+[570] SSID1=HueNet2,PW1=12345678
+[573] Server=account.duckdns.org,Token=token1
+[579] Server1=account.duckdns.org,Token1=token2
+[585] Port=9443
+[587] ======= End Config Data =======
+[590] bg: noConfigPortal = true
+[593] Connecting MultiWifi...
+[6895] WiFi connected after time: 1
+[6896] SSID: HueNet1, RSSI = -32
+[6896] Channel: 2, IP address: 192.168.2.166
+[6896] bg: WiFi OK. Try Blynk
+[6897] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on NodeMCU
+
+[22919] NTP time: Sat Jan  2 06:58:15 2021
+[22919] BlynkArduinoClient.connect: Connecting to account.duckdns.org:9443
+[23720] Certificate OK
+[23731] Ready (ping: 1ms).
+[23802] Connected to Blynk Server = account.duckdns.org, Token = token1
+[23802] bg: WiFi+Blynk OK
+
+Blynk ESP8266 using LittleFS connected.
+Board Name : Air-Control
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
+B
+Your stored Credentials :
+MQTT Server = new-mqtt-server
+Port = 1883
+MQTT UserName = new-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+BBBBBB
+```
+
+---
+
+#### 1.2 MultiReset Detected => Enter Config Portal
+
+```
+Starting Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
+Blynk_Async_WM v1.2.0 for ESP8266 SSL
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFC0003
+multiResetDetectorFlag = 0xFFFC0003
+lowerBytes = 0x0003, upperBytes = 0x0003
+multiResetDetected, number of times = 3
+Saving config file...
+Saving config file OK
+[291] Multi or Double Reset Detected
+[291] Hostname=ESP8266-Async-Config
+[307] LoadCfgFile 
+[307] OK
+[307] ======= Start Stored Config Data =======
+[307] Hdr=SSL_ESP8266,BrdName=Air-Control
+[307] SSID=HueNet1,PW=12345678
+[309] SSID1=HueNet2,PW1=12345678
+[312] Server=account.duckdns.org,Token=token1
+[318] Server1=account.duckdns.org,Token1=token2
+[325] Port=9443
+[326] ======= End Config Data =======
+[329] CCSum=0x36c8,RCSum=0x36c8
+[335] LoadCredFile 
+[335] CrR:pdata=new-mqtt-server,len=34
+[338] CrR:pdata=1883,len=6
+[340] CrR:pdata=new-mqtt-username,len=34
+[344] CrR:pdata=default-mqtt-password,len=34
+[348] CrR:pdata=default-mqtt-SubTopic,len=34
+[352] CrR:pdata=default-mqtt-PubTopic,len=34
 [356] OK
-[359] SaveCredFile 
-[359] CW1:pdata=default-mqtt-server,len=34
-[359] CW1:pdata=1883,len=6
-[359] CW1:pdata=default-mqtt-username,len=34
-[360] CW1:pdata=default-mqtt-password,len=34
-[364] CW1:pdata=default-mqtt-SubTopic,len=34
-[368] CW1:pdata=default-mqtt-PubTopic,len=34
-[374] OK
-[374] CrWCSum=0x29a6
-[377] SaveBkUpCredFile 
-[377] CW2:pdata=default-mqtt-server,len=34
-[381] CW2:pdata=1883,len=6
-[383] CW2:pdata=default-mqtt-username,len=34
-[387] CW2:pdata=default-mqtt-password,len=34
-[391] CW2:pdata=default-mqtt-SubTopic,len=34
-[395] CW2:pdata=default-mqtt-PubTopic,len=34
-[401] OK
-[401] ======= Start Loaded Config Data =======
-[404] Hdr=SSL_ESP32,BrdName=ESP32-Async-Blynk
-[408] SSID=SSID1,PW=password1
-[411] SSID1=SSID2,PW1=password2
-[414] Server=account.ddns.net,Token=token
-[418] Server1=account.duckdns.org,Token1=token1
-[422] Port=9443
-[423] ======= End Config Data =======
-[427] bg: noConfigPortal = true
-[430] Connecting MultiWifi...
-[49418] WiFi not connected
-[49418] bg: Fail2connect WiFi+Blynk
-[50315] 
-stConf:SSID=TestPortal-ESP32,PW=TestPortalPass
-[50315] IP=192.168.220.1,ch=10
+[356] CrCCsum=0x2670,CrRCsum=0x2670
+[360] Valid Stored Dynamic Data
+[363] Hdr=SSL_ESP8266,BrdName=Air-Control
+[366] SSID=HueNet1,PW=12345678
+[369] SSID1=HueNet2,PW1=12345678
+[372] Server=account.duckdns.org,Token=token1
+[378] Server1=account.duckdns.org,Token1=token2
+[384] Port=9443
+[386] ======= End Config Data =======
+[389] bg: Stay forever in config portal.DRD/MRD detected
+[688] 
+stConf:SSID=TestPortal-ESP8266,PW=TestPortalPass
+[688] IP=192.168.200.1,ch=2
 F
 Your stored Credentials :
-MQTT Server = default-mqtt-server
+MQTT Server = new-mqtt-server
 Port = 1883
-MQTT UserName = default-mqtt-username
+MQTT UserName = new-mqtt-username
 MQTT PWD = default-mqtt-password
 Subs Topics = default-mqtt-SubTopic
 Pubs Topics = default-mqtt-PubTopic
-RF
+[212982] h1:myMenuItems[0]=new-mqtt-server
+[212983] h1:myMenuItems[1]=1883
+[212983] h1:myMenuItems[2]=new-mqtt-username
+[212984] h1:myMenuItems[3]=default-mqtt-password
+[212987] h1:myMenuItems[4]=default-mqtt-SubTopic
+[212991] h1:myMenuItems[5]=default-mqtt-PubTopic
+F[229521] id: = HueNet1
+[229531] pw = 12345678
+[229539] id1 = HueNet2
+[229550] pw1 = 12345678
+[229558] sv = account.duckdns.org
+[229567] tk = token1
+[229577] sv1 = account.duckdns.org
+[229586] tk1 = token2
+[229595] pt = 9443
+[229607] nm = Async_ESP8266
+[229617] h:mqtt=new-mqtt-server
+[229617] h2:myMenuItems[0]=new-mqtt-server
+[229626] h:mqpt=1883
+[229626] h2:myMenuItems[1]=1883
+[229635] h:user=new-mqtt-username
+[229635] h2:myMenuItems[2]=new-mqtt-username
+[229645] h:mqpw=default-mqtt-password
+[229645] h2:myMenuItems[3]=default-mqtt-password
+[229655] h:subs=default-mqtt-SubTopic
+[229655] h2:myMenuItems[4]=default-mqtt-SubTopic
+[229664] h:pubs=default-mqtt-PubTopic
+[229664] h2:myMenuItems[5]=default-mqtt-PubTopic
+[229665] h:UpdLittleFS:/wmssl_conf.dat
+[229672] SaveCfgFile 
+[229672] WCSum=0x36b9
+[229745] OK
+[229753] SaveBkUpCfgFile 
+[229814] OK
+[229823] SaveCredFile 
+[229823] CW1:pdata=new-mqtt-server,len=34
+[229823] CW1:pdata=1883,len=6
+[229823] CW1:pdata=new-mqtt-username,len=34
+[229877] CW1:pdata=default-mqtt-password,len=34
+[229877] CW1:pdata=default-mqtt-SubTopic,len=34
+[229878] CW1:pdata=default-mqtt-PubTopic,len=34
+[229884] OK
+[229884] CrWCSum=0x2670
+[229893] SaveBkUpCredFile 
+[229893] CW2:pdata=new-mqtt-server,len=34
+[229893] CW2:pdata=1883,len=6
+[229893] CW2:pdata=new-mqtt-username,len=34
+[229949] CW2:pdata=default-mqtt-password,len=34
+[229949] CW2:pdata=default-mqtt-SubTopic,len=34
+[229950] CW2:pdata=default-mqtt-PubTopic,len=34
+[229956] OK
+[229956] h:Rst
+
 ```
 
----
+#### 1.3 Exit Config Portal with Data
 
-2. Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = true** => reboot
-
-```cpp
-Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
-Version v1.1.0_ESP32_SSL
-[276] Hostname=ESP32-Async-Controller
-[320] LoadCfgFile 
-[321] OK
-[321] ======= Start Stored Config Data =======
-[321] Hdr=SSL_ESP32,BrdName=ESP32-Blynk-Async
-[321] SSID=HueNet1,PW=12345678
-[323] SSID1=HueNet2,PW1=12345678
-[326] Server=********.duckdns.org,Token=********
-[332] Server1=********.duckdns.org,Token1=********
-[338] Port=9443
-[340] ======= End Config Data =======
-[343] CCSum=0x37af,RCSum=0x37af
-[347] LoadCredFile 
-[348] CrR:pdata=mqtt-server,len=34
-[351] CrR:pdata=1883,len=6
-[353] CrR:pdata=mqtt-user,len=34
-[356] CrR:pdata=mqtt-pw,len=34
-[359] CrR:pdata=Sub-Topics,len=34
-[362] CrR:pdata=Pub-Topics,len=34
-[365] OK
-[366] CrCCsum=0x1379,CrRCsum=0x1379
-[369] Valid Stored Dynamic Data
-[372] Hdr=SSL_ESP32,BrdName=ESP32-Blynk-Async
-[376] SSID=HueNet1,PW=12345678
-[379] SSID1=HueNet2,PW1=12345678
-[382] Server=********.duckdns.org,Token=********
-[388] Server1=********.duckdns.org,Token1=********
-[395] Port=9443
-[396] ======= End Config Data =======
-[399] bg: noConfigPortal = true
-[402] Connecting MultiWifi...
-[6739] WiFi connected after time: 1
-[6739] SSID: HueNet1, RSSI = -37
-[6739] Channel: 2, IP address: 192.168.2.98
-[6739] bg: WiFi OK. Try Blynk
-[6741] 
+```
+Starting Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
+Blynk_Async_WM v1.2.0 for ESP8266 SSL
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[394] Hostname=ESP8266-Async-Config
+[416] LoadCfgFile 
+[416] OK
+[416] ======= Start Stored Config Data =======
+[417] Hdr=SSL_ESP8266,BrdName=Async_ESP8266
+[417] SSID=HueNet1,PW=12345678
+[419] SSID1=HueNet2,PW1=12345678
+[421] Server=account.duckdns.org,Token=token1
+[428] Server1=account.duckdns.org,Token1=token2
+[434] Port=9443
+[435] ======= End Config Data =======
+[439] CCSum=0x36b9,RCSum=0x36b9
+[445] LoadCredFile 
+[445] CrR:pdata=new-mqtt-server,len=34
+[447] CrR:pdata=1883,len=6
+[449] CrR:pdata=new-mqtt-username,len=34
+[453] CrR:pdata=default-mqtt-password,len=34
+[458] CrR:pdata=default-mqtt-SubTopic,len=34
+[461] CrR:pdata=default-mqtt-PubTopic,len=34
+[465] OK
+[466] CrCCsum=0x2670,CrRCsum=0x2670
+[469] Valid Stored Dynamic Data
+[472] Hdr=SSL_ESP8266,BrdName=Async_ESP8266
+[476] SSID=HueNet1,PW=12345678
+[479] SSID1=HueNet2,PW1=12345678
+[482] Server=account.duckdns.org,Token=token1
+[488] Server1=account.duckdns.org,Token1=token2
+[494] Port=9443
+[496] ======= End Config Data =======
+[499] bg: noConfigPortal = true
+[502] Connecting MultiWifi...
+[6780] WiFi connected after time: 1
+[6780] SSID: HueNet1, RSSI = -32
+[6781] Channel: 2, IP address: 192.168.2.166
+[6781] bg: WiFi OK. Try Blynk
+[6782] 
     ___  __          __
    / _ )/ /_ _____  / /__
   / _  / / // / _ \/  '_/
  /____/_/\_, /_//_/_/\_\
-        /___/ v0.6.1 on ESP32
+        /___/ v0.6.1 on NodeMCU
 
-[7754] NTP time: Mon Aug 24 06:28:38 2020
-[7754] BlynkArduinoClient.connect: Connecting to ********.duckdns.org:9443
-[9696] Certificate OK
-[9737] Ready (ping: 40ms).
-[9806] Connected to Blynk Server = ********.duckdns.org, Token = ********
-[9806] bg: WiFi+Blynk OK
+[22805] NTP time: Sat Jan  2 07:03:13 2021
+[22805] BlynkArduinoClient.connect: Connecting to account.duckdns.org:9443
+[23707] Certificate OK
+[23720] Ready (ping: 7ms).
+[23793] Connected to Blynk Server = account.duckdns.org, Token = token1
+[23793] bg: WiFi+Blynk OK
 
-Blynk ESP32 using SPIFFS connected. Board Name : ESP32-Blynk-Async
+Blynk ESP8266 using LittleFS connected.
+Board Name : Async_ESP8266
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
 B
 Your stored Credentials :
-MQTT Server = mqtt-server
+MQTT Server = new-mqtt-server
 Port = 1883
-MQTT UserName = mqtt-user
-MQTT PWD = mqtt-pw
-Subs Topics = Sub-Topics
-Pubs Topics = Pub-Topics
+MQTT UserName = new-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+BBBB
 ```
 
 ---
 
-3. No Config Data with **LOAD_DEFAULT_CONFIG_DATA = false** => Config Portal loads "blank" to all fields
+### 2. Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
+
+The following is the sample terminal output when running example [Async_ESP32WM_MRD_Config](examples/Async_ESP32WM_MRD_Config) on **ESP32_DEV**
+
+
+#### 2.1 No MultiReset Detected => Running normally
 
 ```
-Starting Async_ESP32WM_Config using EEPROM without SSL on ESP32_DEV
-Version v1.1.0_ESP32
-[214] Hostname=ESP32-Async-Controller
-[220] EEPROMsz:2048
-[220] ======= Start Stored Config Data =======
-[220] Hdr=SSL_ESP32,BrdName=Air-Control
-[220] SSID=HueNet1,PW=12345678
-[221] SSID1=HueNet,PW1=12345678
-[224] Server=your_account.ddns.net,Token=OS5w5X_XRmME9ytSi7P_M6ss-Bt4BYUO
-[230] Server1=your_account.duckdns.org,Token1=OS5w5X_XRmME9ytSi7P_M6ss-Bt4BYUO
-[236] Port=9443
-[238] ======= End Config Data =======
-[241] CCSum=0x343a,RCSum=0x343a
-[244] CR:pdata=default-mqtt-server,len=34
-[248] CR:pdata=1883,len=6
-[250] CR:pdata=default-mqtt-username,len=34
-[254] CR:pdata=default-mqtt-password,len=34
-[258] CR:pdata=default-mqtt-SubTopic,len=34
-[262] CR:pdata=default-mqtt-PubTopic,len=34
-[266] CrCCsum=0x29a6,CrRCsum=0x29a6
-[269] Valid Stored Dynamic Data
-[272] InitEEPROM,sz=2048,DataSz=556
-[275] g:myMenuItems[0]=blank
-[277] g:myMenuItems[1]=blank
-[280] g:myMenuItems[2]=blank
-[283] g:myMenuItems[3]=blank
-[285] g:myMenuItems[4]=blank
-[288] g:myMenuItems[5]=blank
-[290] SaveEEPROM,sz=2048,CSum=0x1444
-[294] CW:pdata=blank,len=34
-[296] CW:pdata=blank,len=6
-[299] CW:pdata=blank,len=34
-[301] CW:pdata=blank,len=34
-[304] CW:pdata=blank,len=34
-[306] CW:pdata=blank,len=34
-[309] CrWCSum=0xc30
-[362] bg: Stay forever in config portal.No configDat
-[1207] 
-stConf:SSID=TestPortal-ESP32,PW=TestPortalPass
-[1207] IP=192.168.220.1,ch=10
-F
-Your stored Credentials :
-MQTT Server = blank
-Port = blank
-MQTT UserName = blank
-MQTT PWD = blank
-Subs Topics = blank
-Pubs Topics = blank
-[55106] h1:myMenuItems[0]=blank
-[55106] h1:myMenuItems[1]=blank
-[55107] h1:myMenuItems[2]=blank
-[55107] h1:myMenuItems[3]=blank
-[55107] h1:myMenuItems[4]=blank
-[55109] h1:myMenuItems[5]=blank
-RFRFRF
-[205949] id: = HueNet1
-[205972] pw = 12345678
-[206010] id1 = HueNet2
-[206040] pw1 = 12345678
-[206058] sv = your_account.ddns.net
-[206081] tk = ********
-[206105] sv1 = your_account.duckdns.org
-[206123] tk1 = ********
-[206148] pt = 8080
-[206163] nm = ESP32-Blynk-Async
-[206181] h:mqtt=mqtt-server
-[206181] h2:myMenuItems[0]=mqtt-server
-[206197] h:mqpt=1883
-[206197] h2:myMenuItems[1]=1883
-[206213] h:user=mqtt-user
-[206213] h2:myMenuItems[2]=mqtt-user
-[206230] h:mqpw=mqtt-pw
-[206230] h2:myMenuItems[3]=mqtt-pw
-[206270] h:subs=Sub-Topics
-[206270] h2:myMenuItems[4]=Sub-Topics
-[206287] h:pubs=Pub-Topics
-[206287] h2:myMenuItems[5]=Pub-Topics
-[206288] h:UpdEEPROM
-[206288] SaveEEPROM,sz=2048,CSum=0x34c2
-[206288] CW:pdata=mqtt-server,len=34
-[206290] CW:pdata=1883,len=6
-[206293] CW:pdata=mqtt-user,len=34
-[206296] CW:pdata=mqtt-pw,len=34
-[206299] CW:pdata=Sub-Topics,len=34
-[206302] CW:pdata=Pub-Topics,len=34
-[206305] CrWCSum=0x1379
-[206370] h:Rst
-```
----
-
-4. Input valid credentials with **LOAD_DEFAULT_CONFIG_DATA = false** => reboot
-
-```cpp
-Starting Async_ESP32WM_Config using EEPROM without SSL on ESP32_DEV
-Version v1.1.0_ESP32
-[152] Hostname=ESP32-Async-Controller
-[158] EEPROMsz:2048
-[158] ======= Start Stored Config Data =======
-[158] Hdr=ESP32,BrdName=ESP32-Blynk-Async
-[158] SSID=HueNet1,PW=12345678
-[160] SSID1=HueNet2,PW1=12345678
-[163] Server=your_account.ddns.net,Token=********
-[169] Server1=your_account.duckdns.org,Token1=********
-[175] Port=8080
-[176] ======= End Config Data =======
-[180] CCSum=0x34c2,RCSum=0x34c2
-[183] CR:pdata=mqtt-server,len=34
-[186] CR:pdata=1883,len=6
-[188] CR:pdata=mqtt-user,len=34
-[191] CR:pdata=mqtt-pw,len=34
-[194] CR:pdata=Sub-Topics,len=34
-[196] CR:pdata=Pub-Topics,len=34
-[199] CrCCsum=0x1379,CrRCsum=0x1379
-[203] Valid Stored Dynamic Data
-[205] Hdr=ESP32,BrdName=ESP32-Blynk-Async
-[209] SSID=HueNet1,PW=12345678
-[212] SSID1=HueNet2,PW1=12345678
-[215] Server=your_account.ddns.net,Token=********
-[221] Server1=your_account.duckdns.org,Token1=********
-[227] Port=8080
-[229] ======= End Config Data =======
-[232] bg: noConfigPortal = true
-[235] Connecting MultiWifi...
-[7299] WiFi connected after time: 1
-[7299] SSID:HueNet1,RSSI=-37
-[7299] Channel:2,IP address:192.168.2.98
-[7299] bg: WiFi OK. Try Blynk
-[7300] 
-    ___  __          __
-   / _ )/ /_ _____  / /__
-  / _  / / // / _ \/  '_/
- /____/_/\_, /_//_/_/\_\
-        /___/ v0.6.1 on ESP32
-
-[7313] BlynkArduinoClient.connect: Connecting to your_account.ddns.net:8080
-[7407] Ready (ping: 4ms).
-[7475] Connected to Blynk Server = your_account.ddns.net, Token = ********
-[7475] bg: WiFi+Blynk OK
-
-Blynk ESP32 using EEPROM connected. Board Name : ESP32-Blynk-Async
-EEPROM size = 2048 bytes, EEPROM start address = 0 / 0x0
-B
-Your stored Credentials :
-MQTT Server = mqtt-server
-Port = 1883
-MQTT UserName = mqtt-user
-MQTT PWD = mqtt-pw
-Subs Topics = Sub-Topics
-Pubs Topics = Pub-Topics
-```
-
----
-
-5. **No DRD detected** => no Config Portal with valid Credentials
-
-```
-Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
-Version v1.1.0_ESP32_SSL
-[276] Hostname=ESP32-Async-Controller
-[320] LoadCfgFile 
-[321] OK
-[321] ======= Start Stored Config Data =======
-[321] Hdr=SSL_ESP32,BrdName=ESP32-Blynk-Async
-[321] SSID=HueNet1,PW=12345678
-[323] SSID1=HueNet2,PW1=12345678
-[326] Server=********.duckdns.org,Token=********
-[332] Server1=********.duckdns.org,Token1=********
-[338] Port=9443
-[340] ======= End Config Data =======
-[343] CCSum=0x37af,RCSum=0x37af
-[347] LoadCredFile 
-[348] CrR:pdata=mqtt-server,len=34
-[351] CrR:pdata=1883,len=6
-[353] CrR:pdata=mqtt-user,len=34
-[356] CrR:pdata=mqtt-pw,len=34
-[359] CrR:pdata=Sub-Topics,len=34
-[362] CrR:pdata=Pub-Topics,len=34
-[365] OK
-[366] CrCCsum=0x1379,CrRCsum=0x1379
-[369] Valid Stored Dynamic Data
-[372] Hdr=SSL_ESP32,BrdName=ESP32-Blynk-Async
-[376] SSID=HueNet1,PW=12345678
-[379] SSID1=HueNet2,PW1=12345678
-[382] Server=********.duckdns.org,Token=********
-[388] Server1=********.duckdns.org,Token1=********
-[395] Port=9443
-[396] ======= End Config Data =======
-[399] bg: noConfigPortal = true
-[402] Connecting MultiWifi...
-[6739] WiFi connected after time: 1
-[6739] SSID: HueNet1, RSSI = -37
-[6739] Channel: 2, IP address: 192.168.2.98
-[6739] bg: WiFi OK. Try Blynk
-[6741] 
-    ___  __          __
-   / _ )/ /_ _____  / /__
-  / _  / / // / _ \/  '_/
- /____/_/\_, /_//_/_/\_\
-        /___/ v0.6.1 on ESP32
-
-[7754] NTP time: Mon Aug 24 06:28:38 2020
-[7754] BlynkArduinoClient.connect: Connecting to ********.duckdns.org:9443
-[9696] Certificate OK
-[9737] Ready (ping: 40ms).
-[9806] Connected to Blynk Server = ********.duckdns.org, Token = ********
-[9806] bg: WiFi+Blynk OK
-
-Blynk ESP32 using SPIFFS connected. Board Name : ESP32-Blynk-Async
-B
-Your stored Credentials :
-MQTT Server = mqtt-server
-Port = 1883
-MQTT UserName = mqtt-user
-MQTT PWD = mqtt-pw
-Subs Topics = Sub-Topics
-Pubs Topics = Pub-Topics
-```
-
----
-
-6. **DRD detected** => Config Portal even with valid Credentials
-
-```
-
-Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
-Version v1.1.0_ESP32_SSL
-[180] Double Reset Detected
-[328] Hostname=ESP32-Async-Controller
-[414] LoadCfgFile 
-[415] OK
-[415] ======= Start Stored Config Data =======
-[415] Hdr=SSL_ESP32,BrdName=ESP32-Async-Blynk
-[415] SSID=SSID1,PW=password1
-[417] SSID1=SSID2,PW1=password2
-[420] Server=account.ddns.net,Token=token
-[423] Server1=account.duckdns.org,Token1=token1
-[428] Port=9443
+Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
+Blynk_Async_WM v1.2.0 for ESP32 SSL
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[373] Hostname=ESP32-Async-Controller
+[407] LoadCfgFile 
+[411] OK
+[412] ======= Start Stored Config Data =======
+[412] Hdr=SSL_ESP32,BrdName=Air-Control
+[412] SSID=HueNet1,PW=12345678
+[412] SSID1=HueNet2,PW1=12345678
+[415] Server=account.duckdns.org,Token=token1
+[421] Server1=account.duckdns.org,Token1=token2
+[427] Port=9443
 [429] ======= End Config Data =======
-[433] CCSum=0x2585,RCSum=0x2585
-[436] LoadCredFile 
-[437] CrR:pdata=default-mqtt-server,len=34
-[441] CrR:pdata=1883,len=6
-[443] CrR:pdata=default-mqtt-username,len=34
-[447] CrR:pdata=default-mqtt-password,len=34
-[451] CrR:pdata=default-mqtt-SubTopic,len=34
-[455] CrR:pdata=default-mqtt-PubTopic,len=34
-[459] OK
-[460] CrCCsum=0x29a6,CrRCsum=0x29a6
-[464] Valid Stored Dynamic Data
-[466] Hdr=SSL_ESP32,BrdName=ESP32-Async-Blynk
-[470] SSID=SSID1,PW=password1
-[473] SSID1=SSID2,PW1=password2
-[476] Server=account.ddns.net,Token=token
-[480] Server1=account.duckdns.org,Token1=token1
-[484] Port=9443
-[485] ======= End Config Data =======
-[489] bg: Stay forever in config portal.DRD detected
-[1339] 
+[432] CCSum=0x3657,RCSum=0x3657
+[449] LoadCredFile 
+[453] CrR:pdata=new-mqtt-server,len=34
+[453] CrR:pdata=1883,len=6
+[454] CrR:pdata=new-mqtt-username,len=34
+[454] CrR:pdata=default-mqtt-password,len=34
+[456] CrR:pdata=default-mqtt-SubTopic,len=34
+[460] CrR:pdata=default-mqtt-PubTopic,len=34
+[464] OK
+[465] CrCCsum=0x2670,CrRCsum=0x2670
+[468] Valid Stored Dynamic Data
+[471] Hdr=SSL_ESP32,BrdName=Air-Control
+[474] SSID=HueNet1,PW=12345678
+[477] SSID1=HueNet2,PW1=12345678
+[480] Server=account.duckdns.org,Token=token1
+[486] Server1=account.duckdns.org,Token1=token2
+[493] Port=9443
+[494] ======= End Config Data =======
+[497] bg: noConfigPortal = true
+[500] Connecting MultiWifi...
+[7589] WiFi connected after time: 1
+[7589] SSID: HueNet1, RSSI = -27
+[7589] Channel: 2, IP address: 192.168.2.101
+[7589] bg: WiFi OK. Try Blynk
+[7591] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ESP32
+
+[8604] NTP time: Sat Jan  2 07:09:42 2021
+[8604] BlynkArduinoClient.connect: Connecting to account.duckdns.org:9443
+[10551] Certificate OK
+[10558] Ready (ping: 6ms).
+[10627] Connected to Blynk Server = account.duckdns.org, Token = token1
+[10627] bg: WiFi+Blynk OK
+
+Blynk ESP32 using LittleFS connected.
+Board Name : Air-Control
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
+B
+Your stored Credentials :
+MQTT Server = new-mqtt-server
+Port = 1883
+MQTT UserName = new-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+```
+
+#### 2.2 MultiReset Detected => Enter Config Portal
+
+```
+Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
+Blynk_Async_WM v1.2.0 for ESP32 SSL
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFC0003
+multiResetDetectorFlag = 0xFFFC0003
+lowerBytes = 0x0003, upperBytes = 0x0003
+multiResetDetected, number of times = 3
+Saving config file...
+Saving config file OK
+[272] Multi or Double Reset Detected
+[343] Hostname=ESP32-Async-Controller
+[379] LoadCfgFile 
+[384] OK
+[384] ======= Start Stored Config Data =======
+[384] Hdr=SSL_ESP32,BrdName=Air-Control
+[384] SSID=HueNet1,PW=12345678
+[384] SSID1=HueNet2,PW1=12345678
+[387] Server=account.duckdns.org,Token=token1
+[393] Server1=account.duckdns.org,Token1=token2
+[400] Port=9443
+[401] ======= End Config Data =======
+[405] CCSum=0x3657,RCSum=0x3657
+[422] LoadCredFile 
+[427] CrR:pdata=new-mqtt-server,len=34
+[427] CrR:pdata=1883,len=6
+[427] CrR:pdata=new-mqtt-username,len=34
+[427] CrR:pdata=default-mqtt-password,len=34
+[429] CrR:pdata=default-mqtt-SubTopic,len=34
+[433] CrR:pdata=default-mqtt-PubTopic,len=34
+[437] OK
+[438] CrCCsum=0x2670,CrRCsum=0x2670
+[441] Valid Stored Dynamic Data
+[444] Hdr=SSL_ESP32,BrdName=Air-Control
+[448] SSID=HueNet1,PW=12345678
+[451] SSID1=HueNet2,PW1=12345678
+[454] Server=account.duckdns.org,Token=token1
+[460] Server1=account.duckdns.org,Token1=token2
+[466] Port=9443
+[468] ======= End Config Data =======
+[471] bg: Stay forever in config portal.DRD/MRD detected
+[1360] 
 stConf:SSID=TestPortal-ESP32,PW=TestPortalPass
-[1339] IP=192.168.220.1,ch=10
+[1360] IP=192.168.220.1,ch=4
 F
+Your stored Credentials :
+MQTT Server = new-mqtt-server
+Port = 1883
+MQTT UserName = new-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+RFRFRF[188660] id: = HueNet1
+[188671] pw = 12345678
+[188697] id1 = HueNet2
+[188709] pw1 = 12345678
+[188718] sv = account.duckdns.org
+[188728] tk = token1
+[188739] sv1 = account.duckdns.org
+[188749] tk1 = token2
+[188760] pt = 9443
+[188770] nm = ESP32_MRD
+[188783] h:mqtt=default-mqtt-server
+[188783] h2:myMenuItems[0]=default-mqtt-server
+[188794] h:mqpt=1883
+[188794] h2:myMenuItems[1]=1883
+[188806] h:user=default-mqtt-username
+[188806] h2:myMenuItems[2]=default-mqtt-username
+[188851] h:mqpw=default-mqtt-password
+[188851] h2:myMenuItems[3]=default-mqtt-password
+[188863] h:subs=default-mqtt-SubTopic
+[188863] h2:myMenuItems[4]=default-mqtt-SubTopic
+[188873] h:pubs=default-mqtt-PubTopic
+[188873] h2:myMenuItems[5]=default-mqtt-PubTopic
+[188874] h:Updating LittleFS:/wmssl_conf.dat
+[188898] SaveCfgFile 
+[188898] WCSum=0x34bc
+[188905] OK
+[188923] SaveBkUpCfgFile 
+[188930] OK
+[188950] SaveCredFile 
+[188950] CW1:pdata=default-mqtt-server,len=34
+[188959] CW1:pdata=1883,len=6
+[188959] CW1:pdata=default-mqtt-username,len=34
+[188959] CW1:pdata=default-mqtt-password,len=34
+[188959] CW1:pdata=default-mqtt-SubTopic,len=34
+[188964] CW1:pdata=default-mqtt-PubTopic,len=34
+[188969] OK
+[188969] CrWCSum=0x29a6
+[188998] SaveBkUpCredFile 
+[188998] CW2:pdata=default-mqtt-server,len=34
+[189005] CW2:pdata=1883,len=6
+[189005] CW2:pdata=default-mqtt-username,len=34
+[189005] CW2:pdata=default-mqtt-password,len=34
+[189007] CW2:pdata=default-mqtt-SubTopic,len=34
+[189011] CW2:pdata=default-mqtt-PubTopic,len=34
+[189016] OK
+[189016] h:Rst
+
+```
+
+#### 2.3 Exit Config Portal with Data
+
+```
+Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
+Blynk_Async_WM v1.2.0 for ESP32 SSL
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[363] Hostname=ESP32-Async-Controller
+[416] LoadCfgFile 
+[424] OK
+[424] ======= Start Stored Config Data =======
+[424] Hdr=SSL_ESP32,BrdName=ESP32_MRD
+[424] SSID=HueNet1,PW=12345678
+[424] SSID1=HueNet2,PW1=12345678
+[427] Server=account.duckdns.org,Token=token1
+[433] Server1=account.duckdns.org,Token1=token2
+[439] Port=9443
+[441] ======= End Config Data =======
+[444] CCSum=0x34bc,RCSum=0x34bc
+[468] LoadCredFile 
+[476] CrR:pdata=default-mqtt-server,len=34
+[476] CrR:pdata=1883,len=6
+[476] CrR:pdata=default-mqtt-username,len=34
+[476] CrR:pdata=default-mqtt-password,len=34
+[479] CrR:pdata=default-mqtt-SubTopic,len=34
+[483] CrR:pdata=default-mqtt-PubTopic,len=34
+[487] OK
+[488] CrCCsum=0x29a6,CrRCsum=0x29a6
+[491] Valid Stored Dynamic Data
+[494] Hdr=SSL_ESP32,BrdName=ESP32_MRD
+[497] SSID=HueNet1,PW=12345678
+[500] SSID1=HueNet2,PW1=12345678
+[503] Server=account.duckdns.org,Token=token1
+[509] Server1=account.duckdns.org,Token1=token2
+[515] Port=9443
+[517] ======= End Config Data =======
+[520] bg: noConfigPortal = true
+[523] Connecting MultiWifi...
+[6380] WiFi connected after time: 1
+[6380] SSID: HueNet1, RSSI = -24
+[6380] Channel: 2, IP address: 192.168.2.101
+[6380] bg: WiFi OK. Try Blynk
+[6382] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ESP32
+
+[7395] NTP time: Sat Jan  2 07:14:16 2021
+[7395] BlynkArduinoClient.connect: Connecting to account.duckdns.org:9443
+[9293] Certificate OK
+[9302] Ready (ping: 8ms).
+[9371] Connected to Blynk Server = account.duckdns.org, Token = token1
+[9371] bg: WiFi+Blynk OK
+
+Blynk ESP32 using LittleFS connected.
+Board Name : ESP32_MRD
+B
 Your stored Credentials :
 MQTT Server = default-mqtt-server
 Port = 1883
@@ -928,95 +1639,38 @@ MQTT UserName = default-mqtt-username
 MQTT PWD = default-mqtt-password
 Subs Topics = default-mqtt-SubTopic
 Pubs Topics = default-mqtt-PubTopic
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
+RBRB
+```
+
+#### 2.4 WiFi Lost. AutoReconnect WiFi and Blynk
 
 ```
 
----
-
-7. Testing WiFi and Blynk Server lost to verify auto-reconnection
-
-```
-Starting Async_ESP32WM_Config using SPIFFS with SSL on ESP32_DEV
-Version v1.1.0_ESP32_SSL
-[275] Hostname=ESP32-Async-Controller
-[319] LoadCfgFile 
-[320] OK
-[320] ======= Start Stored Config Data =======
-[320] Hdr=SSL_ESP32,BrdName=ESP32-Blynk-Async
-[320] SSID=HueNet1,PW=12345678
-[322] SSID1=HueNet2,PW1=12345678
-[325] Server=your_account.duckdns.org,Token=********
-[331] Server1=your_account.duckdns.org,Token1=********
-[337] Port=8080
-[339] ======= End Config Data =======
-[342] CCSum=0x3757,RCSum=0x3757
-[346] LoadCredFile 
-[347] CrR:pdata=mqtt-server,len=34
-[350] CrR:pdata=1883,len=6
-[353] CrR:pdata=mqtt-user,len=34
-[355] CrR:pdata=mqtt-pw,len=34
-[358] CrR:pdata=Sub-Topics,len=34
-[361] CrR:pdata=Pub-Topics,len=34
-[364] OK
-[365] CrCCsum=0x1379,CrRCsum=0x1379
-[368] Valid Stored Dynamic Data
-[371] Hdr=SSL_ESP32,BrdName=ESP32-Blynk-Async
-[375] SSID=HueNet1,PW=12345678
-[378] SSID1=HueNet2,PW1=12345678
-[381] Server=your_account.duckdns.org,Token=********
-[387] Server1=your_account.duckdns.org,Token1=********
-[394] Port=8080
-[395] ======= End Config Data =======
-[398] bg: noConfigPortal = true
-[401] Connecting MultiWifi...
-[6319] WiFi connected after time: 1
-[6319] SSID: HueNet1, RSSI = -43
-[6319] Channel: 2, IP address: 192.168.2.98
-[6319] bg: WiFi OK. Try Blynk
-[6321] 
+[142428] run: WiFi lost. Reconnect WiFi+Blynk
+[142428] Connecting MultiWifi...
+[149669] WiFi connected after time: 2
+[149669] SSID: HueNet2, RSSI = -51
+[149669] Channel: 4, IP address: 192.168.2.101
+[149669] run: WiFi reconnected. Connect to Blynk
+[149673] 
     ___  __          __
    / _ )/ /_ _____  / /__
   / _  / / // / _ \/  '_/
  /____/_/\_, /_//_/_/\_\
         /___/ v0.6.1 on ESP32
 
-[7334] NTP time: Mon Aug 24 14:09:41 2020
-[7334] BlynkArduinoClient.connect: Connecting to your_account.duckdns.org:9443
-[10135] Certificate OK
-[10144] Ready (ping: 8ms).
-[10213] Connected to Blynk Server = your_account.duckdns.org, Token = ********
-[10213] bg: WiFi+Blynk OK
-
-Blynk ESP32 using SPIFFS connected. Board Name : ESP32-Blynk-Async
-B
-Your stored Credentials :
-MQTT Server = mqtt-server
-Port = 1883
-MQTT UserName = mqtt-user
-MQTT PWD = mqtt-pw
-Subs Topics = Sub-Topics
-Pubs Topics = Pub-Topics
-[26580] run: WiFi lost. Reconnect WiFi+Blynk
-[26580] Connecting MultiWifi...
-[34389] WiFi connected after time: 2
-[34389] SSID: HueNet2, RSSI = -54
-[34389] Channel: 4, IP address: 192.168.2.98
-[34389] run: WiFi reconnected. Connect to Blynk
-[34392] 
-    ___  __          __
-   / _ )/ /_ _____  / /__
-  / _  / / // / _ \/  '_/
- /____/_/\_, /_//_/_/\_\
-        /___/ v0.6.1 on ESP32
-
-[34406] NTP time: Mon Aug 24 14:10:08 2020
-[34409] BlynkArduinoClient.connect: Connecting to your_account.duckdns.org:9443
-[36249] Certificate OK
-[36264] Ready (ping: 14ms).
-[36332] Connected to Blynk Server = your_account.duckdns.org, Token = ********
-[36332] run: WiFi+Blynk reconnected
-
+[149687] NTP time: Sat Jan  2 07:16:39 2021
+[149690] BlynkArduinoClient.connect: Connecting to account.duckdns.org:9443
+[151559] Certificate OK
+[151568] Ready (ping: 8ms).
+[151637] Connected to Blynk Server = account.duckdns.org, Token = token1
+[151637] run: WiFi+Blynk reconnected
+RB
 ```
+
 
 You can see that the system automatically detects and connects to the best or avaiable WiFi APs and/or Blynk Servers, whenever interruption happens. This feature is very useful for systems requiring high degree of reliability.
 
@@ -1046,11 +1700,14 @@ void loop()
 ---
 ---
 
+### 3. Async_ESP32_MultiTask using LittleFS without SSL on ESP32_DEV
+
 The following is the sample terminal output when running example [Async_ESP32_MultiTask](examples/ESP32_MultiTask/Async_ESP32_MultiTask) to demonstrate the displaying and measuring tasks still work when the WiFi and Blynk are lost and the system is busy reconnecting to WiFi and Blynk. See the issue in [**Blynk + LCD + WiFi Manager**](https://community.blynk.cc/t/blynk-lcd-wifi-manager/49818) if not using MultiTask in that case.
 
 ```
-Start Async_ESP32_MultiTask on ESP32_DEV
-Version v1.1.0_ESP32
+Starting Async_ESP32_MultiTask using LittleFS without SSL on ESP32_DEV
+Blynk_Async_WM v1.2.0 for ESP32
+ESP_DoubleResetDetector v1.1.1
 [1431] Hostname=ESP32-Async-MTask
 [1517] LoadCfgFile 
 [1518] OK
@@ -1245,395 +1902,64 @@ T2 = 27.63
 ---
 ---
 
-## Example [Async_ESP32WM_Config](examples/Async_ESP32WM_Config)
 
-Please take a look at other examples, as well.
+### Debug
 
-1. File [Async_ESP32WM_Config.ino](examples/Async_ESP32WM_Config/Async_ESP32WM_Config.ino)
+Debug is enabled by default on Serial.
 
-```cpp
-#include "defines.h"
-#include "Credentials.h"
-#include "dynamicParams.h"
-
-#include <Ticker.h>
-#include <DHT.h>
-
-DHT dht(DHT_PIN, DHT_TYPE);
-BlynkTimer timer;
-Ticker     led_ticker;
-
-void readAndSendData()
-{
-  float temperature = dht.readTemperature();
-  float humidity    = dht.readHumidity();
-
-  if (!isnan(temperature) && !isnan(humidity))
-  {
-    Blynk.virtualWrite(V17, String(temperature, 1));
-    Blynk.virtualWrite(V18, String(humidity, 1));
-  }
-  else
-  {
-    Blynk.virtualWrite(V17, "NAN");
-    Blynk.virtualWrite(V18, "NAN");
-  }
-
-  // Blynk Timer uses millis() and is still working even if WiFi/Blynk not connected
-  Serial.print("R");
-}
-
-void set_led(byte status)
-{
-  digitalWrite(LED_BUILTIN, status);
-}
-
-void heartBeatPrint(void)
-{
-  static int num = 1;
-
-  if (Blynk.connected())
-  {
-    set_led(HIGH);
-    led_ticker.once_ms(111, set_led, (byte) LOW);
-    Serial.print("B");
-  }
-  else
-  {
-    Serial.print("F");
-  }
-
-  if (num == 40)
-  {
-    Serial.println();
-    num = 1;
-  }
-  else if (num++ % 10 == 0)
-  {
-    Serial.print(" ");
-  }
-}
-
-void check_status()
-{
-  static unsigned long checkstatus_timeout = 0;
-
-#define STATUS_CHECK_INTERVAL     60000L
-
-  // Send status report every STATUS_REPORT_INTERVAL (60) seconds: we don't need to send updates frequently if there is no status change.
-  if ((millis() > checkstatus_timeout) || (checkstatus_timeout == 0))
-  {
-    // report status to Blynk
-    heartBeatPrint();
-
-    checkstatus_timeout = millis() + STATUS_CHECK_INTERVAL;
-  }
-}
-
-void setup()
-{
-  // Debug console
-  Serial.begin(115200);
-  while (!Serial);
-
-  pinMode(LED_BUILTIN, OUTPUT);
-
-#if ( USE_SPIFFS)
-  Serial.print("\nStarting Async_ESP32WM_Config using SPIFFS");
-#else
-  Serial.print("\nStarting Async_ESP32WM_Config using EEPROM");
-#endif
-
-#if USE_SSL
-  Serial.println(" with SSL on " + String(ARDUINO_BOARD));
-#else
-  Serial.println(" without SSL on " + String(ARDUINO_BOARD));
-#endif
-
-  Serial.println("Version " + String(BLYNK_ASYNC_WM_VERSION));
-
-  dht.begin();
-
-  // Set config portal SSID and Password
-  Blynk.setConfigPortal("TestPortal-ESP32", "TestPortalPass");
-  // Set config portal IP address
-  Blynk.setConfigPortalIP(IPAddress(192, 168, 220, 1));
-  // Set config portal channel, default = 1. Use 0 => random channel from 1-13 to avoid conflict
-  Blynk.setConfigPortalChannel(0);
-
-  // From v1.0.5, select either one of these to set static IP + DNS
-  Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 230), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0));
-  //Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 220), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0),
-  //                           IPAddress(192, 168, 2, 1), IPAddress(8, 8, 8, 8));
-  //Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 220), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0),
-  //                           IPAddress(4, 4, 4, 4), IPAddress(8, 8, 8, 8));
-
-  // Use this to default DHCP hostname to ESP8266-XXXXXX or ESP32-XXXXXX
-  //Blynk.begin();
-  // Use this to personalize DHCP hostname (RFC952 conformed)
-  // 24 chars max,- only a..z A..Z 0..9 '-' and no '-' as last char
-  //Blynk.begin("ESP32-WM-Config");
-  Blynk.begin(HOST_NAME);
-
-  timer.setInterval(60 * 1000, readAndSendData);
-
-  if (Blynk.connected())
-  {
-#if USE_SPIFFS
-    Serial.println("\nBlynk ESP32 using SPIFFS connected. Board Name : " + Blynk.getBoardName());
-#else
-    Serial.println("\nBlynk ESP32 using EEPROM connected. Board Name : " + Blynk.getBoardName());
-    Serial.printf("EEPROM size = %d bytes, EEPROM start address = %d / 0x%X\n", EEPROM_SIZE, EEPROM_START, EEPROM_START);
-#endif
-  }
-}
-
-#if USE_DYNAMIC_PARAMETERS
-void displayCredentials(void)
-{
-  Serial.println("\nYour stored Credentials :");
-
-  for (int i = 0; i < NUM_MENU_ITEMS; i++)
-  {
-    Serial.println(String(myMenuItems[i].displayName) + " = " + myMenuItems[i].pdata);
-  }
-}
-#endif
-
-void loop()
-{
-  Blynk.run();
-  timer.run();
-  check_status();
-
-#if USE_DYNAMIC_PARAMETERS
-  static bool displayedCredentials = false;
-
-  if (!displayedCredentials)
-  {
-    for (int i = 0; i < NUM_MENU_ITEMS; i++)
-    {
-      if (!strlen(myMenuItems[i].pdata))
-      {
-        break;
-      }
-
-      if ( i == (NUM_MENU_ITEMS - 1) )
-      {
-        displayedCredentials = true;
-        displayCredentials();
-      }
-    }
-  }
-#endif
-}
-```
-
-2. File [defines.h](examples/Async_ESP32WM_Config/defines.h)
+You can also change the debugging level from 0 to 4
 
 ```cpp
-#ifndef defines_h
-#define defines_h
+#define BLYNK_PRINT        Serial
 
-#ifndef ESP32
-  #error This code is intended to run on the ESP32 platform! Please check your Tools->Board setting.
-#endif
+#define BLYNK_WM_DEBUG     3
 
-#define BLYNK_PRINT Serial
+#define USING_MRD          true
 
-#define DOUBLERESETDETECTOR_DEBUG     false
-#define BLYNK_WM_DEBUG                3
-
-// Not use #define USE_SPIFFS  => using EEPROM for configuration data in WiFiManager
-// #define USE_SPIFFS    false => using EEPROM for configuration data in WiFiManager
-// #define USE_SPIFFS    true  => using SPIFFS for configuration data in WiFiManager
-// Be sure to define USE_SPIFFS before #include <BlynkSimpleEsp8266_Async_WM.h>
-
-#define USE_SPIFFS                  true
-//#define USE_SPIFFS                  false
-
-#if (!USE_SPIFFS)
-  // EEPROM_SIZE must be <= 2048 and >= CONFIG_DATA_SIZE (currently 172 bytes)
-  #define EEPROM_SIZE    (2 * 1024)
-  // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
-  #define EEPROM_START   0
-#endif
-
-// Force some params in Blynk, only valid for library version 1.0.1 and later
-#define TIMEOUT_RECONNECT_WIFI                    10000L
-#define RESET_IF_CONFIG_TIMEOUT                   true
-#define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
-// Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
-
-#define USE_SSL   true
-//#define USE_SSL   false
-
-#if USE_SSL
-  #include <BlynkSimpleEsp32_SSL_Async_WM.h>      //https://github.com/khoih-prog/Blynk_Async_WM
+#if USING_MRD
+  #define MULTIRESETDETECTOR_DEBUG       true 
 #else
-  #include <BlynkSimpleEsp32_Async_WM.h>          //https://github.com/khoih-prog/Blynk_Async_WM
+  #define DOUBLERESETDETECTOR_DEBUG     false
 #endif
-
-#define PIN_D22   22            // Pin D22 mapped to pin GPIO22/SCL of ESP32
-
-#define DHT_PIN     PIN_D22     // pin DATA @ D22 / GPIO22
-#define DHT_TYPE    DHT11
-
-#define HOST_NAME   "ESP32-Async-Controller"
-
-#endif      //defines_h
 ```
 
-3. File [Credentials.h](examples/Async_ESP32WM_Config/Credentials.h)
+---
 
-```cpp
-#ifndef Credentials_h
-#define Credentials_h
+### Troubleshooting
 
-/// Start Default Config Data //////////////////
+If you get compilation errors, more often than not, you may need to install a newer version of the core for Arduino boards.
 
-/*
-  // Defined in <BlynkSimpleEsp32_Async_WM.h> and <BlynkSimpleEsp32_SSL_Async_WM.h>
+Sometimes, the library will only work if you update the board core to the latest version because I am using newly added functions.
 
-  #define SSID_MAX_LEN      32
-  #define PASS_MAX_LEN      64
-  
-  typedef struct
-  {
-  char wifi_ssid[SSID_MAX_LEN];
-  char wifi_pw  [PASS_MAX_LEN];
-  }  WiFi_Credentials;
+---
+---
 
-  #define BLYNK_SERVER_MAX_LEN      32
-  #define BLYNK_TOKEN_MAX_LEN       36
+## Releases
 
-  typedef struct
-  {
-  char blynk_server[BLYNK_SERVER_MAX_LEN];
-  char blynk_token [BLYNK_TOKEN_MAX_LEN];
-  }  Blynk_Credentials;
+### Major Releases v1.2.0
 
-  #define NUM_WIFI_CREDENTIALS      2
-  #define NUM_BLYNK_CREDENTIALS     2
+1. Add support to LittleFS for ESP32 using [LITTLEFS](https://github.com/lorol/LITTLEFS) Library
+2. Add support to MultiDetectDetector. **MultiDetectDetector** feature to force Config Portal when configurable multi-reset is detected within predetermined time.
+3. Clean-up all compiler warnings possible.
+4. Add Table of Contents
+5. Modify Version String
+6. Add MRD-related examples.
 
-  typedef struct Configuration
-  {
-  char header         [16];
-  WiFi_Credentials  WiFi_Creds  [NUM_WIFI_CREDENTIALS];
-  Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
-  int  blynk_port;
-  char board_name     [24];
-  int  checkSum;
-  } Blynk_WM_Configuration;
+### Releases v1.1.0
 
-*/
+1. Add examples using RTOS MultiTask to avoid blocking in operation.
+2. Add Version String.
 
-//bool LOAD_DEFAULT_CONFIG_DATA = true;
-bool LOAD_DEFAULT_CONFIG_DATA = false;
+### Releases v1.0.16
 
-Blynk_WM_Configuration defaultConfig =
-{
-  //char header[16], dummy, not used
-#if USE_SSL  
-  "SSL",
-#else
-  "NonSSL",
-#endif
-  //WiFi_Credentials  WiFi_Creds  [NUM_WIFI_CREDENTIALS]
-  //WiFi_Creds.wifi_ssid and WiFi_Creds.wifi_pw
-  "SSID1", "password1",
-  "SSID2", "password2",
-  // Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
-  // Blynk_Creds.blynk_server and Blynk_Creds.blynk_token
-  "account.ddns.net",     "token",
-  "account.duckdns.org",  "token1", 
-  //int  blynk_port;
-#if USE_SSL
-  9443,
-#else
-  8080,
-#endif
-  //char board_name     [24];
-  "ESP32-Async-Blynk",
-  //int  checkSum, dummy, not used
-  0
-};
+1. Initial coding to use [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) instead of (ESP8266)WebServer.
+2. Bump up to v1.0.16 to sync with [Blynk_WiFiManager library](https://github.com/khoih-prog/Blynk_WM) v1.0.16.
 
-/////////// End Default Config Data /////////////
+---
 
+### Issues ###
 
-#endif    //Credentials_h
-```
-
-
-4. File [dynamicParams.h](examples/Async_ESP32WM_Config/dynamicParams.h)
-
-```cpp
-#ifndef dynamicParams_h
-#define dynamicParams_h
-
-#define USE_DYNAMIC_PARAMETERS      true
-
-/////////////// Start dynamic Credentials ///////////////
-
-//Defined in <BlynkSimpleEsp32_Async_WM.h> and <BlynkSimpleEsp32_SSL_Async_WM.h>
-/**************************************
-  #define MAX_ID_LEN                5
-  #define MAX_DISPLAY_NAME_LEN      16
-
-  typedef struct
-  {
-  char id             [MAX_ID_LEN + 1];
-  char displayName    [MAX_DISPLAY_NAME_LEN + 1];
-  char *pdata;
-  uint8_t maxlen;
-  } MenuItem;
-**************************************/
-
-#if USE_DYNAMIC_PARAMETERS
-
-  #define MAX_MQTT_SERVER_LEN      34
-  char MQTT_Server  [MAX_MQTT_SERVER_LEN + 1]   = "default-mqtt-server";
-  
-  #define MAX_MQTT_PORT_LEN        6
-  char MQTT_Port   [MAX_MQTT_PORT_LEN + 1]  = "1883";
-  
-  #define MAX_MQTT_USERNAME_LEN      34
-  char MQTT_UserName  [MAX_MQTT_USERNAME_LEN + 1]   = "default-mqtt-username";
-  
-  #define MAX_MQTT_PW_LEN        34
-  char MQTT_PW   [MAX_MQTT_PW_LEN + 1]  = "default-mqtt-password";
-  
-  #define MAX_MQTT_SUBS_TOPIC_LEN      34
-  char MQTT_SubsTopic  [MAX_MQTT_SUBS_TOPIC_LEN + 1]   = "default-mqtt-SubTopic";
-  
-  #define MAX_MQTT_PUB_TOPIC_LEN       34
-  char MQTT_PubTopic   [MAX_MQTT_PUB_TOPIC_LEN + 1]  = "default-mqtt-PubTopic";
-  
-  MenuItem myMenuItems [] =
-  {
-    { "mqtt", "MQTT Server",      MQTT_Server,      MAX_MQTT_SERVER_LEN },
-    { "mqpt", "Port",             MQTT_Port,        MAX_MQTT_PORT_LEN   },
-    { "user", "MQTT UserName",    MQTT_UserName,    MAX_MQTT_USERNAME_LEN },
-    { "mqpw", "MQTT PWD",         MQTT_PW,          MAX_MQTT_PW_LEN },
-    { "subs", "Subs Topics",      MQTT_SubsTopic,   MAX_MQTT_SUBS_TOPIC_LEN },
-    { "pubs", "Pubs Topics",      MQTT_PubTopic,    MAX_MQTT_PUB_TOPIC_LEN },
-  };
-  
-  uint16_t NUM_MENU_ITEMS = sizeof(myMenuItems) / sizeof(MenuItem);  //MenuItemSize;
-
-#else
-
-  MenuItem myMenuItems [] = {};
-  
-  uint16_t NUM_MENU_ITEMS = 0;
-#endif
-
-
-/////// // End dynamic Credentials ///////////
-
-#endif      //dynamicParams_h
-```
+Submit issues to: [Blynk_Async_WM issues](https://github.com/khoih-prog/Blynk_Async_WM/issues)
 
 ---
 ---
@@ -1666,19 +1992,10 @@ Blynk_WM_Configuration defaultConfig =
 20. Add **LittleFS** support to ESP8266 as SPIFFS deprecated since **ESP8266 core 2.7.1.**
 21. Using [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) instead of (ESP8266)WebServer.
 22. Add examples using RTOS MultiTask to avoid blocking in operation.
-
----
----
-
-### Releases v1.1.0
-
-1. Add examples using RTOS MultiTask to avoid blocking in operation.
-2. Add Version String.
-
-### Releases v1.0.16
-
-1. Initial coding to use [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) instead of (ESP8266)WebServer.
-2. Bump up to v1.0.16 to sync with [Blynk_WiFiManager library](https://github.com/khoih-prog/Blynk_WM) v1.0.16.
+21. Add **LittleFS** support to ESP32 using [LITTLEFS](https://github.com/lorol/LITTLEFS) Library.
+22. Add support to MultiDetectDetector and MRD-related examples
+23. Add Table of Contents and Version String
+24. Clean-up all compiler warnings possible.
 
 
 ---
@@ -1710,7 +2027,7 @@ If you want to contribute to this project:
 
 ---
 
-### License and credits ###
+## License
 
 - The library is licensed under [MIT](https://github.com/khoih-prog/Blynk_Async_WM/blob/master/LICENSE)
 

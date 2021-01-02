@@ -27,8 +27,40 @@
 
 #define BLYNK_PRINT Serial
 
-#define DOUBLERESETDETECTOR_DEBUG     true
 #define BLYNK_WM_DEBUG                3
+
+#define USING_MRD     true
+
+#if USING_MRD
+  // These definitions must be placed before #include <ESP_MultiResetDetector.h> to be used
+  // Otherwise, default values (MRD_TIMES = 3, MRD_TIMEOUT = 10 seconds and MRD_ADDRESS = 0) will be used
+  // Number of subsequent resets during MRD_TIMEOUT to activate
+  #define MRD_TIMES               3
+  
+  // Number of seconds after reset during which a subseqent reset will be considered a mlti reset.
+  #define MRD_TIMEOUT             10
+  
+  // RTC/EEPPROM Address for the MultiResetDetector to use
+  #define MRD_ADDRESS             0
+
+  #define MULTIRESETDETECTOR_DEBUG       true 
+  
+  #warning Using MultiResetDetector MRD
+#else
+  // These definitions must be placed before #include <ESP_DoubleResetDetector.h> to be used
+  // Otherwise, default values (DRD_TIMEOUT = 10 seconds and DRD_ADDRESS = 0) will be used
+  // Number of subsequent resets during DRD_TIMEOUT to activate
+  
+  // Number of seconds after reset during which a subseqent reset will be considered a mlti reset.
+  #define DRD_TIMEOUT             10
+
+// RTC/EEPPROM Address for the DoubleResetDetector to use
+  #define DRD_ADDRESS             0
+
+  #define DOUBLERESETDETECTOR_DEBUG     false
+  
+  #warning Using DoubleResetDetector DRD 
+#endif
 
 // #define USE_SPIFFS and USE_LITTLEFS   false        => using EEPROM for configuration data in WiFiManager
 // #define USE_LITTLEFS    true                       => using LITTLEFS for configuration data in WiFiManager
@@ -67,52 +99,13 @@
 #define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
 // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
 
-//You have to download Blynk WiFiManager Blynk_Async_WM library at //https://github.com/khoih-prog/Blynk_Async_WM
-// In order to enable (USE_BLYNK_WM = true). Otherwise, use (USE_BLYNK_WM = false)
-#define USE_BLYNK_WM   true
-//#define USE_BLYNK_WM   false
+#define USE_SSL   true
+//#define USE_SSL   false
 
-//#define USE_SSL     true
-#define USE_SSL     false
-
-#if USE_BLYNK_WM
-  #if USE_SSL
-    #include <BlynkSimpleEsp8266_SSL_Async_WM.h>        //https://github.com/khoih-prog/Blynk_Async_WM
-  #else
-    #include <BlynkSimpleEsp8266_Async_WM.h>            //https://github.com/khoih-prog/Blynk_Async_WM
-  #endif
-  
-  #include "Credentials.h"
-  #include "dynamicParams.h"
-
+#if USE_SSL
+  #include <BlynkSimpleEsp8266_SSL_Async_WM.h>        //https://github.com/khoih-prog/Blynk_Async_WM
 #else
-  #if USE_SSL
-    #include <BlynkSimpleEsp8266_SSL.h>
-    #define BLYNK_HARDWARE_PORT     9443
-  #else
-    #include <BlynkSimpleEsp8266.h>
-    #define BLYNK_HARDWARE_PORT     8080
-  #endif
-#endif
-
-#if !USE_BLYNK_WM
-
-  #ifndef LED_BUILTIN
-    #define LED_BUILTIN       2         // Pin D2 control on-board LED
-  #endif
-  
-  #define USE_LOCAL_SERVER    true
-  //#define USE_LOCAL_SERVER    false
-  
-  // If local server
-  #if USE_LOCAL_SERVER
-    char blynk_server[]   = "yourname.duckdns.org";
-  #endif
-  
-  char auth[]     = "***";
-  char ssid[]     = "***";
-  char pass[]     = "***";
-
+  #include <BlynkSimpleEsp8266_Async_WM.h>            //https://github.com/khoih-prog/Blynk_Async_WM
 #endif
 
 #define PIN_LED   2   // Pin D4 mapped to pin GPIO2/TXD1 of ESP8266, NodeMCU and WeMoS, control on-board LED
@@ -121,6 +114,6 @@
 #define DHT_PIN     PIN_D2
 #define DHT_TYPE    DHT11
 
-#define HOST_NAME   "8266-DHT11-AsyncDebug"
+#define HOST_NAME   "ESP8266-Async-Config"
 
 #endif      //defines_h

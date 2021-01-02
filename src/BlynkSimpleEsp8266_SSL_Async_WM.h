@@ -1,4 +1,4 @@
-/****************************************************************************************************************************
+/*******************************************************************************************************************************
    BlynkSimpleEsp8266_SSL_WM.h
    For ESP8266 boards
 
@@ -17,14 +17,15 @@
    @date       Jan 2015
    @brief
 
-   Version: 1.1.0
+   Version: 1.2.0
 
    Version    Modified By   Date      Comments
    -------    -----------  ---------- -----------
     1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
                                       Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
     1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
- *****************************************************************************************************************************/
+    1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
+ ********************************************************************************************************************************/
 
 #pragma once
 
@@ -32,7 +33,7 @@
   #error This code is intended to run on the ESP8266 platform! Please check your Tools->Board setting.
 #endif
 
-#define BLYNK_ASYNC_WM_VERSION      "v1.1.0_ESP8266_SSL"
+#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM v1.2.0 for ESP8266 SSL"
 
 #include <version.h>
 
@@ -68,61 +69,121 @@ static const unsigned char BLYNK_DEFAULT_CERT_DER[] PROGMEM =
 //default to use EEPROM, otherwise, use LittleFS or SPIFFS
 #if ( USE_LITTLEFS || USE_SPIFFS )
 
-#if USE_LITTLEFS
-#define FileFS    LittleFS
+  #if USE_LITTLEFS
+    #define FileFS    LittleFS
+    #warning Using LittleFS in BlynkSimpleESP8266_SSL_Async_WM.h
+  #else
+    #define FileFS    SPIFFS
+    #warning Using SPIFFS in BlynkSimpleESP8266_SSL_Async_WM.h
+  #endif
+
+  #include <FS.h>
+  #include <LittleFS.h>
 #else
-#define FileFS    SPIFFS
+  #include <EEPROM.h>
+  #warning Using EEPROM in BlynkSimpleESP8266_SSL_Async_WM.h
 #endif
 
-#include <FS.h>
-#include <LittleFS.h>
+#if !defined(USING_MRD)
+  #define USING_MRD       false
+#endif
+
+#if USING_MRD
+
+  ///////// NEW for MRD /////////////
+  // These defines must be put before #include <ESP_DoubleResetDetector.h>
+  // to select where to store DoubleResetDetector's variable.
+  // For ESP32, You must select one to be true (EEPROM or SPIFFS/LittleFS)
+  // For ESP8266, You must select one to be true (RTC, EEPROM or SPIFFS/LittleFS)
+  // Otherwise, library will use default EEPROM storage
+  #define ESP8266_MRD_USE_RTC     false   //true
+
+  #if USE_LITTLEFS
+    #define ESP_MRD_USE_LITTLEFS    true
+    #define ESP_MRD_USE_SPIFFS      false
+    #define ESP_MRD_USE_EEPROM      false
+  #elif USE_SPIFFS
+    #define ESP_MRD_USE_LITTLEFS    false
+    #define ESP_MRD_USE_SPIFFS      true
+    #define ESP_MRD_USE_EEPROM      false
+  #else
+    #define ESP_MRD_USE_LITTLEFS    false
+    #define ESP_MRD_USE_SPIFFS      false
+    #define ESP_MRD_USE_EEPROM      true
+  #endif
+
+  #ifndef MULTIRESETDETECTOR_DEBUG
+    #define MULTIRESETDETECTOR_DEBUG     false
+  #endif
+  
+  // These definitions must be placed before #include <ESP_MultiResetDetector.h> to be used
+  // Otherwise, default values (MRD_TIMES = 3, MRD_TIMEOUT = 10 seconds and MRD_ADDRESS = 0) will be used
+  // Number of subsequent resets during MRD_TIMEOUT to activate
+  #ifndef MRD_TIMES
+    #define MRD_TIMES               3
+  #endif
+
+  // Number of seconds after reset during which a
+  // subsequent reset will be considered a double reset.
+  #ifndef MRD_TIMEOUT
+    #define MRD_TIMEOUT 10
+  #endif
+
+  // EEPROM Memory Address for the MultiResetDetector to use
+  #ifndef MRD_TIMEOUT
+    #define MRD_ADDRESS 0
+  #endif
+  
+  #include <ESP_MultiResetDetector.h>      //https://github.com/khoih-prog/ESP_MultiResetDetector
+
+  //MultiResetDetector mrd(MRD_TIMEOUT, MRD_ADDRESS);
+  MultiResetDetector* mrd;
+
+  ///////// NEW for MRD /////////////
+  
 #else
-#include <EEPROM.h>
+
+  ///////// NEW for DRD /////////////
+  // These defines must be put before #include <ESP_DoubleResetDetector.h>
+  // to select where to store DoubleResetDetector's variable.
+  // For ESP32, You must select one to be true (EEPROM or SPIFFS/LittleFS)
+  // For ESP8266, You must select one to be true (RTC, EEPROM or SPIFFS/LittleFS)
+  // Otherwise, library will use default EEPROM storage
+  #define ESP8266_DRD_USE_RTC     false   //true
+
+  #if USE_LITTLEFS
+    #define ESP_DRD_USE_LITTLEFS    true
+    #define ESP_DRD_USE_SPIFFS      false
+    #define ESP_DRD_USE_EEPROM      false
+  #elif USE_SPIFFS
+    #define ESP_DRD_USE_LITTLEFS    false
+    #define ESP_DRD_USE_SPIFFS      true
+    #define ESP_DRD_USE_EEPROM      false
+  #else
+    #define ESP_DRD_USE_LITTLEFS    false
+    #define ESP_DRD_USE_SPIFFS      false
+    #define ESP_DRD_USE_EEPROM      true
+  #endif
+
+  #ifndef DOUBLERESETDETECTOR_DEBUG
+    #define DOUBLERESETDETECTOR_DEBUG     false
+  #endif
+
+  // Number of seconds after reset during which a
+  // subsequent reset will be considered a double reset.
+  #define DRD_TIMEOUT 10
+
+  // RTC Memory Address for the DoubleResetDetector to use
+  #define DRD_ADDRESS 0
+  
+  #include <ESP_DoubleResetDetector.h>      //https://github.com/khoih-prog/ESP_DoubleResetDetector
+
+  //DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
+  DoubleResetDetector* drd;
+
+  ///////// NEW for DRD /////////////
+
 #endif
-
-///////// NEW for DRD /////////////
-// These defines must be put before #include <ESP_DoubleResetDetector.h>
-// to select where to store DoubleResetDetector's variable.
-// For ESP32, You must select one to be true (EEPROM or SPIFFS)
-// For ESP8266, You must select one to be true (RTC, EEPROM, LittleFS or SPIFFS)
-// SPIFFS is deprecated from ESP8266 core 2.7.1+
-// Otherwise, library will use default EEPROM storage
-#define ESP8266_DRD_USE_RTC     false   //true
-
-#if ( USE_LITTLEFS || USE_SPIFFS )
-#define ESP_DRD_USE_EEPROM      false
-
-#if USE_LITTLEFS
-#define ESP_DRD_USE_LITTLEFS    true
-#define ESP_DRD_USE_SPIFFS      false
-#else
-#define ESP_DRD_USE_LITTLEFS    false
-#define ESP_DRD_USE_SPIFFS      true
-#endif
-
-#else
-#define ESP_DRD_USE_EEPROM      true
-#define ESP_DRD_USE_LITTLEFS    false
-#define ESP_DRD_USE_SPIFFS      false
-#endif
-
-#ifndef DOUBLERESETDETECTOR_DEBUG
-#define DOUBLERESETDETECTOR_DEBUG     false
-#endif
-
-#include <ESP_DoubleResetDetector.h>      //https://github.com/khoih-prog/ESP_DoubleResetDetector
-
-// Number of seconds after reset during which a
-// subseqent reset will be considered a double reset.
-#define DRD_TIMEOUT 10
-
-// RTC Memory Address for the DoubleResetDetector to use
-#define DRD_ADDRESS 0
-
-//DoubleResetDetector drd(DRD_TIMEOUT, DRD_ADDRESS);
-DoubleResetDetector* drd;
-
-///////// NEW for DRD /////////////
 
 
   template <typename Client>
@@ -402,18 +463,26 @@ class BlynkWifi
       pinMode(LED_BUILTIN, OUTPUT);
       digitalWrite(LED_BUILTIN, LED_OFF);
       
+#if USING_MRD
+      //// New MRD ////
+      mrd = new MultiResetDetector(MRD_TIMEOUT, MRD_ADDRESS);  
+      bool noConfigPortal = true;
+   
+      if (mrd->detectMultiReset())
+#else      
       //// New DRD ////
       drd = new DoubleResetDetector(DRD_TIMEOUT, DRD_ADDRESS);  
       bool noConfigPortal = true;
    
       if (drd->detectDoubleReset())
+#endif
       {
-#if ( BLYNK_WM_DEBUG > 1)      
-        BLYNK_LOG1(BLYNK_F("Double Reset Detected"));
-#endif        
+#if ( BLYNK_WM_DEBUG > 1)
+        BLYNK_LOG1(BLYNK_F("Multi or Double Reset Detected"));
+#endif      
         noConfigPortal = false;
       }
-      //// New DRD ////
+      //// New DRD/MRD ////
       
 #if ( BLYNK_WM_DEBUG > 2)    
       if (LOAD_DEFAULT_CONFIG_DATA) 
@@ -441,10 +510,10 @@ class BlynkWifi
 
       BLYNK_LOG2(BLYNK_F("Hostname="), RFC952_hostname);
           
-      //// New DRD ////
-      //  noConfigPortal when getConfigData() OK and no DRD'ed
+      //// New DRD/MRD ////
+      //  noConfigPortal when getConfigData() OK and no MRD/DRD'ed
       if (getConfigData() && noConfigPortal)
-      //// New DRD ////
+      //// New DRD/MRD ////
       {
         hadConfigData = true;
 
@@ -452,7 +521,7 @@ class BlynkWifi
         BLYNK_LOG1(noConfigPortal? BLYNK_F("bg: noConfigPortal = true") : BLYNK_F("bg: noConfigPortal = false"));
 #endif
 
-        for (int i = 0; i < NUM_WIFI_CREDENTIALS; i++)
+        for (uint16_t i = 0; i < NUM_WIFI_CREDENTIALS; i++)
         {
           wifiMulti.addAP(Blynk8266_WM_config.WiFi_Creds[i].wifi_ssid, Blynk8266_WM_config.WiFi_Creds[i].wifi_pw);
         }
@@ -487,7 +556,7 @@ class BlynkWifi
       else
       {
         BLYNK_LOG2(BLYNK_F("bg: Stay forever in config portal."), 
-                   noConfigPortal ? BLYNK_F("No configDat") : BLYNK_F("DRD detected"));
+                   noConfigPortal ? BLYNK_F("No configDat") : BLYNK_F("DRD/MRD detected"));
           
         // failed to connect to Blynk server, will start configuration mode
         hadConfigData = false;
@@ -533,6 +602,15 @@ class BlynkWifi
     {
       static int retryTimes = 0;
       
+#if USING_MRD
+      //// New MRD ////
+      // Call the mulyi reset detector loop method every so often,
+      // so that it can recognise when the timeout expires.
+      // You can also call mrd.stop() when you wish to no longer
+      // consider the next reset as a multi reset.
+      mrd->loop();
+      //// New MRD ////
+#else      
       //// New DRD ////
       // Call the double reset detector loop method every so often,
       // so that it can recognise when the timeout expires.
@@ -540,6 +618,7 @@ class BlynkWifi
       // consider the next reset as a double reset.
       drd->loop();
       //// New DRD ////
+#endif
 
       // Lost connection in running. Give chance to reconfig.
       if ( WiFi.status() != WL_CONNECTED || !this->connected() )
@@ -878,7 +957,7 @@ class BlynkWifi
       // We dont like to destroy myMenuItems[i].pdata with invalid data
       
       uint16_t maxBufferLength = 0;
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         if (myMenuItems[i].maxlen > maxBufferLength)
           maxBufferLength = myMenuItems[i].maxlen;
@@ -902,7 +981,7 @@ class BlynkWifi
 #endif             
       }
      
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = readBuffer;
 
@@ -967,7 +1046,7 @@ class BlynkWifi
         }
       }
      
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
         totalDataSize += myMenuItems[i].maxlen;
@@ -1009,7 +1088,7 @@ class BlynkWifi
       File file = FileFS.open(CREDENTIALS_FILENAME, "w");
       BLYNK_LOG1(BLYNK_F("SaveCredFile "));
 
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
 
@@ -1049,7 +1128,7 @@ class BlynkWifi
       file = FileFS.open(CREDENTIALS_FILENAME_BACKUP, "w");
       BLYNK_LOG1(BLYNK_F("SaveBkUpCredFile "));
 
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
 
@@ -1258,7 +1337,7 @@ class BlynkWifi
           Blynk8266_WM_config.blynk_port = BLYNK_SERVER_HARDWARE_PORT;      
           strcpy(Blynk8266_WM_config.board_name,       NO_CONFIG);
           
-          for (int i = 0; i < NUM_MENU_ITEMS; i++)
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {
             // Actual size of pdata is [maxlen + 1]
             memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
@@ -1269,7 +1348,7 @@ class BlynkWifi
         strcpy(Blynk8266_WM_config.header, BLYNK_BOARD_TYPE);
         
         #if ( BLYNK_WM_DEBUG > 2)
-        for (int i = 0; i < NUM_MENU_ITEMS; i++)
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
           BLYNK_LOG4(BLYNK_F("g:myMenuItems["), i, BLYNK_F("]="), myMenuItems[i].pdata );
         }
@@ -1312,7 +1391,7 @@ class BlynkWifi
 #undef EEPROM_SIZE
 #define EEPROM_SIZE     4096
 #endif
-// FLAG_DATA_SIZE is 4, to store DRD flag
+// FLAG_DATA_SIZE is 4, to store DRD/MRD flag
 #if (EEPROM_SIZE < FLAG_DATA_SIZE + CONFIG_DATA_SIZE)
 #warning EEPROM_SIZE must be > CONFIG_DATA_SIZE. Reset to 512
 #undef EEPROM_SIZE
@@ -1321,7 +1400,7 @@ class BlynkWifi
 #endif
 
 #ifndef EEPROM_START
-#define EEPROM_START     0      //define 256 in DRD
+#define EEPROM_START     0      //define 256 in DRD/MRD
 #else
 #if (EEPROM_START + FLAG_DATA_SIZE + CONFIG_DATA_SIZE > EEPROM_SIZE)
 #error EPROM_START + FLAG_DATA_SIZE + CONFIG_DATA_SIZE > EEPROM_SIZE. Please adjust.
@@ -1346,7 +1425,7 @@ class BlynkWifi
       // This is used to store tempo data to calculate checksum to see of data is valid
       // We dont like to destroy myMenuItems[i].pdata with invalid data
       
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         if (myMenuItems[i].maxlen > BUFFER_LEN)
         {
@@ -1356,7 +1435,7 @@ class BlynkWifi
         }
       }
          
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = readBuffer;
         
@@ -1401,7 +1480,7 @@ class BlynkWifi
            
       totalDataSize = sizeof(Blynk8266_WM_config) + sizeof(readCheckSum);
       
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
         totalDataSize += myMenuItems[i].maxlen;
@@ -1437,7 +1516,7 @@ class BlynkWifi
       int checkSum = 0;
       uint16_t offset = BLYNK_EEPROM_START + sizeof(Blynk8266_WM_config);
                 
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {       
         char* _pointer = myMenuItems[i].pdata;
         
@@ -1544,7 +1623,7 @@ class BlynkWifi
           Blynk8266_WM_config.blynk_port = BLYNK_SERVER_HARDWARE_PORT;      
           strcpy(Blynk8266_WM_config.board_name,       NO_CONFIG);
           
-          for (int i = 0; i < NUM_MENU_ITEMS; i++)
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {
             // Actual size of pdata is [maxlen + 1]
             memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
@@ -1555,7 +1634,7 @@ class BlynkWifi
         strcpy(Blynk8266_WM_config.header, BLYNK_BOARD_TYPE);
         
         #if ( BLYNK_WM_DEBUG > 2)    
-        for (int i = 0; i < NUM_MENU_ITEMS; i++)
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
           BLYNK_LOG4(BLYNK_F("g:myMenuItems["), i, BLYNK_F("]="), myMenuItems[i].pdata );
         }
@@ -1617,7 +1696,7 @@ class BlynkWifi
     {
 #define BLYNK_CONNECT_TIMEOUT_MS      20000L
 
-      for (int i = 0; i < NUM_BLYNK_CREDENTIALS; i++)
+      for (uint16_t i = 0; i < NUM_BLYNK_CREDENTIALS; i++)
       {
         config(Blynk8266_WM_config.Blynk_Creds[i].blynk_token,
                Blynk8266_WM_config.Blynk_Creds[i].blynk_server, Blynk8266_WM_config.blynk_port);
@@ -1681,7 +1760,7 @@ class BlynkWifi
       
       root_html_template = String(BLYNK_WM_HTML_HEAD)  + BLYNK_WM_FLDSET_START;
       
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {
         pitem = String(BLYNK_WM_HTML_PARAM);
 
@@ -1694,7 +1773,7 @@ class BlynkWifi
       
       root_html_template += String(BLYNK_WM_FLDSET_END) + BLYNK_WM_HTML_BUTTON + BLYNK_WM_HTML_SCRIPT;     
       
-      for (int i = 0; i < NUM_MENU_ITEMS; i++)
+      for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {
         pitem = String(BLYNK_WM_HTML_SCRIPT_ITEM);
         
@@ -1751,7 +1830,7 @@ class BlynkWifi
           result.replace("[[nm]]",     Blynk8266_WM_config.board_name);
           
           // Load default configuration        
-          for (int i = 0; i < NUM_MENU_ITEMS; i++)
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {
             String toChange = String("[[") + myMenuItems[i].id + "]]";
             result.replace(toChange, myMenuItems[i].pdata);
@@ -1870,7 +1949,7 @@ class BlynkWifi
             strncpy(Blynk8266_WM_config.board_name, value.c_str(), sizeof(Blynk8266_WM_config.board_name) - 1);
         }
 
-        for (int i = 0; i < NUM_MENU_ITEMS; i++)
+        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
           if (key == myMenuItems[i].id)
           {

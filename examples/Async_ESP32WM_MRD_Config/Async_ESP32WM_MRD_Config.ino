@@ -1,6 +1,6 @@
 /****************************************************************************************************************************
-   Async_DHT11ESP8266.ino
-   For ESP8266 boards
+   Async_ESP32WM_MRD_Config.ino
+   For ESP32 boards
 
    Blynk_Async_WM is a library, using AsyncWebServer instead of (ESP8266)WebServer for the ESP8266/ESP32 to enable easy
    configuration/reconfiguration and autoconnect/autoreconnect of WiFi/Blynk.
@@ -19,6 +19,8 @@
  ********************************************************************************************************************************/
 
 #include "defines.h"
+#include "Credentials.h"
+#include "dynamicParams.h"
 
 #include <Ticker.h>
 #include <DHT.h>
@@ -42,6 +44,9 @@ void readAndSendData()
     Blynk.virtualWrite(V17, "NAN");
     Blynk.virtualWrite(V18, "NAN");
   }
+
+  // Blynk Timer uses millis() and is still working even if WiFi/Blynk not connected
+  Serial.print(F("R"));
 }
 
 void set_led(byte status)
@@ -55,8 +60,8 @@ void heartBeatPrint()
 
   if (Blynk.connected())
   {
-    set_led(LOW);
-    led_ticker.once_ms(111, set_led, (byte) HIGH);
+    set_led(HIGH);
+    led_ticker.once_ms(111, set_led, (byte) LOW);
     Serial.print(F("B"));
   }
   else
@@ -64,7 +69,7 @@ void heartBeatPrint()
     Serial.print(F("F"));
   }
 
-  if (num == 80)
+  if (num == 40)
   {
     Serial.println();
     num = 1;
@@ -93,47 +98,45 @@ void check_status()
 
 void setup()
 {
-  pinMode(PIN_LED, OUTPUT);
+  pinMode(LED_BUILTIN, OUTPUT);
   
-  // Debug console
   Serial.begin(115200);
   while (!Serial);
 
   delay(200);
 
 #if ( USE_LITTLEFS || USE_SPIFFS)
-  Serial.print(F("\nStarting Async_DHT11ESP8266 using "));
+  Serial.print(F("\nStarting Async_ESP32WM_MRD_Config using "));
   Serial.print(CurrentFileFS);
 #else
-  Serial.print(F("\nStarting Async_DHT11ESP8266 using EEPROM"));
+  Serial.print(F("\nStarting Async_ESP32WM_MRD_Config using EEPROM"));
 #endif
 
 #if USE_SSL
   Serial.print(F(" with SSL on ")); Serial.println(ARDUINO_BOARD);
 #else
   Serial.print(F(" without SSL on ")); Serial.println(ARDUINO_BOARD);
-#endif
+#endif  
 
-#if USE_BLYNK_WM
   Serial.println(BLYNK_ASYNC_WM_VERSION);
+  
+#if USING_MRD
+  Serial.println(ESP_MULTI_RESET_DETECTOR_VERSION);
+#else
   Serial.println(ESP_DOUBLE_RESET_DETECTOR_VERSION);
 #endif
   
   dht.begin();
 
-#if USE_BLYNK_WM
-
-  // From v1.0.5
   // Set config portal SSID and Password
-  Blynk.setConfigPortal("TestPortal", "TestPortalPass");
-  
+  Blynk.setConfigPortal("TestPortal-ESP32", "TestPortalPass");
   // Set config portal IP address
-  Blynk.setConfigPortalIP(IPAddress(192, 168, 200, 1));
-  // Set config portal channel, defalut = 1. Use 0 => random channel from 1-13
+  Blynk.setConfigPortalIP(IPAddress(192, 168, 220, 1));
+  // Set config portal channel, default = 1. Use 0 => random channel from 1-13 to avoid conflict
   Blynk.setConfigPortalChannel(0);
 
   // From v1.0.5, select either one of these to set static IP + DNS
-  Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 220), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0));
+  Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 230), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0));
   //Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 220), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0),
   //                           IPAddress(192, 168, 2, 1), IPAddress(8, 8, 8, 8));
   //Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 220), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0),
@@ -143,40 +146,27 @@ void setup()
   //Blynk.begin();
   // Use this to personalize DHCP hostname (RFC952 conformed)
   // 24 chars max,- only a..z A..Z 0..9 '-' and no '-' as last char
-  //Blynk.begin("DHT11_ESP8266");
+  //Blynk.begin("ESP32-WM-Config");
   Blynk.begin(HOST_NAME);
-#else
-  WiFi.begin(ssid, pass);
-
-#if USE_LOCAL_SERVER
-  Blynk.config(auth, blynk_server, BLYNK_HARDWARE_PORT);
-#else
-  Blynk.config(auth);
-#endif
-
-  Blynk.connect();
-#endif
 
   timer.setInterval(60 * 1000, readAndSendData);
 
   if (Blynk.connected())
   {
 #if ( USE_LITTLEFS || USE_SPIFFS)
-    Serial.print(F("\nBlynk ESP8266 using "));
+    Serial.print(F("\nBlynk ESP32 using "));
     Serial.print(CurrentFileFS);
     Serial.println(F(" connected."));
 #else
-    Serial.println(F("\nBlynk ESP8266 using EEPROM connected."));
+    Serial.println(F("\nBlynk ESP32 using EEPROM connected."));
     Serial.printf("EEPROM size = %d bytes, EEPROM start address = %d / 0x%X\n", EEPROM_SIZE, EEPROM_START, EEPROM_START);
 #endif
 
-#if USE_BLYNK_WM
     Serial.print(F("Board Name : ")); Serial.println(Blynk.getBoardName());
-#endif
   }
 }
 
-#if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
+#if USE_DYNAMIC_PARAMETERS
 void displayCredentials()
 {
   Serial.println(F("\nYour stored Credentials :"));
@@ -196,7 +186,7 @@ void loop()
   timer.run();
   check_status();
 
-#if (USE_BLYNK_WM && USE_DYNAMIC_PARAMETERS)
+#if USE_DYNAMIC_PARAMETERS
   static bool displayedCredentials = false;
 
   if (!displayedCredentials)
@@ -215,5 +205,5 @@ void loop()
       }
     }
   }
-#endif    
+#endif
 }
