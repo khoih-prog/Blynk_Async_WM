@@ -30,7 +30,6 @@
   * [3. ESP32 WiFi uses ADC2 for WiFi functions](#3-esp32-wifi-uses-adc2-for-wifi-functions)
 * [How to migrate from Blynk_WM library](#how-to-migrate-from-blynk_wm-library)
 * [How to migrate from Blynk](#how-to-migrate-from-blynk)
-* [How to use](#how-to-use)
 * [HOWTO use default Credentials and have them pre-loaded onto Config Portal](#howto-use-default-credentials-and-have-them-pre-loaded-onto-config-portal)
   * [ 1. To load Default Credentials](#1-to-load-default-credentials)
   * [ 2. To use system default to load "blank" when there is no valid Credentials](#2-to-use-system-default-to-load-blank-when-there-is-no-valid-credentials)
@@ -39,7 +38,7 @@
   * [ 5. If you don't need to add dynamic parameters](#5-if-you-dont-need-to-add-dynamic-parameters)
 * [Important Notes for using Dynamic Parameters' ids](#important-notes-for-using-dynamic-parameters-ids)
 * [Important Notes](#important-notes)
-* [Why using this Blynk_WiFiManager with MultiWiFi-MultiBlynk features](#why-using-this-blynk_wifimanager-with-multiwifi-multiblynk-features)
+* [Why using this Blynk_Async_WM with MultiWiFi-MultiBlynk features](#why-using-this-blynk_async_wm-with-multiwifi-multiblynk-features)
 * [Examples](#examples)
   * [Not using MultiTasking](#not-using-multitasking)
     * [ 1. Async_AM2315_ESP32_SSL](examples/Async_AM2315_ESP32_SSL)
@@ -67,14 +66,15 @@
   * [3. File Credentials.h](#3-file-credentialsh) 
   * [4. File dynamicParams.h](#4-file-dynamicparamsh) 
 * [Debug Terminal Output Samples](#debug-terminal-output-samples)
-  * [1. ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU](#1-esp8266wm_mrd_config-using-littlefs-with-ssl-on-esp8266_nodemcu)
+  * [1. Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU](#1-async_esp8266wm_mrd_config-using-littlefs-with-ssl-on-esp8266_nodemcu)
     * [1.1. No MultiReset Detected => Running normally](#11-no-multireset-detected--running-normally)
     * [1.2. MultiReset Detected => Enter Config Portal](#12-multireset-detected--enter-config-portal)
-  * [2. ESP32WM_MRD_Config using LITTLEFS without SSL on ESP32_DEV](#2-esp32wm_mrd_config-using-littlefs-without-ssl-on-esp32_dev)
+    * [1.3. Exit Config Portal with Data](#13-exit-config-portal-with-data)
+  * [2. Async_ESP32WM_MRD_Config using LITTLEFS without SSL on ESP32_DEV](#2-async_esp32wm_mrd_config-using-littlefs-with-ssl-on-esp32_dev)
     * [2.1. No MultiReset Detected => Running normally](#21-no-multireset-detected--running-normally)
     * [2.2. MultiReset Detected => Enter Config Portal](#22-multireset-detected--enter-config-portal)
     * [2.3. Exit Config Portal with Data](#23-exit-config-portal-with-data)
-    * [2.4. WiFi Lost => AutoReconnect WiFi and Blynk.](#24-wifi-lost--autoreconnect-wifi-and-blynk)
+    * [2.4. WiFi Lost => AutoReconnect WiFi and Blynk](#24-wifi-lost-autoreconnect-wifi-and-blynk)
   * [3. Async_ESP32_MultiTask using LittleFS without SSL on ESP32_DEV](#3-async_esp32_multitask-using-littlefs-without-ssl-on-esp32_dev) 
 * [Debug](#debug)
 * [Troubleshooting](#troubleshooting)
@@ -261,7 +261,7 @@ In your code, just replacing
 3. `BlynkSimpleEsp32_WM.h`       with `BlynkSimpleEsp32_Async_WM.h`        for ESP32 `without SSL`
 4. `BlynkSimpleEsp32_SSL_WM.h`   with `BlynkSimpleEsp32_SSL_Async_WM.h`    for ESP32 `with SSL`
 
-### How to to migrate from Blynk
+### How to migrate from Blynk
 
 In your code, replace
 1. `BlynkSimpleEsp8266.h`     with `BlynkSimpleEsp8266_Async_WM.h`      for ESP8266 `without SSL`
@@ -582,6 +582,38 @@ Please be noted that the following **reserved names are already used in library*
 ```cpp
 // Set config portal channel, default = 1. Use 0 => random channel from 1-13 to avoid conflict
   Blynk.setConfigPortalChannel(0);
+```
+
+---
+---
+
+### Why using this [Blynk_Async_WM](https://github.com/khoih-prog/Blynk_Async_WM) with MultiWiFi-MultiBlynk features
+
+You can see that the system **automatically detects and connects to the best or avaiable WiFi APs and/or Blynk Servers**, whenever interruption happens. This feature is very useful for systems requiring high degree of reliability.
+
+Moreover, this `Blynk.begin()` is **not a blocking call**, so you can use it for critical functions requiring in loop().
+
+Anyway, this is better for projects using Blynk just for GUI (graphical user interface).
+
+In operation, if WiFi or Blynk connection is lost, `Blynk.run()` will try reconnecting automatically. Therefore, `Blynk.run()` must be called in the `loop()` function. Don't use:
+
+```cpp
+void loop()
+{
+  if (Blynk.connected())
+     Blynk.run();
+     
+  ...
+}
+```
+just
+
+```cpp
+void loop()
+{
+  Blynk.run();
+  ...
+}
 ```
 
 ---
