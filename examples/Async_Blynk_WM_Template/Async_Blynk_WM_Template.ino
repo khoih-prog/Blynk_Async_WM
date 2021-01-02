@@ -10,14 +10,15 @@
    Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
    Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
    Licensed under MIT license
-   Version: 1.1.0
+   Version: 1.2.0
 
    Version    Modified By   Date      Comments
    -------    -----------  ---------- -----------
     1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
                                       Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
     1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
- *****************************************************************************************************************************/
+    1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
+ ********************************************************************************************************************************/
 
 // Sketch uses Arduino IDE-selected ESP32 and ESP8266 to select compile choices
 
@@ -152,13 +153,24 @@
       #warning Using EEPROM for ESP8266
     #endif  
   #else
-    //#define USE_SPIFFS false  // ESP32, Choosing EEPROM over LittleFS / SPIFFS here
-    #define USE_SPIFFS true
-    #if USE_SPIFFS
-      #warning Using SPIFFS for ESP32
+    // Not use #define USE_LITTLEFS and #define USE_SPIFFS  => using SPIFFS for configuration data in WiFiManager
+    // (USE_LITTLEFS == false) and (USE_SPIFFS == false)    => using EEPROM for configuration data in WiFiManager
+    // (USE_LITTLEFS == true) and (USE_SPIFFS == false)     => using LITTLEFS for configuration data in WiFiManager
+    // (USE_LITTLEFS == true) and (USE_SPIFFS == true)      => using LITTLEFS for configuration data in WiFiManager
+    // (USE_LITTLEFS == false) and (USE_SPIFFS == true)     => using SPIFFS for configuration data in WiFiManager
+    // Those above #define's must be placed before #include <BlynkSimpleEsp32_WFM.h>
+    
+    #define USE_LITTLEFS          true
+    #define USE_SPIFFS            false
+
+    #if USE_LITTLEFS
+      #warning Using LittleFS for ESP32
+    #elif USE_SPIFFS
+      #warning Using SPIFFS for ESP32  
     #else
       #warning Using EEPROM for ESP32
     #endif
+
   #endif
 
   #if USE_LITTLEFS
@@ -299,7 +311,7 @@
   #if USE_DYNAMIC_PARAMETERS
     ///////////////////////////////////////////////////////////////////////////////////////////
     //// COMPILER VALUE SELECTION - SET UP DYNAMIC PARAMETER DATA TYPES & INITIAL VALUES //////
-    //Defined in <BlynkSimpleEsp8266_WM.h> and <BlynkSimpleEsp8266_SSL_WM.h>   
+    //Defined in <BlynkSimpleEsp8266_Async_WM.h> and <BlynkSimpleEsp8266_SSL_WM.h>   
     /**************************************
     #define MAX_ID_LEN                5
     #define MAX_DISPLAY_NAME_LEN      16
@@ -442,12 +454,25 @@ bool heartbeatLEDon = false; // this lets me use the same routine for the turn-o
   Serial.begin ( SERIAL_SPEED );
   delay ( 500 );  
   Serial.println ( F("\n\n=======================================") );
-  Serial.print ( SKETCH_NAME ); 
-  #if USE_SSL
-    Serial.print ( F(" ** Using SSL **") );  
-  #endif
-  Serial.println("Version " + String(BLYNK_ASYNC_WM_VERSION));
-  Serial.println();
+  Serial.print ( SKETCH_NAME );
+  
+#if (USE_LITTLEFS)
+  Serial.print( F(" ** Using LITTLEFS **") );
+#elif (USE_SPIFFS)
+  Serial.print( F(" ** Using SPIFFS **") );  
+#else
+  Serial.print( F(" ** Using EEPROM **") );
+#endif
+  
+#if USE_SSL
+  Serial.print ( F(" ** Using SSL **") );  
+#endif
+Serial.println();
+
+#if USE_WM
+  Serial.println(BLYNK_ASYNC_WM_VERSION);
+  Serial.println(ESP_DOUBLE_RESET_DETECTOR_VERSION);
+#endif
 
   connectToWLANandBlynk();  // Connect to WiFi, then to Blynk server
 
@@ -536,12 +561,15 @@ void connectToWLANandBlynk()
   {
     #if USE_WM
       #if ( USE_LITTLEFS || USE_SPIFFS )
-        Serial.println ( "\nBlynk using " + String(CurrentFileFS) + " connected. Board Name : " + Blynk.getBoardName() );
+        Serial.print ( F("\nBlynk using ") ); Serial.print ( CurrentFileFS );
+        Serial.print ( F(" connected. Board Name : ") ); Serial.println ( Blynk.getBoardName() );
       #else
-         Serial.println ( "\nBlynk using EEPROM connected. Board Name : " + Blynk.getBoardName() );
+         Serial.print ( F("\nBlynk using EEPROM connected. Board Name : ") );
+         Serial.println ( Blynk.getBoardName() );
          Serial.printf( "EEPROM size = %d bytes, EEPROM start address = %d / 0x%X\n", EEPROM_SIZE, EEPROM_START, EEPROM_START );
       #endif  
-    #endif      
+    #endif 
+     
     Serial.println ( F("Blynk connected just fine") ); 
     Serial.print   ( F("  IP address  ") ); Serial.println ( WiFi.localIP() ) ;
     Serial.print   ( F("  MAC address ") ); Serial.println ( WiFi.macAddress() );  
