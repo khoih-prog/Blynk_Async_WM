@@ -1,21 +1,22 @@
 /****************************************************************************************************************************
-   defines.h
-   For ESP8266 boards
+  defines.h
+  For ESP8266 boards
 
-   Blynk_Async_WM is a library, using AsyncWebServer instead of (ESP8266)WebServer for the ESP8266/ESP32 to enable easy
-   configuration/reconfiguration and autoconnect/autoreconnect of WiFi/Blynk.
-   
-   Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
-   Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
-   Licensed under MIT license
-   Version: 1.2.0
+  Blynk_Async_WM is a library, using AsyncWebServer instead of (ESP8266)WebServer for the ESP8266/ESP32 to enable easy
+  configuration/reconfiguration and autoconnect/autoreconnect of WiFi/Blynk.
+  
+  Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
+  Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
+  Licensed under MIT license
+  Version: 1.2.1
 
-   Version    Modified By   Date      Comments
-   -------    -----------  ---------- -----------
-    1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
-                                      Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
-    1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
-    1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
+  Version    Modified By   Date      Comments
+  -------    -----------  ---------- -----------
+  1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
+                                    Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
+  1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
+  1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
+  1.2.1     K Hoang      16/01/2021 Add functions to control Config Portal from software or Virtual Switches
  ********************************************************************************************************************************/
 
 #ifndef defines_h
@@ -38,9 +39,7 @@
 // Select USE_LITTLEFS (higher priority) or USE_SPIFFS
 
 #define USE_LITTLEFS                true
-//#define USE_LITTLEFS                false
 #define USE_SPIFFS                  false
-//#define USE_SPIFFS                  true
 
 #if USE_LITTLEFS
   //LittleFS has higher priority
@@ -58,13 +57,15 @@
   // EEPROM_SIZE must be <= 4096 and >= CONFIG_DATA_SIZE (currently 172 bytes)
   #define EEPROM_SIZE    (4 * 1024)
   // EEPROM_START + CONFIG_DATA_SIZE must be <= EEPROM_SIZE
-  #define EEPROM_START  768
+  #define EEPROM_START  0
 #endif
 
 // Force some params in Blynk, only valid for library version 1.0.1 and later
 #define TIMEOUT_RECONNECT_WIFI                    10000L
 #define RESET_IF_CONFIG_TIMEOUT                   true
 #define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
+
+#define USE_DYNAMIC_PARAMETERS                    true
 // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
 
 //You have to download Blynk WiFiManager Blynk_Async_WM library at //https://github.com/khoih-prog/Blynk_Async_WM

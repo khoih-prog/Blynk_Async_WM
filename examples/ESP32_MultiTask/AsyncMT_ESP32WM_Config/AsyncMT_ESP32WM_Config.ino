@@ -1,21 +1,22 @@
 /****************************************************************************************************************************
-   Async_ESP32WM_Config.ino
-   For ESP32 boards
+  AsyncMT_ESP32WM_Config.ino
+  For ESP32 boards
 
-   Blynk_Async_WM is a library, using AsyncWebServer instead of (ESP8266)WebServer for the ESP8266/ESP32 to enable easy
-   configuration/reconfiguration and autoconnect/autoreconnect of WiFi/Blynk.
-   
-   Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
-   Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
-   Licensed under MIT license
-   Version: 1.2.0
+  Blynk_Async_WM is a library, using AsyncWebServer instead of (ESP8266)WebServer for the ESP8266/ESP32 to enable easy
+  configuration/reconfiguration and autoconnect/autoreconnect of WiFi/Blynk.
+  
+  Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
+  Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
+  Licensed under MIT license
+  Version: 1.2.1
 
-   Version    Modified By   Date      Comments
-   -------    -----------  ---------- -----------
-    1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
-                                      Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
-    1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
-    1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
+  Version    Modified By   Date      Comments
+  -------    -----------  ---------- -----------
+  1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
+                                    Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
+  1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
+  1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
+  1.2.1     K Hoang      16/01/2021 Add functions to control Config Portal from software or Virtual Switches
  ********************************************************************************************************************************/
 
 #include "defines.h"
@@ -33,7 +34,7 @@ volatile bool blynkConnected = false;
 
 #if USE_DYNAMIC_PARAMETERS
 
-void displayCredentials(void)
+void displayCredentials()
 {
   Serial.println("\nYour stored Credentials :");
 
@@ -43,7 +44,7 @@ void displayCredentials(void)
   }
 }
 
-void checkAndDisplayCredentials(void)
+void checkAndDisplayCredentials()
 {
   static bool displayedCredentials = false;
 
@@ -108,7 +109,7 @@ void set_led(byte status)
   digitalWrite(LED_BUILTIN, status);
 }
 
-void checkBlynk(void)
+void checkBlynk()
 {
   static int num = 1;
 
@@ -233,10 +234,10 @@ void setup()
   delay(200);
   
 #if ( USE_LITTLEFS || USE_SPIFFS)
-  Serial.print(F("\nStarting Async_ESP32_WM_Config using "));
+  Serial.print(F("\nStarting AsyncMT_ESP32_WM_Config using "));
   Serial.print(CurrentFileFS);
 #else
-  Serial.print(F("\nStarting Async_ESP32_WM_Config using EEPROM"));
+  Serial.print(F("\nStarting AsyncMT_ESP32_WM_Config using EEPROM"));
 #endif
 
 #if USE_SSL
