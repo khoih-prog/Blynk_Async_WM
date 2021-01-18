@@ -17,6 +17,7 @@
   * [Why using Async](#why-using-async)
   * [Currently supported Boards](#currently-supported-boards)
 * [Changelog](#changelog)
+  * [Releases v1.2.1](#releases-v121)
   * [Major Releases v1.2.0](#major-releases-v120)
   * [Releases v1.1.0](#releases-v110)
   * [Releases v1.0.16](#releases-v1016)
@@ -53,15 +54,20 @@
     * [10. Async_Blynk_WM_Template](examples/Async_Blynk_WM_Template)
     * [11. **Async_ESP32WM_MRD_Config**](examples/Async_ESP32WM_MRD_Config)
     * [12. **Async_ESP8266WM_MRD_Config**](examples/Async_ESP8266WM_MRD_Config)
+    * [13. **Async_ESP32WM_ForcedConfig**](examples/Async_ESP32WM_ForcedConfig) 
+    * [14. **Async_ESP32WM_MRD_ForcedConfig**](examples/Async_ESP32WM_MRD_ForcedConfig)
+    * [15. **Async_ESP8266WM_ForcedConfig**](examples/Async_ESP8266WM_ForcedConfig)
+    * [16. **Async_ESP8266WM_MRD_ForcedConfig**](examples/Async_ESP8266WM_MRD_ForcedConfig)
   * [Using Free-RTOS MultiTasking for ESP32](#using-free-rtos-multitasking-for-esp32)
     * [ 1. Async_ESP32_MultiTask](examples/ESP32_MultiTask/Async_ESP32_MultiTask)
     * [ 2. AsyncMT_AM2315_ESP32_SSL](examples/ESP32_MultiTask/AsyncMT_AM2315_ESP32_SSL)
     * [ 3. AsyncMT_DHT11ESP32](examples/ESP32_MultiTask/AsyncMT_DHT11ESP32)
     * [ 4. AsyncMT_DHT11ESP32_SSL](examples/ESP32_MultiTask/AsyncMT_DHT11ESP32_SSL)
     * [ 5. AsyncMT_ESP32WM_Config](examples/ESP32_MultiTask/AsyncMT_ESP32WM_Config)
+    * [ 6. **AsyncMT_ESP32WM_ForcedConfig**](examples/ESP32_MultiTask/AsyncMT_ESP32WM_ForcedConfig)
 * [So, how it works?](#so-how-it-works)
-* [Example Async_ESP32WM_MRD_Config](#example-async_esp32wm_mrd_config)
-  * [1. File Async_ESP32WM_MRD_Config.ino](#1-file-async_esp32wm_mrd_configino)
+* [Example Async_ESP32WM_MRD_ForcedConfig](#example-async_esp32wm_mrd_forcedconfig)
+  * [1. File Async_ESP32WM_MRD_ForcedConfig.ino](#1-file-async_esp32wm_mrd_forcedconfigino)
   * [2. File defines.h](#2-file-definesh) 
   * [3. File Credentials.h](#3-file-credentialsh) 
   * [4. File dynamicParams.h](#4-file-dynamicparamsh) 
@@ -76,6 +82,14 @@
     * [2.3. Exit Config Portal with Data](#23-exit-config-portal-with-data)
     * [2.4. WiFi Lost => AutoReconnect WiFi and Blynk](#24-wifi-lost-autoreconnect-wifi-and-blynk)
   * [3. Async_ESP32_MultiTask using LittleFS without SSL on ESP32_DEV](#3-async_esp32_multitask-using-littlefs-without-ssl-on-esp32_dev) 
+  * [4. Async_ESP32WM_MRD_ForcedConfig using non-persistent ConfigPortal virtual button](#4-async_esp32wm_mrd_forcedconfig-using-non-persistent-configportal-virtual-button)
+    * [4.1. Start normally then press non-persistent ConfigPortal virtual button](#41-start-normally-then-press-non-persistent-configportal-virtual-button)
+    * [4.2. Enter non-persistent ConfigPortal](#42-enter-non-persistent-configportal)
+    * [4.3. Exit Config Portal with Saved Data](#43-exit-config-portal-with-saved-data)
+  * [5. Async_ESP32WM_MRD_ForcedConfig using persistent ConfigPortal virtual button](#5-async_esp32wm_mrd_forcedconfig-using-persistent-configportal-virtual-button)
+    * [5.1. Start normally then press persistent ConfigPortal virtual button](#51-start-normally-then-press-persistent-configportal-virtual-button)
+    * [5.2. Enter persistent ConfigPortal](#52-enter-persistent-configportal)
+    * [5.3. Exit Config Portal with Saved Data](#53-exit-config-portal-with-saved-data)
 * [Debug](#debug)
 * [Troubleshooting](#troubleshooting)
 * [Releases](#releases)
@@ -128,6 +142,12 @@ This [**BlynkESP32_BT_WF** library](https://github.com/khoih-prog/BlynkESP32_BT_
 ---
 
 ## Changelog
+
+### Releases v1.2.1
+
+1. Add functions to control Config Portal from software or Virtual Switches. Check [How to trigger a Config Portal from code #25](https://github.com/khoih-prog/Blynk_WM/issues/25)
+2. Add examples to demo the new Virtual ConfigPortal SW feature
+3. Optimize code
 
 ### Major Releases v1.2.0
 
@@ -207,7 +227,7 @@ This [**BlynkESP32_BT_WF** library](https://github.com/khoih-prog/BlynkESP32_BT_
 
 1. Install [VS Code](https://code.visualstudio.com/)
 2. Install [PlatformIO](https://platformio.org/platformio-ide)
-3. Install [**Blynk_Async_WM** library](https://platformio.org/lib/show/11085/Blynk_Async_WM) by using [Library Manager](https://platformio.org/lib/show/11085/Blynk_Async_WM/installation). Search for **Blynk_Async_WM** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
+3. Install [**Blynk_Async_WM** library](https://platformio.org/lib/show/11085/Blynk_Async_WM) or [**Blynk_Async_WM** library](https://platformio.org/lib/show/11511/Blynk_Async_WM) by using [Library Manager](https://platformio.org/lib/show/11085/Blynk_Async_WM/installation). Search for **Blynk_Async_WM** in [Platform.io Author's Libraries](https://platformio.org/lib/search?query=author:%22Khoi%20Hoang%22)
 4. Use included [platformio.ini](platformio/platformio.ini) file from examples to ensure that all dependent libraries will installed automatically. Please visit documentation for the other options and examples at [Project Configuration File](https://docs.platformio.org/page/projectconf.html)
 
 ---
@@ -636,6 +656,10 @@ void loop()
 10. [Async_Blynk_WM_Template](examples/Async_Blynk_WM_Template)
 11. [**Async_ESP32WM_MRD_Config**](examples/Async_ESP32WM_MRD_Config)
 12. [**Async_ESP8266WM_MRD_Config**](examples/Async_ESP8266WM_MRD_Config)
+13. [**Async_ESP32WM_ForcedConfig**](examples/Async_ESP32WM_ForcedConfig) 
+14. [**Async_ESP32WM_MRD_ForcedConfig**](examples/Async_ESP32WM_MRD_ForcedConfig) 
+15. [**Async_ESP8266WM_ForcedConfig**](examples/Async_ESP8266WM_ForcedConfig)
+16. [**Async_ESP8266WM_MRD_ForcedConfig**](examples/Async_ESP8266WM_MRD_ForcedConfig)
 
 #### Using Free-RTOS MultiTasking for ESP32
 
@@ -644,6 +668,7 @@ void loop()
  3. [AsyncMT_DHT11ESP32](examples/ESP32_MultiTask/AsyncMT_DHT11ESP32) 
  4. [AsyncMT_DHT11ESP32_SSL](examples/ESP32_MultiTask/AsyncMT_DHT11ESP32_SSL) 
  5. [AsyncMT_ESP32WM_Config](examples/ESP32_MultiTask/AsyncMT_ESP32WM_Config)
+ 6. [**AsyncMT_ESP32WM_ForcedConfig**](examples/ESP32_MultiTask/AsyncMT_ESP32WM_ForcedConfig)
 
 ---
 
@@ -684,11 +709,11 @@ Then click **Save**. The system will auto-restart. You will see the board's buil
 ---
 ---
 
-## Example [Async_ESP32WM_MRD_Config](examples/Async_ESP32WM_MRD_Config)
+## Example [Async_ESP32WM_MRD_ForcedConfig](examples/Async_ESP32WM_MRD_ForcedConfig)
 
 Please take a look at other examples, as well.
 
-#### 1. File [Async_ESP32WM_MRD_Config.ino](examples/Async_ESP32WM_MRD_Config/Async_ESP32WM_MRD_Config.ino)
+#### 1. File [Async_ESP32WM_MRD_ForcedConfig.ino](examples/Async_ESP32WM_MRD_ForcedConfig/Async_ESP32WM_MRD_ForcedConfig.ino)
 
 
 ```cpp
@@ -702,6 +727,33 @@ Please take a look at other examples, as well.
 DHT dht(DHT_PIN, DHT_TYPE);
 BlynkTimer timer;
 Ticker     led_ticker;
+
+#define BLYNK_PIN_FORCED_CONFIG           V10
+#define BLYNK_PIN_FORCED_PERS_CONFIG      V20
+
+// Use button V10 (BLYNK_PIN_FORCED_CONFIG) to forced Config Portal
+BLYNK_WRITE(BLYNK_PIN_FORCED_CONFIG)
+{ 
+  if (param.asInt())
+  {
+    Serial.println( F("\nCP Button Hit. Rebooting") ); 
+
+    // This will keep CP once, clear after reset, even you didn't enter CP at all.
+    Blynk.resetAndEnterConfigPortal(); 
+  }
+}
+
+// Use button V20 (BLYNK_PIN_FORCED_PERS_CONFIG) to forced Persistent Config Portal
+BLYNK_WRITE(BLYNK_PIN_FORCED_PERS_CONFIG)
+{ 
+  if (param.asInt())
+  {
+    Serial.println( F("\nPersistent CP Button Hit. Rebooting") ); 
+   
+    // This will keep CP forever, until you successfully enter CP, and Save data to clear the flag.
+    Blynk.resetAndEnterConfigPortalPersistent();
+  }
+}
 
 void readAndSendData()
 {
@@ -780,10 +832,10 @@ void setup()
   delay(200);
 
 #if ( USE_LITTLEFS || USE_SPIFFS)
-  Serial.print(F("\nStarting Async_ESP32WM_MRD_Config using "));
+  Serial.print(F("\nStarting Async_ESP32WM_MRD_ForcedConfig using "));
   Serial.print(CurrentFileFS);
 #else
-  Serial.print(F("\nStarting Async_ESP32WM_MRD_Config using EEPROM"));
+  Serial.print(F("\nStarting Async_ESP32WM_MRD_ForcedConfig using EEPROM"));
 #endif
 
 #if USE_SSL
@@ -883,7 +935,7 @@ void loop()
 }
 ```
 
-#### 2. File [defines.h](examples/Async_ESP32WM_MRD_Config/defines.h)
+#### 2. File [defines.h](examples/Async_ESP32WM_MRD_ForcedConfig/defines.h)
 
 ```cpp
 #ifndef defines_h
@@ -962,6 +1014,8 @@ void loop()
 #define TIMEOUT_RECONNECT_WIFI                    10000L
 #define RESET_IF_CONFIG_TIMEOUT                   true
 #define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
+
+#define USE_DYNAMIC_PARAMETERS                    true
 // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
 
 #define USE_SSL   true
@@ -983,7 +1037,7 @@ void loop()
 #endif      //defines_h
 ```
 
-#### 3. File [Credentials.h](examples/Async_ESP32WM_MRD_Config/Credentials.h)
+#### 3. File [Credentials.h](examples/Async_ESP32WM_MRD_ForcedConfig/Credentials.h)
 
 
 ```cpp
@@ -1065,14 +1119,14 @@ Blynk_WM_Configuration defaultConfig =
 #endif    //Credentials_h
 ```
 
-#### 4. File [dynamicParams.h](examples/Async_ESP32WM_MRD_Config/dynamicParams.h)
+#### 4. File [dynamicParams.h](examples/Async_ESP32WM_MRD_ForcedConfig/dynamicParams.h)
 
 
 ```cpp
 #ifndef dynamicParams_h
 #define dynamicParams_h
 
-#define USE_DYNAMIC_PARAMETERS      true
+// USE_DYNAMIC_PARAMETERS defined in defined.h
 
 /////////////// Start dynamic Credentials ///////////////
 
@@ -1149,7 +1203,7 @@ The following is the sample terminal output when running example [Async_ESP8266W
 
 ```
 Starting Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
-Blynk_Async_WM v1.2.0 for ESP8266 SSL
+Blynk_Async_WM SSL for ESP8266 v1.2.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -1229,7 +1283,7 @@ BBBBBB
 
 ```
 Starting Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
-Blynk_Async_WM v1.2.0 for ESP8266 SSL
+Blynk_Async_WM SSL for ESP8266 v1.2.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFC0003
 multiResetDetectorFlag = 0xFFFC0003
@@ -1334,11 +1388,13 @@ F[229521] id: = HueNet1
 
 ```
 
+---
+
 #### 1.3 Exit Config Portal with Data
 
 ```
 Starting Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
-Blynk_Async_WM v1.2.0 for ESP8266 SSL
+Blynk_Async_WM SSL for ESP8266 v1.2.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -1413,6 +1469,7 @@ BBBB
 ```
 
 ---
+---
 
 ### 2. Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
 
@@ -1423,7 +1480,7 @@ The following is the sample terminal output when running example [Async_ESP32WM_
 
 ```
 Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM v1.2.0 for ESP32 SSL
+Blynk_Async_WM SSL for ESP32 v1.2.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -1496,11 +1553,13 @@ Subs Topics = default-mqtt-SubTopic
 Pubs Topics = default-mqtt-PubTopic
 ```
 
+---
+
 #### 2.2 MultiReset Detected => Enter Config Portal
 
 ```
 Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM v1.2.0 for ESP32 SSL
+Blynk_Async_WM SSL for ESP32 v1.2.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFC0003
 multiResetDetectorFlag = 0xFFFC0003
@@ -1599,11 +1658,13 @@ RFRFRF[188660] id: = HueNet1
 
 ```
 
+---
+
 #### 2.3 Exit Config Portal with Data
 
 ```
 Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM v1.2.0 for ESP32 SSL
+Blynk_Async_WM SSL for ESP32 v1.2.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -1677,6 +1738,8 @@ Saving config file OK
 RBRB
 ```
 
+---
+
 #### 2.4 WiFi Lost. AutoReconnect WiFi and Blynk
 
 ```
@@ -1738,7 +1801,7 @@ The following is the sample terminal output when running example [Async_ESP32_Mu
 
 ```
 Starting Async_ESP32_MultiTask using LittleFS without SSL on ESP32_DEV
-Blynk_Async_WM v1.2.0 for ESP32
+Blynk_Async_WM for ESP32 v1.2.1
 ESP_DoubleResetDetector v1.1.1
 [1431] Hostname=ESP32-Async-MTask
 [1517] LoadCfgFile 
@@ -1935,6 +1998,610 @@ T2 = 27.63
 ---
 
 
+### 4. Async_ESP32WM_MRD_ForcedConfig using non-persistent ConfigPortal virtual button
+
+The following is the sample terminal output when running example [Async_ESP32WM_MRD_ForcedConfig](examples/Async_ESP32WM_MRD_ForcedConfig) on **ESP32_DEV**
+
+The function to call is 
+
+```
+// This will keep CP once, clear after reset, even you didn't enter CP at all.
+Blynk.resetAndEnterConfigPortal();
+```
+
+#### 4.1 Start normally then press non-persistent ConfigPortal virtual button
+
+```
+Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
+Blynk_Async_WM SSL for ESP32 v1.2.1
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[369] Hostname=ESP32-Async-Controller
+[421] LoadCfgFile 
+[429] OK
+[429] ======= Start Stored Config Data =======
+[429] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[429] SSID=HueNet1,PW=12345678
+[429] SSID1=HueNet2,PW1=12345678
+[432] Server=account.duckdns.org,Token=token
+[438] Server1=account.duckdns.org,Token1=token1
+[444] Port=9443
+[446] ======= End Config Data =======
+[449] CCSum=0x3553,RCSum=0x3553
+[473] LoadCredFile 
+[481] CrR:pdata=default-mqtt-server,len=34
+[481] CrR:pdata=1883,len=6
+[481] CrR:pdata=default-mqtt-username,len=34
+[481] CrR:pdata=default-mqtt-password,len=34
+[484] CrR:pdata=default-mqtt-SubTopic,len=34
+[488] CrR:pdata=default-mqtt-PubTopic,len=34
+[492] OK
+[493] CrCCsum=0x29a6,CrRCsum=0x29a6
+[496] Valid Stored Dynamic Data
+[499] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[502] SSID=HueNet1,PW=12345678
+[505] SSID1=HueNet2,PW1=12345678
+[508] Server=account.duckdns.org,Token=token
+[514] Server1=account.duckdns.org,Token1=token1
+[520] Port=9443
+[522] ======= End Config Data =======
+[525] Check if isForcedCP
+[545] LoadCPFile 
+[551] OK
+[551] bg: noConfigPortal = true
+[551] Connecting MultiWifi...
+[6826] WiFi connected after time: 1
+[6826] SSID: HueNet1, RSSI = -24
+[6826] Channel: 2, IP address: 192.168.2.82
+[6826] bg: WiFi OK. Try Blynk
+[6827] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ESP32
+
+[7841] NTP time: Mon Jan 18 02:41:32 2021
+[7841] BlynkArduinoClient.connect: Connecting to account.duckdns.org:9443
+[9638] Certificate OK
+[9645] Ready (ping: 6ms).
+[9714] Connected to Blynk Server = account.duckdns.org, Token = token
+[9714] bg: WiFi+Blynk OK
+
+Blynk ESP32 using LittleFS connected.
+Board Name : ESP32_SSL
+B
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
+
+CP Button Hit. Rebooting
+[19457] setForcedCP non-Persistent    <========== Non-Persistent CP will clear after reset
+[19475] SaveCPFile 
+[19482] OK
+[19491] SaveBkUpCPFile 
+[19495] OK
+```
+
+---
+
+#### 4.2 Enter non-persistent ConfigPortal
+
+Non-Persistent CP will be removed after first reset, even you didn't enter the CP. You can optionally enter CP, input and `Save` config data.
+
+```
+Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
+Blynk_Async_WM SSL for ESP32 v1.2.1
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[419] Hostname=ESP32-Async-Controller
+[477] LoadCfgFile 
+[485] OK
+[485] ======= Start Stored Config Data =======
+[485] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[485] SSID=HueNet1,PW=12345678
+[485] SSID1=HueNet2,PW1=12345678
+[488] Server=account.duckdns.org,Token=token
+[494] Server1=account.duckdns.org,Token1=token1
+[501] Port=9443
+[502] ======= End Config Data =======
+[506] CCSum=0x3553,RCSum=0x3553
+[532] LoadCredFile 
+[540] CrR:pdata=default-mqtt-server,len=34
+[540] CrR:pdata=1883,len=6
+[540] CrR:pdata=default-mqtt-username,len=34
+[540] CrR:pdata=default-mqtt-password,len=34
+[543] CrR:pdata=default-mqtt-SubTopic,len=34
+[547] CrR:pdata=default-mqtt-PubTopic,len=34
+[551] OK
+[552] CrCCsum=0x29a6,CrRCsum=0x29a6
+[555] Valid Stored Dynamic Data
+[558] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[562] SSID=HueNet1,PW=12345678
+[564] SSID1=HueNet2,PW1=12345678
+[567] Server=account.duckdns.org,Token=token
+[574] Server1=account.duckdns.org,Token1=token1
+[580] Port=9443
+[581] ======= End Config Data =======
+[585] Check if isForcedCP
+[606] LoadCPFile 
+[612] OK
+[613] bg: isForcedConfigPortal = true
+[613] bg:Stay forever in CP:Forced-non-Persistent  <========== Non-Persistent CP will clear after reset
+[613] clearForcedCP
+[632] SaveCPFile 
+[639] OK
+[648] SaveBkUpCPFile 
+[652] OK
+[1497] 
+stConf:SSID=TestPortal-ESP32,PW=TestPortalPass
+[1497] IP=192.168.220.1,ch=8
+F
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
+RF[66298] id: = HueNet1
+[66311] pw = 12345678
+[66330] id1 = HueNet2
+[66339] pw1 = 12345678
+[66350] sv = account.duckdns.org
+[66364] tk = token
+[66382] sv1 = account.duckdns.org
+[66391] tk1 = token1
+[66400] pt = 9443
+[66409] nm = ESP32_SSL
+[66423] h2:myMenuItems[0]=default-mqtt-server
+[66439] h2:myMenuItems[1]=1883
+[66451] h2:myMenuItems[2]=default-mqtt-username
+[66475] h2:myMenuItems[3]=default-mqtt-password
+[66485] h2:myMenuItems[4]=default-mqtt-SubTopic
+[66494] h2:myMenuItems[5]=default-mqtt-PubTopic
+[66495] h:Updating LittleFS:/wmssl_conf.dat
+[66540] SaveCfgFile 
+[66540] WCSum=0x3553
+[66681] OK
+[66697] SaveBkUpCfgFile 
+[66703] OK
+[66721] SaveCredFile 
+[66721] CW1:pdata=default-mqtt-server,len=34
+[66726] CW1:pdata=1883,len=6
+[66726] CW1:pdata=default-mqtt-username,len=34
+[66726] CW1:pdata=default-mqtt-password,len=34
+[66726] CW1:pdata=default-mqtt-SubTopic,len=34
+[66731] CW1:pdata=default-mqtt-PubTopic,len=34
+[66736] OK
+[66736] CrWCSum=0x29a6
+[66758] SaveBkUpCredFile 
+[66758] CW2:pdata=default-mqtt-server,len=34
+[66764] CW2:pdata=1883,len=6
+[66764] CW2:pdata=default-mqtt-username,len=34
+[66764] CW2:pdata=default-mqtt-password,len=34
+[66764] CW2:pdata=default-mqtt-SubTopic,len=34
+[66768] CW2:pdata=default-mqtt-PubTopic,len=34
+[66773] OK
+[66774] clearForcedCP
+[66803] SaveCPFile 
+[66812] OK
+[66827] SaveBkUpCPFile 
+[66837] OK
+[66837] h:Rst
+```
+
+---
+
+#### 4.3 Exit Config Portal with Saved Data
+
+```
+Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
+Blynk_Async_WM SSL for ESP32 v1.2.1
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[386] Hostname=ESP32-Async-Controller
+[439] LoadCfgFile 
+[447] OK
+[447] ======= Start Stored Config Data =======
+[447] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[447] SSID=HueNet1,PW=12345678
+[447] SSID1=HueNet2,PW1=12345678
+[450] Server=account.duckdns.org,Token=token
+[456] Server1=account.duckdns.org,Token1=token1
+[462] Port=9443
+[464] ======= End Config Data =======
+[467] CCSum=0x3553,RCSum=0x3553
+[491] LoadCredFile 
+[498] CrR:pdata=default-mqtt-server,len=34
+[498] CrR:pdata=1883,len=6
+[498] CrR:pdata=default-mqtt-username,len=34
+[498] CrR:pdata=default-mqtt-password,len=34
+[501] CrR:pdata=default-mqtt-SubTopic,len=34
+[505] CrR:pdata=default-mqtt-PubTopic,len=34
+[509] OK
+[510] CrCCsum=0x29a6,CrRCsum=0x29a6
+[513] Valid Stored Dynamic Data
+[516] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[519] SSID=HueNet1,PW=12345678
+[522] SSID1=HueNet2,PW1=12345678
+[525] Server=account.duckdns.org,Token=token
+[531] Server1=account.duckdns.org,Token1=token1
+[538] Port=9443
+[539] ======= End Config Data =======
+[543] Check if isForcedCP
+[564] LoadCPFile 
+[570] OK
+[570] bg: noConfigPortal = true
+[571] Connecting MultiWifi...
+[7355] WiFi connected after time: 1
+[7355] SSID: HueNet1, RSSI = -23
+[7355] Channel: 2, IP address: 192.168.2.82
+[7355] bg: WiFi OK. Try Blynk
+[7356] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ESP32
+
+[7371] NTP time: Mon Jan 18 02:43:00 2021
+[7373] BlynkArduinoClient.connect: Connecting to account.duckdns.org:9443
+[9310] Certificate OK
+[9317] Ready (ping: 6ms).
+[9386] Connected to Blynk Server = account.duckdns.org, Token = token
+[9386] bg: WiFi+Blynk OK
+
+Blynk ESP32 using LittleFS connected.
+Board Name : ESP32_SSL
+B
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
+RB
+
+```
+
+
+---
+---
+
+
+### 5. Async_ESP32WM_MRD_ForcedConfig using persistent ConfigPortal virtual button
+
+The following is the sample terminal output when running example [Async_ESP32WM_MRD_ForcedConfig](examples/Async_ESP32WM_MRD_ForcedConfig) on **ESP32_DEV**
+
+
+The function to call is 
+
+```
+// This will keep CP once, clear after reset, even you didn't enter CP at all.
+Blynk.resetAndEnterConfigPortalPersistent();
+```
+
+#### 5.1 Start normally then press persistent ConfigPortal virtual button
+
+```
+Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
+Blynk_Async_WM SSL for ESP32 v1.2.1
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[386] Hostname=ESP32-Async-Controller
+[439] LoadCfgFile 
+[447] OK
+[447] ======= Start Stored Config Data =======
+[447] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[447] SSID=HueNet1,PW=12345678
+[447] SSID1=HueNet2,PW1=12345678
+[450] Server=account.duckdns.org,Token=token
+[456] Server1=account.duckdns.org,Token1=token1
+[462] Port=9443
+[464] ======= End Config Data =======
+[467] CCSum=0x3553,RCSum=0x3553
+[491] LoadCredFile 
+[498] CrR:pdata=default-mqtt-server,len=34
+[498] CrR:pdata=1883,len=6
+[498] CrR:pdata=default-mqtt-username,len=34
+[498] CrR:pdata=default-mqtt-password,len=34
+[501] CrR:pdata=default-mqtt-SubTopic,len=34
+[505] CrR:pdata=default-mqtt-PubTopic,len=34
+[509] OK
+[510] CrCCsum=0x29a6,CrRCsum=0x29a6
+[513] Valid Stored Dynamic Data
+[516] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[519] SSID=HueNet1,PW=12345678
+[522] SSID1=HueNet2,PW1=12345678
+[525] Server=account.duckdns.org,Token=token
+[531] Server1=account.duckdns.org,Token1=token1
+[538] Port=9443
+[539] ======= End Config Data =======
+[543] Check if isForcedCP
+[564] LoadCPFile 
+[570] OK
+[570] bg: noConfigPortal = true
+[571] Connecting MultiWifi...
+[7355] WiFi connected after time: 1
+[7355] SSID: HueNet1, RSSI = -23
+[7355] Channel: 2, IP address: 192.168.2.82
+[7355] bg: WiFi OK. Try Blynk
+[7356] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ESP32
+
+[7371] NTP time: Mon Jan 18 02:43:00 2021
+[7373] BlynkArduinoClient.connect: Connecting to account.duckdns.org:9443
+[9310] Certificate OK
+[9317] Ready (ping: 6ms).
+[9386] Connected to Blynk Server = account.duckdns.org, Token = token
+[9386] bg: WiFi+Blynk OK
+
+Blynk ESP32 using LittleFS connected.
+Board Name : ESP32_SSL
+B
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
+RBRB
+Persistent CP Button Hit. Rebooting
+[170221] setForcedCP Persistent     <========== Persistent CP requested
+[170240] SaveCPFile 
+[170248] OK
+[170358] SaveBkUpCPFile 
+[170398] OK
+```
+
+---
+
+#### 5.2 Enter persistent ConfigPortal
+
+Persistent CP will remain after resets. The only way to get rid of Config Portal is to enter CP, input (even fake data or none) and `Save` config data.
+
+```
+Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
+Blynk_Async_WM SSL for ESP32 v1.2.1
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[351] Hostname=ESP32-Async-Controller
+[403] LoadCfgFile 
+[411] OK
+[411] ======= Start Stored Config Data =======
+[411] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[411] SSID=HueNet1,PW=12345678
+[411] SSID1=HueNet2,PW1=12345678
+[414] Server=account.duckdns.org,Token=token
+[420] Server1=account.duckdns.org,Token1=token1
+[427] Port=9443
+[428] ======= End Config Data =======
+[432] CCSum=0x3553,RCSum=0x3553
+[455] LoadCredFile 
+[462] CrR:pdata=default-mqtt-server,len=34
+[462] CrR:pdata=1883,len=6
+[462] CrR:pdata=default-mqtt-username,len=34
+[463] CrR:pdata=default-mqtt-password,len=34
+[466] CrR:pdata=default-mqtt-SubTopic,len=34
+[470] CrR:pdata=default-mqtt-PubTopic,len=34
+[474] OK
+[474] CrCCsum=0x29a6,CrRCsum=0x29a6
+[478] Valid Stored Dynamic Data
+[480] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[484] SSID=HueNet1,PW=12345678
+[487] SSID1=HueNet2,PW1=12345678
+[490] Server=account.duckdns.org,Token=token
+[496] Server1=account.duckdns.org,Token1=token1
+[502] Port=9443
+[504] ======= End Config Data =======
+[507] Check if isForcedCP
+[527] LoadCPFile 
+[534] OK
+[534] bg: isForcedConfigPortal = true
+[534] bg:Stay forever in CP:Forced-Persistent     <========== Persistent CP will remain after reset
+[1379] 
+stConf:SSID=TestPortal-ESP32,PW=TestPortalPass
+[1379] IP=192.168.220.1,ch=11
+F
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
+RF[76317] id: = HueNet1
+[76337] pw = 12345678
+[76358] id1 = HueNet2
+[76372] pw1 = 12345678
+[76384] sv = account.duckdns.org
+[76403] tk = token
+[76416] sv1 = account.duckdns.org
+[76432] tk1 = token1
+[76450] pt = 9443
+[76463] nm = ESP32_SSL
+[76483] h2:myMenuItems[0]=default-mqtt-server
+[76498] h2:myMenuItems[1]=1883
+[76520] h2:myMenuItems[2]=default-mqtt-username
+[76531] h2:myMenuItems[3]=default-mqtt-password
+[76546] h2:myMenuItems[4]=default-mqtt-SubTopic
+[76560] h2:myMenuItems[5]=default-mqtt-PubTopic
+[76561] h:Updating LittleFS:/wmssl_conf.dat
+[76594] SaveCfgFile 
+[76594] WCSum=0x3553
+[76722] OK
+[76735] SaveBkUpCfgFile 
+[76742] OK
+[76767] SaveCredFile 
+[76767] CW1:pdata=default-mqtt-server,len=34
+[76774] CW1:pdata=1883,len=6
+[76774] CW1:pdata=default-mqtt-username,len=34
+[76774] CW1:pdata=default-mqtt-password,len=34
+[76774] CW1:pdata=default-mqtt-SubTopic,len=34
+[76779] CW1:pdata=default-mqtt-PubTopic,len=34
+[76784] OK
+[76785] CrWCSum=0x29a6
+[76806] SaveBkUpCredFile 
+[76806] CW2:pdata=default-mqtt-server,len=34
+[76811] CW2:pdata=1883,len=6
+[76812] CW2:pdata=default-mqtt-username,len=34
+[76812] CW2:pdata=default-mqtt-password,len=34
+[76812] CW2:pdata=default-mqtt-SubTopic,len=34
+[76816] CW2:pdata=default-mqtt-PubTopic,len=34
+[76821] OK
+[76821] clearForcedCP
+[76844] SaveCPFile 
+[76857] OK
+[76867] SaveBkUpCPFile 
+[76871] OK
+[76871] h:Rst
+```
+
+---
+
+#### 5.3 Exit Config Portal with Saved Data
+
+Enter CP, input (even fake data or none) and `Save` config data to exit persistent ConfigPortal
+
+```
+Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
+Blynk_Async_WM SSL for ESP32 v1.2.1
+ESP_MultiResetDetector v1.1.1
+LittleFS Flag read = 0xFFFE0001
+multiResetDetectorFlag = 0xFFFE0001
+lowerBytes = 0x0001, upperBytes = 0x0001
+No multiResetDetected, number of times = 1
+LittleFS Flag read = 0xFFFE0001
+Saving config file...
+Saving config file OK
+[388] Hostname=ESP32-Async-Controller
+[438] LoadCfgFile 
+[446] OK
+[446] ======= Start Stored Config Data =======
+[446] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[446] SSID=HueNet1,PW=12345678
+[446] SSID1=HueNet2,PW1=12345678
+[449] Server=account.duckdns.org,Token=token
+[455] Server1=account.duckdns.org,Token1=token1
+[461] Port=9443
+[463] ======= End Config Data =======
+[466] CCSum=0x3553,RCSum=0x3553
+[489] LoadCredFile 
+[496] CrR:pdata=default-mqtt-server,len=34
+[496] CrR:pdata=1883,len=6
+[496] CrR:pdata=default-mqtt-username,len=34
+[496] CrR:pdata=default-mqtt-password,len=34
+[499] CrR:pdata=default-mqtt-SubTopic,len=34
+[503] CrR:pdata=default-mqtt-PubTopic,len=34
+[507] OK
+[508] CrCCsum=0x29a6,CrRCsum=0x29a6
+[511] Valid Stored Dynamic Data
+[514] Hdr=SSL_ESP32,BrdName=ESP32_SSL
+[517] SSID=HueNet1,PW=12345678
+[520] SSID1=HueNet2,PW1=12345678
+[523] Server=account.duckdns.org,Token=token
+[529] Server1=account.duckdns.org,Token1=token1
+[535] Port=9443
+[537] ======= End Config Data =======
+[540] Check if isForcedCP
+[560] LoadCPFile 
+[567] OK
+[567] bg: noConfigPortal = true
+[567] Connecting MultiWifi...
+[6820] WiFi connected after time: 1
+[6820] SSID: HueNet1, RSSI = -24
+[6820] Channel: 2, IP address: 192.168.2.82
+[6820] bg: WiFi OK. Try Blynk
+[6821] 
+    ___  __          __
+   / _ )/ /_ _____  / /__
+  / _  / / // / _ \/  '_/
+ /____/_/\_, /_//_/_/\_\
+        /___/ v0.6.1 on ESP32
+
+[6836] NTP time: Mon Jan 18 02:47:10 2021
+[6838] BlynkArduinoClient.connect: Connecting to account.duckdns.org:9443
+[8814] Certificate OK
+[8821] Ready (ping: 6ms).
+[8890] Connected to Blynk Server = account.duckdns.org, Token = token
+[8890] bg: WiFi+Blynk OK
+
+Blynk ESP32 using LittleFS connected.
+Board Name : ESP32_SSL
+B
+Your stored Credentials :
+MQTT Server = default-mqtt-server
+Port = 1883
+MQTT UserName = default-mqtt-username
+MQTT PWD = default-mqtt-password
+Subs Topics = default-mqtt-SubTopic
+Pubs Topics = default-mqtt-PubTopic
+Stop multiResetDetecting
+Saving config file...
+Saving config file OK
+RBRBRBRBRB
+```
+
+---
+---
+
+
 ### Debug
 
 Debug is enabled by default on Serial.
@@ -1967,6 +2634,12 @@ Sometimes, the library will only work if you update the board core to the latest
 ---
 
 ## Releases
+
+### Releases v1.2.1
+
+1. Add functions to control Config Portal from software or Virtual Switches. Check [How to trigger a Config Portal from code #25](https://github.com/khoih-prog/Blynk_WM/issues/25)
+2. Add examples to demo the new Virtual ConfigPortal SW feature
+3. Optimize code
 
 ### Major Releases v1.2.0
 
@@ -2024,10 +2697,11 @@ Submit issues to: [Blynk_Async_WM issues](https://github.com/khoih-prog/Blynk_As
 20. Add **LittleFS** support to ESP8266 as SPIFFS deprecated since **ESP8266 core 2.7.1.**
 21. Using [ESPAsyncWebServer](https://github.com/me-no-dev/ESPAsyncWebServer) instead of (ESP8266)WebServer.
 22. Add examples using RTOS MultiTask to avoid blocking in operation.
-21. Add **LittleFS** support to ESP32 using [LITTLEFS](https://github.com/lorol/LITTLEFS) Library.
+21. Add **LittleFS** support to ESP32 using [Lorol's LittleFS_esp32](https://github.com/lorol/LITTLEFS) Library.
 22. Add support to MultiDetectDetector and MRD-related examples
 23. Add Table of Contents and Version String
 24. Clean-up all compiler warnings possible.
+25. Add functions to control Config Portal from software or **Virtual Switches**.
 
 
 ---
@@ -2036,13 +2710,19 @@ Submit issues to: [Blynk_Async_WM issues](https://github.com/khoih-prog/Blynk_As
 ### Contributions and thanks
 
 1. Thanks to [me-no-dev](https://github.com/me-no-dev) for great [ESPAsyncWebServer Library](https://github.com/me-no-dev/ESPAsyncWebServer), [ESPAsyncTCP](https://github.com/me-no-dev/ESPAsyncTCP) and [AsyncTCP](https://github.com/me-no-dev/AsyncTCP).
-2. Thanks to [thorathome in GitHub](https://github.com/thorathome) and [thorathome in Blynk](https://community.blynk.cc/u/thorathome) to test, find bug, suggest and encourage to add those new features in [Blynk_WiFiManager library](https://github.com/khoih-prog/Blynk_WM) v1.0.13, such as Default Credentials/Dynamic Parms, Configurable Config Portal Title, DRD. The powerful [Async_Blynk_WM_Template](examples/Async_Blynk_WM_Template) is written by [thorathome](https://github.com/thorathome) and is included in the examples with his permission. See [WM Config Portal using BlynkSimpleEsp32/8266_WM.h](https://community.blynk.cc/t/wm-config-portal-using-blynksimpleesp32-8266-wm-h/45402).
-3. Thanks to good work of [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for working with, developing, debugging and testing.
+2. Thanks to [lorol](https://github.com/lorol) for useful [LittleFS_esp32 Library](https://github.com/lorol/LITTLEFS)
+3. Thanks to [Thor Johnson](https://github.com/thorathome) and [Thor Johnson in Blynk](https://community.blynk.cc/u/thorathome) to test, find bug, suggest and encourage to add those new features in [Blynk_WiFiManager library](https://github.com/khoih-prog/Blynk_WM) v1.0.13, such as Default Credentials/Dynamic Parms, Configurable Config Portal Title, DRD. The powerful [Async_Blynk_WM_Template](examples/Async_Blynk_WM_Template) is written by [Thor Johnson](https://github.com/thorathome) and is included in the examples with his permission.
+Check these new features thanks to his direct contribution and/or enhancement requests :
+  * [WM Config Portal using BlynkSimpleEsp32/8266_WM.h](https://community.blynk.cc/t/wm-config-portal-using-blynksimpleesp32-8266-wm-h/45402).
+  * [How to trigger a Config Portal from code #25](https://github.com/khoih-prog/Blynk_WM/issues/25)
+4. Thanks to good work of [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for working with, developing, debugging and testing.
+
 
 <table>
   <tr>
     <td align="center"><a href="https://github.com/me-no-dev"><img src="https://github.com/me-no-dev.png" width="100px;" alt="me-no-dev"/><br /><sub><b>⭐️⭐️ me-no-dev</b></sub></a><br /></td>
-    <td align="center"><a href="https://github.com/thorathome"><img src="https://github.com/thorathome.png" width="100px;" alt="thorathome"/><br /><sub><b>⭐️ thorathome</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/lorol"><img src="https://github.com/lorol.png" width="100px;" alt="lorol"/><br /><sub><b>⭐️ lorol</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/thorathome"><img src="https://github.com/thorathome.png" width="100px;" alt="thorathome"/><br /><sub><b>⭐️ Thor Johnson</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/tcpipchip"><img src="https://github.com/tcpipchip.png" width="100px;" alt="tcpipchip"/><br /><sub><b>tcpipchip</b></sub></a><br /></td>
   </tr> 
 </table>
