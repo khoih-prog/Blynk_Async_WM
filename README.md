@@ -17,6 +17,7 @@
   * [Why using Async](#why-using-async)
   * [Currently supported Boards](#currently-supported-boards)
 * [Changelog](#changelog)
+  * [Releases v1.2.2](#releases-v122)
   * [Releases v1.2.1](#releases-v121)
   * [Major Releases v1.2.0](#major-releases-v120)
   * [Releases v1.1.0](#releases-v110)
@@ -142,6 +143,10 @@ This [**BlynkESP32_BT_WF** library](https://github.com/khoih-prog/BlynkESP32_BT_
 ---
 
 ## Changelog
+
+### Releases v1.2.2
+
+1. Fix rare Config Portal bug not updating Config and dynamic Params data successfully in very noisy or weak WiFi situation
 
 ### Releases v1.2.1
 
@@ -1203,7 +1208,7 @@ The following is the sample terminal output when running example [Async_ESP8266W
 
 ```
 Starting Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
-Blynk_Async_WM SSL for ESP8266 v1.2.1
+Blynk_Async_WM SSL for ESP8266 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -1283,7 +1288,7 @@ BBBBBB
 
 ```
 Starting Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
-Blynk_Async_WM SSL for ESP8266 v1.2.1
+Blynk_Async_WM SSL for ESP8266 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFC0003
 multiResetDetectorFlag = 0xFFFC0003
@@ -1394,7 +1399,7 @@ F[229521] id: = HueNet1
 
 ```
 Starting Async_ESP8266WM_MRD_Config using LittleFS with SSL on ESP8266_NODEMCU
-Blynk_Async_WM SSL for ESP8266 v1.2.1
+Blynk_Async_WM SSL for ESP8266 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -1480,7 +1485,7 @@ The following is the sample terminal output when running example [Async_ESP32WM_
 
 ```
 Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.2.1
+Blynk_Async_WM SSL for ESP32 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -1559,7 +1564,7 @@ Pubs Topics = default-mqtt-PubTopic
 
 ```
 Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.2.1
+Blynk_Async_WM SSL for ESP32 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFC0003
 multiResetDetectorFlag = 0xFFFC0003
@@ -1664,7 +1669,7 @@ RFRFRF[188660] id: = HueNet1
 
 ```
 Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.2.1
+Blynk_Async_WM SSL for ESP32 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -1801,7 +1806,7 @@ The following is the sample terminal output when running example [Async_ESP32_Mu
 
 ```
 Starting Async_ESP32_MultiTask using LittleFS without SSL on ESP32_DEV
-Blynk_Async_WM for ESP32 v1.2.1
+Blynk_Async_WM for ESP32 v1.2.2
 ESP_DoubleResetDetector v1.1.1
 [1431] Hostname=ESP32-Async-MTask
 [1517] LoadCfgFile 
@@ -2013,7 +2018,7 @@ Blynk.resetAndEnterConfigPortal();
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.2.1
+Blynk_Async_WM SSL for ESP32 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2104,7 +2109,7 @@ Non-Persistent CP will be removed after first reset, even you didn't enter the C
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.2.1
+Blynk_Async_WM SSL for ESP32 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2219,7 +2224,7 @@ RF[66298] id: = HueNet1
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.2.1
+Blynk_Async_WM SSL for ESP32 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2318,7 +2323,7 @@ Blynk.resetAndEnterConfigPortalPersistent();
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.2.1
+Blynk_Async_WM SSL for ESP32 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2409,7 +2414,7 @@ Persistent CP will remain after resets. The only way to get rid of Config Portal
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.2.1
+Blynk_Async_WM SSL for ESP32 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2521,7 +2526,7 @@ Enter CP, input (even fake data or none) and `Save` config data to exit persiste
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.2.1
+Blynk_Async_WM SSL for ESP32 v1.2.2
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2634,6 +2639,10 @@ Sometimes, the library will only work if you update the board core to the latest
 ---
 
 ## Releases
+
+### Releases v1.2.2
+
+1. Fix rare Config Portal bug not updating Config and dynamic Params data successfully in very noisy or weak WiFi situation
 
 ### Releases v1.2.1
 

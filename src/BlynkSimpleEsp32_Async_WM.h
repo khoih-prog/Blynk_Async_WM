@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.2.1
+  Version: 1.2.2
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -26,6 +26,7 @@
   1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
   1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
   1.2.1     K Hoang      16/01/2021 Add functions to control Config Portal from software or Virtual Switches
+  1.2.2     K Hoang      28/01/2021 Fix Config Portal and Dynamic Params bugs
  ********************************************************************************************************************************/
 
 #pragma once
@@ -34,7 +35,7 @@
   #error This code is intended to run on the ESP32 platform! Please check your Tools->Board setting.
 #endif
 
-#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM for ESP32 v1.2.1"
+#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM for ESP32 v1.2.2"
 
 #define BLYNK_SEND_ATOMIC
 
@@ -197,6 +198,7 @@ typedef struct
 #if USE_DYNAMIC_PARAMETERS
   extern uint16_t NUM_MENU_ITEMS;
   extern MenuItem myMenuItems [];
+  bool *menuItemUpdated = NULL;
 #endif
 
 #define SSID_MAX_LEN      32
@@ -2033,100 +2035,134 @@ class BlynkWifi
           memset(&BlynkESP32_WM_config, 0, sizeof(BlynkESP32_WM_config));
           strcpy(BlynkESP32_WM_config.header, BLYNK_BOARD_TYPE);
         }
-
-        if (key == "id")
+        
+#if USE_DYNAMIC_PARAMETERS
+        if (!menuItemUpdated)
         {
-          BLYNK_LOG2(BLYNK_F("id: = "), value.c_str());
+          // Don't need to free
+          menuItemUpdated = new bool[NUM_MENU_ITEMS];
           
+          if (menuItemUpdated)
+          {
+            for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+            {           
+              // To flag item is not yet updated
+              menuItemUpdated[i] = false;           
+            }
+  #if ( BLYNK_WM_DEBUG > 2)                 
+            BLYNK_LOG1(BLYNK_F("h: Init menuItemUpdated" ));
+  #endif                        
+          }
+          else
+          {
+            BLYNK_LOG1(BLYNK_F("h: Error can't alloc memory for menuItemUpdated" ));
+          }
+        }  
+#endif
+
+        static bool id_Updated  = false;
+        static bool pw_Updated  = false;
+        static bool id1_Updated = false;
+        static bool pw1_Updated = false;
+        static bool sv_Updated  = false;
+        static bool tk_Updated  = false;
+        static bool sv1_Updated = false;
+        static bool tk1_Updated = false;
+        static bool pt_Updated  = false;
+        static bool nm_Updated  = false;
+
+        if (!id_Updated && (key == String("id")))
+        {
+          id_Updated = true;
           number_items_Updated++;
+          
           if (strlen(value.c_str()) < sizeof(BlynkESP32_WM_config.WiFi_Creds[0].wifi_ssid) - 1)
             strcpy(BlynkESP32_WM_config.WiFi_Creds[0].wifi_ssid, value.c_str());
           else
             strncpy(BlynkESP32_WM_config.WiFi_Creds[0].wifi_ssid, value.c_str(), sizeof(BlynkESP32_WM_config.WiFi_Creds[0].wifi_ssid) - 1);
         }
-        else if (key == "pw")
+        else if (!pw_Updated && (key == String("pw")))
         {
-          BLYNK_LOG2(BLYNK_F("pw = "), value.c_str());
-          
+          pw_Updated = true;
           number_items_Updated++;
+          
           if (strlen(value.c_str()) < sizeof(BlynkESP32_WM_config.WiFi_Creds[0].wifi_pw) - 1)
             strcpy(BlynkESP32_WM_config.WiFi_Creds[0].wifi_pw, value.c_str());
           else
             strncpy(BlynkESP32_WM_config.WiFi_Creds[0].wifi_pw, value.c_str(), sizeof(BlynkESP32_WM_config.WiFi_Creds[0].wifi_pw) - 1);
         }
-
-        else if (key == "id1")
+        else if (!id1_Updated && (key == String("id1")))
         {
-          BLYNK_LOG2(BLYNK_F("id1 = "), value.c_str());
-          
+          id1_Updated = true;
           number_items_Updated++;
+          
           if (strlen(value.c_str()) < sizeof(BlynkESP32_WM_config.WiFi_Creds[1].wifi_ssid) - 1)
             strcpy(BlynkESP32_WM_config.WiFi_Creds[1].wifi_ssid, value.c_str());
           else
             strncpy(BlynkESP32_WM_config.WiFi_Creds[1].wifi_ssid, value.c_str(), sizeof(BlynkESP32_WM_config.WiFi_Creds[1].wifi_ssid) - 1);
         }
-        else if (key == "pw1")
+        else if (!pw1_Updated && (key == String("pw1")))
         {
-          BLYNK_LOG2(BLYNK_F("pw1 = "), value.c_str());
-        
+          pw1_Updated = true;
           number_items_Updated++;
+          
           if (strlen(value.c_str()) < sizeof(BlynkESP32_WM_config.WiFi_Creds[1].wifi_pw) - 1)
             strcpy(BlynkESP32_WM_config.WiFi_Creds[1].wifi_pw, value.c_str());
           else
             strncpy(BlynkESP32_WM_config.WiFi_Creds[1].wifi_pw, value.c_str(), sizeof(BlynkESP32_WM_config.WiFi_Creds[1].wifi_pw) - 1);
         }
-        else if (key == "sv")
+        else if (!sv_Updated && (key == String("sv")))
         {
-          BLYNK_LOG2(BLYNK_F("sv = "), value.c_str());
-          
+          sv_Updated = true;
           number_items_Updated++;
+          
           if (strlen(value.c_str()) < sizeof(BlynkESP32_WM_config.Blynk_Creds[0].blynk_server) - 1)
             strcpy(BlynkESP32_WM_config.Blynk_Creds[0].blynk_server, value.c_str());
           else
             strncpy(BlynkESP32_WM_config.Blynk_Creds[0].blynk_server, value.c_str(), sizeof(BlynkESP32_WM_config.Blynk_Creds[0].blynk_server) - 1);
         }
-        else if (key == "tk")
+        else if (!tk_Updated && (key == String("tk")))
         {
-          BLYNK_LOG2(BLYNK_F("tk = "), value.c_str());
-          
+          tk_Updated = true;
           number_items_Updated++;
+          
           if (strlen(value.c_str()) < sizeof(BlynkESP32_WM_config.Blynk_Creds[0].blynk_token) - 1)
             strcpy(BlynkESP32_WM_config.Blynk_Creds[0].blynk_token, value.c_str());
           else
             strncpy(BlynkESP32_WM_config.Blynk_Creds[0].blynk_token, value.c_str(), sizeof(BlynkESP32_WM_config.Blynk_Creds[0].blynk_token) - 1);
         }
-        else if (key == "sv1")
+        else if (!sv1_Updated && (key == String("sv1")))
         {
-          BLYNK_LOG2(BLYNK_F("sv1 = "), value.c_str());
-          
+          sv1_Updated = true;
           number_items_Updated++;
+          
           if (strlen(value.c_str()) < sizeof(BlynkESP32_WM_config.Blynk_Creds[1].blynk_server) - 1)
             strcpy(BlynkESP32_WM_config.Blynk_Creds[1].blynk_server, value.c_str());
           else
             strncpy(BlynkESP32_WM_config.Blynk_Creds[1].blynk_server, value.c_str(), sizeof(BlynkESP32_WM_config.Blynk_Creds[1].blynk_server) - 1);
         }
-        else if (key == "tk1")
+        else if (!tk1_Updated && (key == String("tk1")))
         {
-          BLYNK_LOG2(BLYNK_F("tk1 = "), value.c_str());
-          
+          tk1_Updated = true;
           number_items_Updated++;
+          
           if (strlen(value.c_str()) < sizeof(BlynkESP32_WM_config.Blynk_Creds[1].blynk_token) - 1)
             strcpy(BlynkESP32_WM_config.Blynk_Creds[1].blynk_token, value.c_str());
           else
             strncpy(BlynkESP32_WM_config.Blynk_Creds[1].blynk_token, value.c_str(), sizeof(BlynkESP32_WM_config.Blynk_Creds[1].blynk_token) - 1);
         }
-        else if (key == "pt")
+        else if (!pt_Updated && (key == String("pt")))
         {
-          BLYNK_LOG2(BLYNK_F("pt = "), value.toInt());
-          
+          pt_Updated = true;
           number_items_Updated++;
+          
           BlynkESP32_WM_config.blynk_port = value.toInt();
         }
-        else if (key == "nm")
+        else if (!nm_Updated && (key == String("nm")))
         {
-          BLYNK_LOG2(BLYNK_F("nm = "), value.c_str());
-          
+          nm_Updated = true;
           number_items_Updated++;
+          
           if (strlen(value.c_str()) < sizeof(BlynkESP32_WM_config.board_name) - 1)
             strcpy(BlynkESP32_WM_config.board_name, value.c_str());
           else
@@ -2136,9 +2172,12 @@ class BlynkWifi
 #if USE_DYNAMIC_PARAMETERS
         for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
         {
-          if (key == myMenuItems[i].id)
+          if ( !menuItemUpdated[i] && (key == myMenuItems[i].id) )
           {
-            //BLYNK_LOG4(F("h:"), myMenuItems[i].id, F("="), value.c_str() );
+            BLYNK_LOG4(BLYNK_F("h:"), myMenuItems[i].id, BLYNK_F("="), value.c_str() );
+            
+            menuItemUpdated[i] = true;
+            
             number_items_Updated++;
 
             // Actual size of pdata is [maxlen + 1]
