@@ -10,7 +10,7 @@
   Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
   Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
   Licensed under MIT license
-  Version: 1.2.1
+  Version: 1.2.2
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -19,6 +19,7 @@
   1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
   1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
   1.2.1     K Hoang      16/01/2021 Add functions to control Config Portal from software or Virtual Switches
+  1.2.2     K Hoang      28/01/2021 Fix Config Portal and Dynamic Params bugs
  ********************************************************************************************************************************/
 
 #ifndef MY_WIFI_CREDENTIALS_h
