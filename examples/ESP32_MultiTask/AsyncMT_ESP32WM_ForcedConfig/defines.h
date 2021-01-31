@@ -8,16 +8,6 @@
   Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
   Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
   Licensed under MIT license
-  Version: 1.2.2
-
-  Version    Modified By   Date      Comments
-  -------    -----------  ---------- -----------
-  1.0.16    K Hoang      25/08/2020 Initial coding to use (ESP)AsyncWebServer instead of (ESP8266)WebServer. 
-                                    Bump up to v1.0.16 to sync with Blynk_WM v1.0.16
-  1.1.0     K Hoang      26/11/2020 Add examples using RTOS MultiTask to avoid blocking in operation.
-  1.2.0     K Hoang      01/01/2021 Add support to ESP32 LittleFS. Remove possible compiler warnings. Update examples. Add MRD
-  1.2.1     K Hoang      16/01/2021 Add functions to control Config Portal from software or Virtual Switches
-  1.2.2     K Hoang      28/01/2021 Fix Config Portal and Dynamic Params bugs
  ********************************************************************************************************************************/
 
 #ifndef defines_h
@@ -65,7 +55,7 @@
 // Force some params in Blynk, only valid for library version 1.0.1 and later
 #define TIMEOUT_RECONNECT_WIFI                    10000L
 #define RESET_IF_CONFIG_TIMEOUT                   true
-#define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
+#define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    3
 
 #define USE_DYNAMIC_PARAMETERS                    true
 // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
