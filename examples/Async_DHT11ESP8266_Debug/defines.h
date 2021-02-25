@@ -51,14 +51,6 @@
   #define EEPROM_START  0
 #endif
 
-// Force some params in Blynk, only valid for library version 1.0.1 and later
-#define TIMEOUT_RECONNECT_WIFI                    10000L
-#define RESET_IF_CONFIG_TIMEOUT                   true
-#define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
-
-#define USE_DYNAMIC_PARAMETERS                    true
-// Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
-
 //You have to download Blynk WiFiManager Blynk_Async_WM library at //https://github.com/khoih-prog/Blynk_Async_WM
 // In order to enable (USE_BLYNK_WM = true). Otherwise, use (USE_BLYNK_WM = false)
 #define USE_BLYNK_WM   true
@@ -68,6 +60,29 @@
 #define USE_SSL     false
 
 #if USE_BLYNK_WM
+
+  /////////////////////////////////////////////
+
+  // Add customs headers from v1.2.0
+  #define USING_CUSTOMS_STYLE                 true
+  #define USING_CUSTOMS_HEAD_ELEMENT          true
+  #define USING_CORS_FEATURE                  true
+  
+  /////////////////////////////////////////////
+  
+  // Force some params in Blynk, only valid for library version 1.0.1 and later
+  #define TIMEOUT_RECONNECT_WIFI                    10000L
+  #define RESET_IF_CONFIG_TIMEOUT                   true
+  
+  #define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
+  
+  // Config Timeout 120s (default 60s)
+  #define CONFIG_TIMEOUT                            120000L
+  
+  #define USE_DYNAMIC_PARAMETERS                    true
+  //////////////////////////////////////////
+  // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
+  
   #if USE_SSL
     #include <BlynkSimpleEsp8266_SSL_Async_WM.h>        //https://github.com/khoih-prog/Blynk_Async_WM
   #else

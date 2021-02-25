@@ -8,7 +8,7 @@
   Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
   Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
   Licensed under MIT license
-  Version: 1.2.3
+  Version: 1.3.0
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -19,6 +19,7 @@
   1.2.1     K Hoang      16/01/2021 Add functions to control Config Portal from software or Virtual Switches
   1.2.2     K Hoang      28/01/2021 Fix Config Portal and Dynamic Params bugs
   1.2.3     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
+  1.3.0     K Hoang      24/02/2021 Add customs HTML header feature and support to ESP32-S2.
  ********************************************************************************************************************************/
 
 #include "defines.h"
@@ -207,7 +208,12 @@ void BlynkCheck( void * pvParameters )
 /////////// Set Core and Priority. Be careful here ///////////
 
 #define USING_CORE_1      0
-#define USING_CORE_2      1
+
+#if ( ARDUINO_ESP32S2_DEV || ARDUINO_FEATHERS2 || ARDUINO_PROS2 || ARDUINO_MICROS2 )
+  #define USING_CORE_2      0
+#else
+  #define USING_CORE_2      1  
+#endif
 
 //Low priority numbers denote low priority tasks. The idle task has priority 0 (tskIDLE_PRIORITY).
 //MAX_PRIORITIES = 25 => Can use priority from 0-24
@@ -221,6 +227,11 @@ void BlynkCheck( void * pvParameters )
 #define BlynkCheck_Priority                 ( BlynkRun_Priority )
 
 ////////////////// End Free-RTOS related code //////////////////
+
+#if USING_CUSTOMS_STYLE
+const char NewCustomsStyle[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}\
+button{background-color:blue;color:white;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
+#endif
 
 void setup()
 {
@@ -268,6 +279,22 @@ void setup()
   //Blynk.setSTAStaticIPConfig(IPAddress(192, 168, 2, 220), IPAddress(192, 168, 2, 1), IPAddress(255, 255, 255, 0),
   //                           IPAddress(4, 4, 4, 4), IPAddress(8, 8, 8, 8));
 
+//////////////////////////////////////////////
+  
+#if USING_CUSTOMS_STYLE
+  Blynk.setCustomsStyle(NewCustomsStyle);
+#endif
+
+#if USING_CUSTOMS_HEAD_ELEMENT
+  Blynk.setCustomsHeadElement("<style>html{filter: invert(10%);}</style>");
+#endif
+
+#if USING_CORS_FEATURE  
+  Blynk.setCORSHeader("Your Access-Control-Allow-Origin");
+#endif
+
+  //////////////////////////////////////////////
+  
   // Use this to default DHCP hostname to ESP8266-XXXXXX or ESP32-XXXXXX
   //Blynk.begin();
   // Use this to personalize DHCP hostname (RFC952 conformed)

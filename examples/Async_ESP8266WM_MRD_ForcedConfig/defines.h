@@ -17,11 +17,11 @@
   #error This code is intended to run on the ESP8266 platform! Please check your Tools->Board setting.
 #endif
 
-#define BLYNK_PRINT Serial
+#define BLYNK_PRINT                   Serial
 
-#define BLYNK_WM_DEBUG                1
+#define BLYNK_WM_DEBUG                3
 
-#define USING_MRD     true
+#define USING_MRD                     true
 
 #if USING_MRD
   // These definitions must be placed before #include <ESP_MultiResetDetector.h> to be used
@@ -83,16 +83,30 @@
   #define EEPROM_START  0
 #endif
 
+/////////////////////////////////////////////
+
+// Add customs headers from v1.2.0
+#define USING_CUSTOMS_STYLE                 true
+#define USING_CUSTOMS_HEAD_ELEMENT          true
+#define USING_CORS_FEATURE                  true
+
+/////////////////////////////////////////////
+
 // Force some params in Blynk, only valid for library version 1.0.1 and later
 #define TIMEOUT_RECONNECT_WIFI                    10000L
 #define RESET_IF_CONFIG_TIMEOUT                   true
+
 #define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
 
+// Config Timeout 120s (default 60s)
+#define CONFIG_TIMEOUT                            120000L
+
 #define USE_DYNAMIC_PARAMETERS                    true
+//////////////////////////////////////////
 // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
 
-//#define USE_SSL   true
-#define USE_SSL   false
+#define USE_SSL   true
+//#define USE_SSL   false
 
 #if USE_SSL
   #include <BlynkSimpleEsp8266_SSL_Async_WM.h>        //https://github.com/khoih-prog/Blynk_Async_WM

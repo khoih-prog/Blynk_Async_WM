@@ -15,6 +15,8 @@
 
 #ifndef ESP32
   #error This code is intended to run on the ESP32 platform! Please check your Tools->Board setting.
+#elif ( ARDUINO_ESP32S2_DEV || ARDUINO_FEATHERS2 || ARDUINO_PROS2 || ARDUINO_MICROS2 )
+  #error This code is not supporting ESP32-S2 now.
 #endif
 
 #define BLYNK_PRINT Serial
@@ -31,8 +33,15 @@
 // (USE_LITTLEFS == false) and (USE_SPIFFS == true)     => using SPIFFS for configuration data in WiFiManager
 // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
 
-#define USE_LITTLEFS          true
-#define USE_SPIFFS            false
+#if ( ARDUINO_ESP32S2_DEV || ARDUINO_FEATHERS2 || ARDUINO_PROS2 || ARDUINO_MICROS2 )
+  // Currently, ESP32-S2 only supporting EEPROM. Will fix to support LittleFS and SPIFFS
+  #define USE_LITTLEFS          false
+  #define USE_SPIFFS            false
+  #warning ESP32-S2 only support supporting EEPROM now. Must use with PSRAM.
+#else
+  #define USE_LITTLEFS          true
+  #define USE_SPIFFS            false
+#endif
 
 #if USE_LITTLEFS
   //LittleFS has higher priority
@@ -52,13 +61,27 @@
   #define EEPROM_START   0
 #endif
 
+/////////////////////////////////////////////
+
+// Add customs headers from v1.2.0
+#define USING_CUSTOMS_STYLE                 true
+#define USING_CUSTOMS_HEAD_ELEMENT          true
+#define USING_CORS_FEATURE                  true
+
+/////////////////////////////////////////////
+
 // Force some params in Blynk, only valid for library version 1.0.1 and later
 #define TIMEOUT_RECONNECT_WIFI                    10000L
 #define RESET_IF_CONFIG_TIMEOUT                   true
+
 #define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    5
 
+// Config Timeout 120s (default 60s)
+#define CONFIG_TIMEOUT                            120000L
+
 #define USE_DYNAMIC_PARAMETERS                    true
-// Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
+//////////////////////////////////////////
+// Those above #define's must be placed before #include <BlynkSimpleEsp32_Async_WM.h>
 
 //#define USE_SSL   true
 #define USE_SSL   false
