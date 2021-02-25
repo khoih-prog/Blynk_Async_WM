@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.2.3
+  Version: 1.3.0
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -28,15 +28,19 @@
   1.2.1     K Hoang      16/01/2021 Add functions to control Config Portal from software or Virtual Switches
   1.2.2     K Hoang      28/01/2021 Fix Config Portal and Dynamic Params bugs
   1.2.3     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
+  1.3.0     K Hoang      24/02/2021 Add customs HTML header feature and support to ESP32-S2.
  ********************************************************************************************************************************/
 
 #pragma once
+
+#ifndef BlynkSimpleEsp8266_SSL_Async_WM_h
+#define BlynkSimpleEsp8266_SSL_Async_WM_h
 
 #ifndef ESP8266
   #error This code is intended to run on the ESP8266 platform! Please check your Tools->Board setting.
 #endif
 
-#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM SSL for ESP8266 v1.2.3"
+#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM SSL for ESP8266 v1.3.0"
 
 #include <version.h>
 
@@ -307,15 +311,20 @@ typedef struct
 
 // Configurable items besides fixed Header
 #define NUM_CONFIGURABLE_ITEMS    ( 2 + (2 * NUM_WIFI_CREDENTIALS) + (2 * NUM_BLYNK_CREDENTIALS) )
+
+#define HEADER_MAX_LEN            16
+#define BOARD_NAME_MAX_LEN        24
+
 typedef struct Configuration
 {
-  char header         [16];
+  char header         [HEADER_MAX_LEN];
   WiFi_Credentials  WiFi_Creds  [NUM_WIFI_CREDENTIALS];
   Blynk_Credentials Blynk_Creds [NUM_BLYNK_CREDENTIALS];
   int  blynk_port;
-  char board_name     [24];
+  char board_name     [BOARD_NAME_MAX_LEN];
   int  checkSum;
 } Blynk_WM_Configuration;
+
 // Currently CONFIG_DATA_SIZE  =  ( 48 + (96 * NUM_WIFI_CREDENTIALS) + (68 * NUM_BLYNK_CREDENTIALS) ) = 376
 
 uint16_t CONFIG_DATA_SIZE = sizeof(Blynk_WM_Configuration);
@@ -326,9 +335,12 @@ extern Blynk_WM_Configuration defaultConfig;
 // Permit special chars such as # and %
 
 // -- HTML page fragments
-const char BLYNK_WM_HTML_HEAD[]     /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>BlynkSimpleEsp8266_SSL_Async_WM</title><style>div,input{padding:2px;font-size:1em;}input{width:95%;}\
-body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.5rem;margin:0px;}\
-</style></head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
+
+const char BLYNK_WM_HTML_HEAD_START[] /*PROGMEM*/ = "<!DOCTYPE html><html><head><title>BlynkSimpleEsp8266_SSL_Async_WM</title>";
+
+const char BLYNK_WM_HTML_HEAD_STYLE[] /*PROGMEM*/ = "<style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>";
+
+const char BLYNK_WM_HTML_HEAD_END[]   /*PROGMEM*/ = "</head><div style=\"text-align:left;display:inline-block;min-width:260px;\">\
 <fieldset><div><label>WiFi SSID</label><input value=\"[[id]]\"id=\"id\"><div></div></div>\
 <div><label>PWD</label><input value=\"[[pw]]\"id=\"pw\"><div></div></div>\
 <div><label>WiFi SSID1</label><input value=\"[[id1]]\"id=\"id1\"><div></div></div>\
@@ -339,6 +351,7 @@ body{text-align: center;}button{background-color:#16A1E7;color:#fff;line-height:
 <div><label>Token1</label><input value=\"[[tk1]]\"id=\"tk1\"><div></div></div>\
 <div><label>Port</label><input value=\"[[pt]]\"id=\"pt\"><div></div></div></fieldset>\
 <fieldset><div><label>Board Name</label><input value=\"[[nm]]\"id=\"nm\"><div></div></div></fieldset>";
+
 const char BLYNK_WM_FLDSET_START[]  /*PROGMEM*/ = "<fieldset>";
 const char BLYNK_WM_FLDSET_END[]    /*PROGMEM*/ = "</fieldset>";
 const char BLYNK_WM_HTML_PARAM[]    /*PROGMEM*/ = "<div><label>{b}</label><input value='[[{v}]]'id='{i}'><div></div></div>";
@@ -354,7 +367,23 @@ udVal('pt',document.getElementById('pt').value);udVal('nm',document.getElementBy
 const char BLYNK_WM_HTML_SCRIPT_ITEM[]  /*PROGMEM*/ = "udVal('{d}',document.getElementById('{d}').value);";
 const char BLYNK_WM_HTML_SCRIPT_END[]   /*PROGMEM*/ = "alert('Updated');}</script>";
 const char BLYNK_WM_HTML_END[]          /*PROGMEM*/ = "</html>";
-///
+
+//////////////////////////////////////////
+
+//KH Add repeatedly used const
+//KH, from v1.2.0
+const char WM_HTTP_HEAD_CL[]         = "Content-Length";
+const char WM_HTTP_HEAD_TEXT_HTML[]  = "text/html";
+const char WM_HTTP_HEAD_TEXT_PLAIN[] = "text/plain";
+const char WM_HTTP_CACHE_CONTROL[]   = "Cache-Control";
+const char WM_HTTP_NO_STORE[]        = "no-cache, no-store, must-revalidate";
+const char WM_HTTP_PRAGMA[]          = "Pragma";
+const char WM_HTTP_NO_CACHE[]        = "no-cache";
+const char WM_HTTP_EXPIRES[]         = "Expires";
+const char WM_HTTP_CORS[]            = "Access-Control-Allow-Origin";
+const char WM_HTTP_CORS_ALLOW_ALL[]  = "*";
+
+//////////////////////////////////////////
 
 #define BLYNK_SERVER_HARDWARE_PORT    9443
 
@@ -657,6 +686,11 @@ class BlynkWifi
         {
           retryTimes = 0;
 
+#if ( ARDUINO_ESP32S2_DEV || ARDUINO_FEATHERS2 || ARDUINO_PROS2 || ARDUINO_MICROS2 )
+          // Fix ESP32-S2 issue with WebServer (https://github.com/espressif/arduino-esp32/issues/4348)
+          delay(1);
+#endif
+
           return;
         }
         else
@@ -725,6 +759,8 @@ class BlynkWifi
       }
     }
 
+    //////////////////////////////////////////////
+
     void setHostname()
     {
       if (RFC952_hostname[0] != 0)
@@ -732,17 +768,23 @@ class BlynkWifi
         WiFi.hostname(RFC952_hostname);
       }
     }
+    
+    //////////////////////////////////////////////
 
     void setConfigPortalIP(IPAddress portalIP = IPAddress(192, 168, 4, 1))
     {
       portal_apIP = portalIP;
     }
+    
+    //////////////////////////////////////////////
 
     void setConfigPortal(String ssid = "", String pass = "")
     {
       portal_ssid = ssid;
       portal_pass = pass;
     }
+    
+    //////////////////////////////////////////////
 
 #define MIN_WIFI_CHANNEL      1
 #define MAX_WIFI_CHANNEL      11
@@ -759,6 +801,8 @@ class BlynkWifi
 
       return WiFiAPChannel;
     }
+    
+    //////////////////////////////////////////////
     
     void setSTAStaticIPConfig(IPAddress ip, IPAddress gw, IPAddress sn = IPAddress(255, 255, 255, 0),
                               IPAddress dns_address_1 = IPAddress(0, 0, 0, 0),
@@ -780,6 +824,8 @@ class BlynkWifi
       else
         static_DNS2   = dns_address_2;
     }
+    
+    //////////////////////////////////////////////
 
     String getWiFiSSID(uint8_t index)
     { 
@@ -791,6 +837,8 @@ class BlynkWifi
 
       return (String(Blynk8266_WM_config.WiFi_Creds[index].wifi_ssid));
     }
+    
+    //////////////////////////////////////////////
 
     String getWiFiPW(uint8_t index)
     {
@@ -802,6 +850,8 @@ class BlynkWifi
 
       return (String(Blynk8266_WM_config.WiFi_Creds[index].wifi_pw));
     }
+    
+    //////////////////////////////////////////////
 
     String getServerName(uint8_t index)
     {
@@ -813,6 +863,8 @@ class BlynkWifi
 
       return (String(Blynk8266_WM_config.Blynk_Creds[index].blynk_server));
     }
+    
+    //////////////////////////////////////////////
 
     String getToken(uint8_t index)
     {
@@ -824,6 +876,8 @@ class BlynkWifi
 
       return (String(Blynk8266_WM_config.Blynk_Creds[index].blynk_token));
     }
+    
+    //////////////////////////////////////////////
 
     String getBoardName()
     {
@@ -832,6 +886,8 @@ class BlynkWifi
 
       return (String(Blynk8266_WM_config.board_name));
     }
+    
+    //////////////////////////////////////////////
 
     int getHWPort()
     {
@@ -840,6 +896,8 @@ class BlynkWifi
 
       return (Blynk8266_WM_config.blynk_port);
     }
+    
+    //////////////////////////////////////////////
 
     Blynk_WM_Configuration* getFullConfigData(Blynk_WM_Configuration *configData)
     {
@@ -852,12 +910,16 @@ class BlynkWifi
 
       return (configData);
     }
+    
+    //////////////////////////////////////////////
 
     void clearConfigData()
     {
       memset(&Blynk8266_WM_config, 0, sizeof(Blynk8266_WM_config));
       saveConfigData();
     }
+    
+    //////////////////////////////////////////////
     
     // Forced CP => Flag = 0xBEEFBEEF. Else => No forced CP
     // Flag to be stored at (EEPROM_START + DRD_FLAG_DATA_SIZE + CONFIG_DATA_SIZE) 
@@ -881,6 +943,8 @@ class BlynkWifi
       ESP.reset();
     }
     
+    //////////////////////////////////////////////
+    
     // This will keep CP forever, until you successfully enter CP, and Save data to clear the flag.
     void resetAndEnterConfigPortalPersistent()
     {
@@ -893,7 +957,73 @@ class BlynkWifi
       ESP.reset();
     }
     
-    //////////////////////////////////////////////
+    //////////////////////////////////////
+    
+    // Add customs headers from v1.3.0
+    
+    // New from v1.2.0, for configure CORS Header, default to WM_HTTP_CORS_ALLOW_ALL = "*"
+
+#if USING_CUSTOMS_STYLE
+    //sets a custom style, such as color
+    // "<style>div,input{padding:5px;font-size:1em;}
+    // input{width:95%;}body{text-align: center;}
+    // button{background-color:#16A1E7;color:#fff;line-height:2.4rem;font-size:1.2rem;width:100%;}
+    // fieldset{border-radius:0.3rem;margin:0px;}</style>";
+    void setCustomsStyle(const char* CustomsStyle = BLYNK_WM_HTML_HEAD_STYLE) 
+    {
+      BLYNK_WM_HTML_HEAD_CUSTOMS_STYLE = CustomsStyle;
+      BLYNK_LOG2(F("Set CustomsStyle to : "), BLYNK_WM_HTML_HEAD_CUSTOMS_STYLE);
+    }
+    
+    //////////////////////////////////////
+    
+    const char* getCustomsStyle()
+    {
+      BLYNK_LOG2(F("Get CustomsStyle = "), BLYNK_WM_HTML_HEAD_CUSTOMS_STYLE);
+      return BLYNK_WM_HTML_HEAD_CUSTOMS_STYLE;
+    }
+#endif
+
+    //////////////////////////////////////
+
+#if USING_CUSTOMS_HEAD_ELEMENT    
+    //sets a custom element to add to head, like a new style tag
+    void setCustomsHeadElement(const char* CustomsHeadElement = NULL) 
+    {
+      _CustomsHeadElement = CustomsHeadElement;
+      BLYNK_LOG2(F("Set CustomsHeadElement to : "), _CustomsHeadElement);
+    }
+    
+    //////////////////////////////////////
+    
+    const char* getCustomsHeadElement()
+    {
+      BLYNK_LOG2(F("Get CustomsHeadElement = "), _CustomsHeadElement);
+      return _CustomsHeadElement;
+    }
+#endif
+
+    //////////////////////////////////////
+    
+#if USING_CORS_FEATURE   
+    void setCORSHeader(const char* CORSHeaders = NULL)
+    {     
+      _CORS_Header = CORSHeaders;
+
+      BLYNK_LOG2(F("Set CORS Header to : "), _CORS_Header);
+    }
+    
+    //////////////////////////////////////
+    
+    const char* getCORSHeader()
+    {      
+      BLYNK_LOG2(F("Get CORS Header = "), _CORS_Header);
+      return _CORS_Header;
+    }
+#endif
+          
+    //////////////////////////////////////
+
 
   private:
     AsyncWebServer *server;
@@ -927,7 +1057,26 @@ class BlynkWifi
     IPAddress static_DNS1 = IPAddress(0, 0, 0, 0);
     IPAddress static_DNS2 = IPAddress(0, 0, 0, 0);
 
+/////////////////////////////////////
+    
+    // Add customs headers from v1.2.0
+    
+#if USING_CUSTOMS_STYLE
+    const char* BLYNK_WM_HTML_HEAD_CUSTOMS_STYLE = NULL;
+#endif
+    
+#if USING_CUSTOMS_HEAD_ELEMENT
+    const char* _CustomsHeadElement = NULL;
+#endif
+    
+#if USING_CORS_FEATURE    
+    const char* _CORS_Header        = WM_HTTP_CORS_ALLOW_ALL;   //"*";
+#endif
+       
+    //////////////////////////////////////
+    
 #define RFC952_HOSTNAME_MAXLEN      24
+
     char RFC952_hostname[RFC952_HOSTNAME_MAXLEN + 1];
 
     char* getRFC952_hostname(const char* iHostname)
@@ -952,6 +1101,8 @@ class BlynkWifi
 
       return RFC952_hostname;
     }
+    
+    //////////////////////////////////////
 
     void displayConfigData(Blynk_WM_Configuration configData)
     {
@@ -968,6 +1119,8 @@ class BlynkWifi
       BLYNK_LOG2(BLYNK_F("Port="),      configData.blynk_port);
       BLYNK_LOG1(BLYNK_F("======= End Config Data ======="));
     }
+    
+    //////////////////////////////////////
 
     void displayWiFiData()
     {
@@ -975,6 +1128,8 @@ class BlynkWifi
                  BLYNK_F(",SN="), WiFi.subnetMask().toString());
       BLYNK_LOG4(BLYNK_F("DNS1="), WiFi.dnsIP(0).toString(), BLYNK_F(",DNS2="), WiFi.dnsIP(1).toString());
     }
+    
+    //////////////////////////////////////
 
     int calcChecksum()
     {
@@ -986,14 +1141,16 @@ class BlynkWifi
 
       return checkSum;
     }
+    
+    //////////////////////////////////////
 
 #if ( USE_LITTLEFS || USE_SPIFFS )
 
-#define  CONFIG_FILENAME              BLYNK_F("/wmssl_conf.dat")
-#define  CONFIG_FILENAME_BACKUP       BLYNK_F("/wmssl_conf.bak")
+#define  CONFIG_FILENAME                  BLYNK_F("/wmssl_conf.dat")
+#define  CONFIG_FILENAME_BACKUP           BLYNK_F("/wmssl_conf.bak")
 
-#define  CREDENTIALS_FILENAME         BLYNK_F("/wmssl_cred.dat")
-#define  CREDENTIALS_FILENAME_BACKUP  BLYNK_F("/wmssl_cred.bak")
+#define  CREDENTIALS_FILENAME             BLYNK_F("/wmssl_cred.dat")
+#define  CREDENTIALS_FILENAME_BACKUP        BLYNK_F("/wmssl_cred.bak")
 
 #define  CONFIG_PORTAL_FILENAME           BLYNK_F("/wm_cp.dat")
 #define  CONFIG_PORTAL_FILENAME_BACKUP    BLYNK_F("/wm_cp.bak")
@@ -1208,6 +1365,8 @@ class BlynkWifi
       
       return true;    
     }
+    
+    //////////////////////////////////////
 
     bool loadDynamicData()
     {
@@ -1267,6 +1426,8 @@ class BlynkWifi
       
       return true;    
     }
+    
+    //////////////////////////////////////
 
     void saveDynamicData()
     {
@@ -1351,6 +1512,8 @@ class BlynkWifi
     }
 #endif
 
+    //////////////////////////////////////
+
     void loadConfigData()
     {
       File file = FileFS.open(CONFIG_FILENAME, "r");
@@ -1376,6 +1539,8 @@ class BlynkWifi
       BLYNK_LOG1(BLYNK_F("OK"));
       file.close();
     }
+    
+    //////////////////////////////////////
 
     void saveConfigData()
     {
@@ -1582,6 +1747,8 @@ class BlynkWifi
 
       return true;
     }
+    
+    //////////////////////////////////////
 
 #else
 
@@ -1625,6 +1792,7 @@ class BlynkWifi
       EEPROM.put(BLYNK_EEPROM_START + CONFIG_DATA_SIZE, readForcedConfigPortalFlag);
       EEPROM.commit();
     }
+    
     //////////////////////////////////////////////
     
     void clearForcedCP()
@@ -1732,7 +1900,8 @@ class BlynkWifi
       
       return true;    
     }
-
+    
+    //////////////////////////////////////
 
     bool EEPROM_getDynamicData()
     {
@@ -1772,6 +1941,8 @@ class BlynkWifi
       
       return true;
     }
+    
+    //////////////////////////////////////
 
     void EEPROM_putDynamicData()
     {
@@ -1937,6 +2108,8 @@ class BlynkWifi
 
       return true;
     }
+    
+    //////////////////////////////////////
 
     void saveConfigData()
     {
@@ -1948,6 +2121,8 @@ class BlynkWifi
       
       EEPROM.commit();
     }
+    
+    //////////////////////////////////////
     
     void saveAllConfigData()
     {
@@ -1963,8 +2138,12 @@ class BlynkWifi
       
       EEPROM.commit();
     }
+    
+    //////////////////////////////////////
 
 #endif
+
+    //////////////////////////////////////
 
     bool connectMultiBlynk()
     {
@@ -1988,6 +2167,8 @@ class BlynkWifi
       return false;
 
     }
+    
+    //////////////////////////////////////
 
     uint8_t connectMultiWiFi()
     {
@@ -2027,13 +2208,32 @@ class BlynkWifi
       return status;
     }
     
+    //////////////////////////////////////////////
+    
     // NEW
-    void createHTML(String &root_html_template)
+    void createHTML(String& root_html_template)
     {
       String pitem;
       
-      root_html_template = String(BLYNK_WM_HTML_HEAD)  + BLYNK_WM_FLDSET_START;
+      root_html_template  = BLYNK_WM_HTML_HEAD_START;
       
+  #if USING_CUSTOMS_STYLE
+      // Using Customs style when not NULL
+      if (BLYNK_WM_HTML_HEAD_CUSTOMS_STYLE)
+        root_html_template  += BLYNK_WM_HTML_HEAD_CUSTOMS_STYLE;
+      else
+        root_html_template  += BLYNK_WM_HTML_HEAD_STYLE;
+  #else     
+      root_html_template  += BLYNK_WM_HTML_HEAD_STYLE;
+  #endif
+      
+  #if USING_CUSTOMS_HEAD_ELEMENT
+      if (_CustomsHeadElement)
+        root_html_template += _CustomsHeadElement;
+  #endif          
+      
+      root_html_template += String(BLYNK_WM_HTML_HEAD_END) + BLYNK_WM_FLDSET_START;
+
 #if USE_DYNAMIC_PARAMETERS      
       for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
       {
@@ -2064,7 +2264,8 @@ class BlynkWifi
       
       return;     
     }
-    ////
+       
+    //////////////////////////////////////////////
 
     void handleRequest(AsyncWebServerRequest *request)
     {
@@ -2119,7 +2320,19 @@ class BlynkWifi
           }
 #endif
 
-          request->send(200, "text/html", result);
+          AsyncWebServerResponse *response = request->beginResponse(200, FPSTR(WM_HTTP_HEAD_TEXT_HTML), result);
+          response->addHeader(FPSTR(WM_HTTP_CACHE_CONTROL), FPSTR(WM_HTTP_NO_STORE));
+  
+#if USING_CORS_FEATURE
+          // New from v1.2.0, for configure CORS Header, default to WM_HTTP_CORS_ALLOW_ALL = "*"
+          BLYNK_LOG4(F("handleRequest:WM_HTTP_CORS:"), WM_HTTP_CORS, " : ", _CORS_Header);
+          response->addHeader(FPSTR(WM_HTTP_CORS), _CORS_Header);
+#endif
+  
+          response->addHeader(FPSTR(WM_HTTP_PRAGMA), FPSTR(WM_HTTP_NO_CACHE));
+          response->addHeader(FPSTR(WM_HTTP_EXPIRES), "-1");
+          
+          request->send(response);
 
           return;
         }
@@ -2165,97 +2378,127 @@ class BlynkWifi
         static bool pt_Updated  = false;
         static bool nm_Updated  = false;
 
-        if (!id_Updated && (key == String("id")))
+        if (key == String("id"))
         {
-          id_Updated = true;
-          number_items_Updated++;
+          if (!id_Updated)
+          {
+            id_Updated = true;          
+            number_items_Updated++;
+          }
           
           if (strlen(value.c_str()) < sizeof(Blynk8266_WM_config.WiFi_Creds[0].wifi_ssid) - 1)
             strcpy(Blynk8266_WM_config.WiFi_Creds[0].wifi_ssid, value.c_str());
           else
             strncpy(Blynk8266_WM_config.WiFi_Creds[0].wifi_ssid, value.c_str(), sizeof(Blynk8266_WM_config.WiFi_Creds[0].wifi_ssid) - 1);
         }
-        else if (!pw_Updated && (key == String("pw")))
+        else if (key == String("pw"))
         {
-          pw_Updated = true;
-          number_items_Updated++;
+          if (!pw_Updated)
+          {
+            pw_Updated = true;          
+            number_items_Updated++;
+          }
           
           if (strlen(value.c_str()) < sizeof(Blynk8266_WM_config.WiFi_Creds[0].wifi_pw) - 1)
             strcpy(Blynk8266_WM_config.WiFi_Creds[0].wifi_pw, value.c_str());
           else
             strncpy(Blynk8266_WM_config.WiFi_Creds[0].wifi_pw, value.c_str(), sizeof(Blynk8266_WM_config.WiFi_Creds[0].wifi_pw) - 1);
         }
-        else if (!id1_Updated && (key == String("id1")))
+        else if (key == String("id1"))
         {
-          id1_Updated = true;
-          number_items_Updated++;
+          if (!id1_Updated)
+          {
+            id1_Updated = true;          
+            number_items_Updated++;
+          }
           
           if (strlen(value.c_str()) < sizeof(Blynk8266_WM_config.WiFi_Creds[1].wifi_ssid) - 1)
             strcpy(Blynk8266_WM_config.WiFi_Creds[1].wifi_ssid, value.c_str());
           else
             strncpy(Blynk8266_WM_config.WiFi_Creds[1].wifi_ssid, value.c_str(), sizeof(Blynk8266_WM_config.WiFi_Creds[1].wifi_ssid) - 1);
         }
-        else if (!pw1_Updated && (key == String("pw1")))
+        else if (key == String("pw1"))
         {
-          pw1_Updated = true;
-          number_items_Updated++;
+          if (!pw1_Updated)
+          {
+            pw1_Updated = true;          
+            number_items_Updated++;
+          }
           
           if (strlen(value.c_str()) < sizeof(Blynk8266_WM_config.WiFi_Creds[1].wifi_pw) - 1)
             strcpy(Blynk8266_WM_config.WiFi_Creds[1].wifi_pw, value.c_str());
           else
             strncpy(Blynk8266_WM_config.WiFi_Creds[1].wifi_pw, value.c_str(), sizeof(Blynk8266_WM_config.WiFi_Creds[1].wifi_pw) - 1);
         }
-        else if (!sv_Updated && (key == String("sv")))
+        else if (key == String("sv"))
         {
-          sv_Updated = true;
-          number_items_Updated++;
+          if (!sv_Updated)
+          {
+            sv_Updated = true;          
+            number_items_Updated++;
+          }
           
           if (strlen(value.c_str()) < sizeof(Blynk8266_WM_config.Blynk_Creds[0].blynk_server) - 1)
             strcpy(Blynk8266_WM_config.Blynk_Creds[0].blynk_server, value.c_str());
           else
             strncpy(Blynk8266_WM_config.Blynk_Creds[0].blynk_server, value.c_str(), sizeof(Blynk8266_WM_config.Blynk_Creds[0].blynk_server) - 1);
         }
-        else if (!tk_Updated && (key == String("tk")))
+        else if (key == String("tk"))
         {
-          tk_Updated = true;
-          number_items_Updated++;
+          if (!tk_Updated)
+          {
+            tk_Updated = true;          
+            number_items_Updated++;
+          }
           
           if (strlen(value.c_str()) < sizeof(Blynk8266_WM_config.Blynk_Creds[0].blynk_token) - 1)
             strcpy(Blynk8266_WM_config.Blynk_Creds[0].blynk_token, value.c_str());
           else
             strncpy(Blynk8266_WM_config.Blynk_Creds[0].blynk_token, value.c_str(), sizeof(Blynk8266_WM_config.Blynk_Creds[0].blynk_token) - 1);
         }
-        else if (!sv1_Updated && (key == String("sv1")))
+        else if (key == String("sv1"))
         {
-          sv1_Updated = true;
-          number_items_Updated++;
+          if (!sv1_Updated)
+          {
+            sv1_Updated = true;          
+            number_items_Updated++;
+          }
           
           if (strlen(value.c_str()) < sizeof(Blynk8266_WM_config.Blynk_Creds[1].blynk_server) - 1)
             strcpy(Blynk8266_WM_config.Blynk_Creds[1].blynk_server, value.c_str());
           else
             strncpy(Blynk8266_WM_config.Blynk_Creds[1].blynk_server, value.c_str(), sizeof(Blynk8266_WM_config.Blynk_Creds[1].blynk_server) - 1);
         }
-        else if (!tk1_Updated && (key == String("tk1")))
+        else if (key == String("tk1"))
         {
-          tk1_Updated = true;
-          number_items_Updated++;
+          if (!tk1_Updated)
+          {
+            tk1_Updated = true;          
+            number_items_Updated++;
+          }
           
           if (strlen(value.c_str()) < sizeof(Blynk8266_WM_config.Blynk_Creds[1].blynk_token) - 1)
             strcpy(Blynk8266_WM_config.Blynk_Creds[1].blynk_token, value.c_str());
           else
             strncpy(Blynk8266_WM_config.Blynk_Creds[1].blynk_token, value.c_str(), sizeof(Blynk8266_WM_config.Blynk_Creds[1].blynk_token) - 1);
         }
-        else if (!pt_Updated && (key == String("pt")))
+        else if (key == String("pt"))
         {
-          pt_Updated = true;
-          number_items_Updated++;
+          if (!pt_Updated)
+          {
+            pt_Updated = true;          
+            number_items_Updated++;
+          }
           
           Blynk8266_WM_config.blynk_port = value.toInt();
         }
-        else if (!nm_Updated && (key == String("nm")))
+        else if (key == String("nm"))
         {
-          nm_Updated = true;
-          number_items_Updated++;
+          if (!nm_Updated)
+          {
+            nm_Updated = true;          
+            number_items_Updated++;
+          }
           
           if (strlen(value.c_str()) < sizeof(Blynk8266_WM_config.board_name) - 1)
             strcpy(Blynk8266_WM_config.board_name, value.c_str());
@@ -2264,31 +2507,37 @@ class BlynkWifi
         }
 
 #if USE_DYNAMIC_PARAMETERS
-        for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
+        else
         {
-          if ( !menuItemUpdated[i] && (key == myMenuItems[i].id) )
+          for (uint16_t i = 0; i < NUM_MENU_ITEMS; i++)
           {
-            BLYNK_LOG4(BLYNK_F("h:"), myMenuItems[i].id, BLYNK_F("="), value.c_str() );
-            
-            menuItemUpdated[i] = true;
-            
-            number_items_Updated++;
+            if ( !menuItemUpdated[i] && (key == myMenuItems[i].id) )
+            {
+              BLYNK_LOG4(BLYNK_F("h:"), myMenuItems[i].id, BLYNK_F("="), value.c_str() );
+              
+              if (!menuItemUpdated[i])
+              {
+                menuItemUpdated[i] = true;          
+                number_items_Updated++;
+              }
 
-            // Actual size of pdata is [maxlen + 1]
-            memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
+              // Actual size of pdata is [maxlen + 1]
+              memset(myMenuItems[i].pdata, 0, myMenuItems[i].maxlen + 1);
 
-            if ((int) strlen(value.c_str()) < myMenuItems[i].maxlen)
-              strcpy(myMenuItems[i].pdata, value.c_str());
-            else
-              strncpy(myMenuItems[i].pdata, value.c_str(), myMenuItems[i].maxlen);
-#if ( BLYNK_WM_DEBUG > 2)                   
-            BLYNK_LOG4(BLYNK_F("h2:myMenuItems["), i, BLYNK_F("]="), myMenuItems[i].pdata );
-#endif            
+              if ((int) strlen(value.c_str()) < myMenuItems[i].maxlen)
+                strcpy(myMenuItems[i].pdata, value.c_str());
+              else
+                strncpy(myMenuItems[i].pdata, value.c_str(), myMenuItems[i].maxlen);
+  #if ( BLYNK_WM_DEBUG > 2)                   
+              BLYNK_LOG4(BLYNK_F("h2:myMenuItems["), i, BLYNK_F("]="), myMenuItems[i].pdata );
+  #endif
+              break;
+            }
           }
         }
 #endif
         
-        request->send(200, "text/html", "OK");
+        request->send(200, WM_HTTP_HEAD_TEXT_HTML, "OK");
 
 #if USE_DYNAMIC_PARAMETERS
         if (number_items_Updated == NUM_CONFIGURABLE_ITEMS + NUM_MENU_ITEMS)
@@ -2321,10 +2570,15 @@ class BlynkWifi
       }    // if (server)
     }
 
+    //////////////////////////////////////////////
+
+#ifndef CONFIG_TIMEOUT
+  #warning Default CONFIG_TIMEOUT = 60s
+  #define CONFIG_TIMEOUT			60000L
+#endif
+
     void startConfigurationMode()
     {
-#define CONFIG_TIMEOUT			60000L
-
       // turn the LED_BUILTIN ON to tell us we are in configuration mode.
       digitalWrite(LED_BUILTIN, LED_ON);
 
@@ -2395,9 +2649,13 @@ class BlynkWifi
     }
 };
 
+//////////////////////////////////////////////
+
 static WiFiClientSecure _blynkWifiClient;
 static BlynkArduinoClientSecure<WiFiClientSecure> _blynkTransport(_blynkWifiClient);
 BlynkWifi<BlynkArduinoClientSecure<WiFiClientSecure> > Blynk(_blynkTransport);
 
 #include <BlynkWidgets.h>
+
+#endif    // BlynkSimpleEsp8266_SSL_Async_WM_h
 
