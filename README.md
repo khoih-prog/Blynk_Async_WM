@@ -15,6 +15,7 @@
 * [Why do we need this Blynk_Async_WM library](#why-do-we-need-this-blynk_async_wm-library)
   * [Features](#features)
   * [Why using Async](#why-using-async)
+  * [Why using SSL insecured mode now](#why-using-ssl-insecured-mode-now)
   * [Currently supported Boards](#currently-supported-boards)
 * [Changelog](#changelog)
   * [Major Releases v1.4.0](#major-releases-v140)
@@ -157,6 +158,18 @@ Thanks to this [**Blynk_Async_WM library**](https://github.com/khoih-prog/Blynk_
 - ServeStatic plugin that supports cache, Last-Modified, default index and more
 - Simple template processing engine to handle templates
 
+#### Why using SSL insecured mode now
+
+This so-called **"insecured mode"** 
+
+1. permits you to actually connect to a **TLS server** (port 443,9443, etc., especially with expired CA Certs such as **Blynk Cloud**). It won't let you connect to plain non-SSL server because full encryption is still required.
+2. You never have to worry about CA Certs' update and to include every trusted CA root certificate of every TLS server
+3. Still requires **encryption**. It just does not **validate the certificate or fingerprint**. Insecure because we could be subject to a **MITM** (**M**an-**I**n-**T**he-**M**iddle) attack.
+4. It's still much better than **plain non-SSL** mode which just communicates using no encryption at all.
+
+So this is the much better choice.
+
+For more information, check [Blynk WiFiManager for ESP8266/ESP32 (including ESP32-S2, ESP32-C3) with Multi-WiFi and Multi-Blynk. Fix SSL issue for Blynk Cloud Server now](https://community.blynk.cc/t/blynk-wifimanager-for-esp8266-esp32-including-esp32-s2-esp32-c3-with-multi-wifi-and-multi-blynk-fix-ssl-issue-for-blynk-cloud-server-now/41011/40) and [ESP8266 SSL connections down using Blynk_WiFiManager (ESP32 works fine, non-SSL 8266 works fine)](https://community.blynk.cc/t/esp8266-ssl-connections-down-using-blynk-wifimanager-esp32-works-fine-non-ssl-8266-works-fine/52144/19)
 
 #### Currently supported Boards
 
@@ -3154,6 +3167,10 @@ Submit issues to: [Blynk_Async_WM issues](https://github.com/khoih-prog/Blynk_As
 23. Add Table of Contents and Version String
 24. Clean-up all compiler warnings possible.
 25. Add functions to control Config Portal from software or **Virtual Switches**.
+26. Add support to **ESP32-S2 (ESP32-S2 Saola, AI-Thinker ESP-12K, etc.) using EEPROM, LittleFS and SPIFFS**
+27. Configurable **Customs HTML Headers**, including Customs Style, Customs Head Elements, CORS Header
+28. Add support to **ESP32-C3 using EEPROM and SPIFFS**
+29. Fix SSL issue with Blynk Cloud Server by using SSL in unsecured mode. For more information, check [Blynk WiFiManager for ESP8266/ESP32 (including ESP32-S2, ESP32-C3) with Multi-WiFi and Multi-Blynk. Fix SSL issue for Blynk Cloud Server now](https://community.blynk.cc/t/blynk-wifimanager-for-esp8266-esp32-including-esp32-s2-esp32-c3-with-multi-wifi-and-multi-blynk-fix-ssl-issue-for-blynk-cloud-server-now/41011/40) and [ESP8266 SSL connections down using Blynk_WiFiManager (ESP32 works fine, non-SSL 8266 works fine)](https://community.blynk.cc/t/esp8266-ssl-connections-down-using-blynk-wifimanager-esp32-works-fine-non-ssl-8266-works-fine/52144/19)
 
 
 ---
