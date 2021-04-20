@@ -13,10 +13,18 @@
 #ifndef defines_h
 #define defines_h
 
-#ifndef ESP32
+#if !( defined(ESP32) )
   #error This code is intended to run on the ESP32 platform! Please check your Tools->Board setting.
-#elif ( ARDUINO_ESP32S2_DEV || ARDUINO_FEATHERS2 || ARDUINO_PROS2 || ARDUINO_MICROS2 )
-  #error This code is not supporting ESP32-S2 now.
+#elif ( ARDUINO_ESP32S2_DEV || ARDUINO_FEATHERS2 || ARDUINO_ESP32S2_THING_PLUS || ARDUINO_MICROS2 || \
+        ARDUINO_METRO_ESP32S2 || ARDUINO_MAGTAG29_ESP32S2 || ARDUINO_FUNHOUSE_ESP32S2 || \
+        ARDUINO_ADAFRUIT_FEATHER_ESP32S2_NOPSRAM )
+  #error This code is not supporting ESP32-S2 now.      
+  #define BOARD_TYPE      "ESP32-S2"
+#elif ( ARDUINO_ESP32C3_DEV )
+  #error This code is not supporting ESP32-C3 now.
+  #define BOARD_TYPE      "ESP32-C3"
+#else
+  #define BOARD_TYPE      "ESP32"
 #endif
 
 #define BLYNK_PRINT Serial
@@ -33,11 +41,10 @@
 // (USE_LITTLEFS == false) and (USE_SPIFFS == true)     => using SPIFFS for configuration data in WiFiManager
 // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
 
-#if ( ARDUINO_ESP32S2_DEV || ARDUINO_FEATHERS2 || ARDUINO_PROS2 || ARDUINO_MICROS2 )
-  // Currently, ESP32-S2 only supporting EEPROM. Will fix to support LittleFS and SPIFFS
+#if ( ARDUINO_ESP32C3_DEV )
+  // Currently, ESP32-C3 only supporting SPIFFS and EEPROM. Will fix to support LittleFS
   #define USE_LITTLEFS          false
-  #define USE_SPIFFS            false
-  #warning ESP32-S2 only support supporting EEPROM now. Must use with PSRAM.
+  #define USE_SPIFFS            true
 #else
   #define USE_LITTLEFS          true
   #define USE_SPIFFS            false

@@ -8,7 +8,7 @@
   Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
   Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
   Licensed under MIT license
-  Version: 1.3.0
+  Version: 1.4.0
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -20,12 +20,14 @@
   1.2.2     K Hoang      28/01/2021 Fix Config Portal and Dynamic Params bugs
   1.2.3     K Hoang      31/01/2021 To permit autoreset after timeout if DRD/MRD or non-persistent forced-CP
   1.3.0     K Hoang      24/02/2021 Add customs HTML header feature and support to ESP32-S2.
+  1.4.0     K Hoang      19/04/2021 Add LittleFS and SPIFFS support to ESP32-S2. Add support to ESP32-C3 without LittleFS
+                                    Fix SSL issue with Blynk Cloud Server
  ********************************************************************************************************************************/
 
 #include "defines.h"
 
 #include <Ticker.h>
-#include <DHT.h>
+#include <DHT.h>        // https://github.com/adafruit/DHT-sensor-library
 
 DHT dht(DHT_PIN, DHT_TYPE);
 BlynkTimer timer;
