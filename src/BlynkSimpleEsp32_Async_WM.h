@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.4.0
+  Version: 1.4.1
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -31,6 +31,7 @@
   1.3.0     K Hoang      24/02/2021 Add customs HTML header feature and support to ESP32-S2.
   1.4.0     K Hoang      19/04/2021 Add LittleFS and SPIFFS support to ESP32-S2. Add support to ESP32-C3 without LittleFS
                                     Fix SSL issue with Blynk Cloud Server
+  1.4.1     K Hoang      24/04/2021 Fix issue of custom Blynk port (different from 8080 or 9443) not working on ESP32
  ********************************************************************************************************************************/
 
 #pragma once
@@ -42,7 +43,7 @@
   #error This code is intended to run on the ESP32 platform! Please check your Tools->Board setting.
 #endif
 
-#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM for ESP32 v1.4.0"
+#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM for ESP32 v1.4.1"
 
 #define BLYNK_SEND_ATOMIC
 
@@ -2067,7 +2068,7 @@ class BlynkWifi
       for (uint16_t i = 0; i < NUM_BLYNK_CREDENTIALS; i++)
       {
         config(BlynkESP32_WM_config.Blynk_Creds[i].blynk_token,
-               BlynkESP32_WM_config.Blynk_Creds[i].blynk_server, BLYNK_SERVER_HARDWARE_PORT);
+               BlynkESP32_WM_config.Blynk_Creds[i].blynk_server, BlynkESP32_WM_config.blynk_port);
 
         if (connect(BLYNK_CONNECT_TIMEOUT_MS) )
         {

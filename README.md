@@ -18,6 +18,7 @@
   * [Why using SSL insecured mode now](#why-using-ssl-insecured-mode-now)
   * [Currently supported Boards](#currently-supported-boards)
 * [Changelog](#changelog)
+  * [Releases v1.4.1](#releases-v141)
   * [Major Releases v1.4.0](#major-releases-v140)
   * [Major Releases v1.3.0](#major-releases-v130)
   * [Releases v1.2.3](#releases-v123)
@@ -183,6 +184,10 @@ This [**BlynkESP32_BT_WF** library](https://github.com/khoih-prog/BlynkESP32_BT_
 ---
 
 ## Changelog
+
+### Releases v1.4.1
+
+1. Fix issue of custom Blynk port (different from 8080 or 9443) not working on ESP32. Check [Custom Blynk port not working for BlynkSimpleEsp32_Async_WM.h #4](https://github.com/khoih-prog/Blynk_Async_WM/issues/4)
 
 ### Major Releases v1.4.0
 
@@ -1844,7 +1849,7 @@ The following is the sample terminal output when running example [Async_ESP32WM_
 
 ```
 Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -1923,7 +1928,7 @@ Pubs Topics = default-mqtt-PubTopic
 
 ```
 Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFC0003
 multiResetDetectorFlag = 0xFFFC0003
@@ -2028,7 +2033,7 @@ RFRFRF[188660] id: = HueNet1
 
 ```
 Starting Async_ESP32WM_MRD_Config using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2377,7 +2382,7 @@ Blynk.resetAndEnterConfigPortal();
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2468,7 +2473,7 @@ Non-Persistent CP will be removed after first reset, even you didn't enter the C
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2583,7 +2588,7 @@ RF[66298] id: = HueNet1
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2682,7 +2687,7 @@ Blynk.resetAndEnterConfigPortalPersistent();
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2773,7 +2778,7 @@ Persistent CP will remain after resets. The only way to get rid of Config Portal
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2885,7 +2890,7 @@ Enter CP, input (even fake data or none) and `Save` config data to exit persiste
 
 ```
 Starting Async_ESP32WM_MRD_ForcedConfig using LittleFS with SSL on ESP32_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_MultiResetDetector v1.1.1
 LittleFS Flag read = 0xFFFE0001
 multiResetDetectorFlag = 0xFFFE0001
@@ -2970,7 +2975,7 @@ The following is the sample terminal output when running example [Async_ESP32WM_
 
 ```
 Starting Async_ESP32WM_ForcedConfig using LittleFS with SSL on ESP32S2_DEV
-Blynk_Async_WM SSL for ESP32 v1.4.0
+Blynk_Async_WM SSL for ESP32 v1.4.1
 ESP_DoubleResetDetector v1.1.1
 [958] Set CustomsStyle to : <style>div,input{padding:5px;font-size:1em;}input{width:95%;}body{text-align: center;}button{background-color:blue;color:white;line-height:2.4rem;font-size:1.2rem;width:100%;}fieldset{border-radius:0.3rem;margin:0px;}</style>
 [980] Set CustomsHeadElement to : <style>html{filter: invert(10%);}</style>
@@ -3074,6 +3079,10 @@ Sometimes, the library will only work if you update the board core to the latest
 ---
 
 ## Releases
+
+### Releases v1.4.1
+
+1. Fix issue of custom Blynk port (different from 8080 or 9443) not working on ESP32. Check [Custom Blynk port not working for BlynkSimpleEsp32_Async_WM.h #4](https://github.com/khoih-prog/Blynk_Async_WM/issues/4)
 
 ### Major Releases v1.4.0
 
@@ -3186,7 +3195,7 @@ Check these new features thanks to his direct contribution and/or enhancement re
   * [How to trigger a Config Portal from code #25](https://github.com/khoih-prog/Blynk_WM/issues/25)
   * [Good new feature: Blynk.resetAndEnterConfigPortal() Thanks & question #27](https://github.com/khoih-prog/Blynk_WM/issues/27)
 4. Thanks to good work of [Miguel Alexandre Wisintainer](https://github.com/tcpipchip) for working with, developing, debugging and testing.
-
+5. Thanks to [komaneko](https://github.com/jjskaife) to report bugs in [Custom Blynk port not working for BlynkSimpleEsp32_Async_WM.h #4](https://github.com/khoih-prog/Blynk_Async_WM/issues/4) leading to v1.4.1
 
 <table>
   <tr>
@@ -3194,6 +3203,7 @@ Check these new features thanks to his direct contribution and/or enhancement re
     <td align="center"><a href="https://github.com/lorol"><img src="https://github.com/lorol.png" width="100px;" alt="lorol"/><br /><sub><b>⭐️ lorol</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/thorathome"><img src="https://github.com/thorathome.png" width="100px;" alt="thorathome"/><br /><sub><b>⭐️ Thor Johnson</b></sub></a><br /></td>
     <td align="center"><a href="https://github.com/tcpipchip"><img src="https://github.com/tcpipchip.png" width="100px;" alt="tcpipchip"/><br /><sub><b>tcpipchip</b></sub></a><br /></td>
+    <td align="center"><a href="https://github.com/jjskaife"><img src="https://github.com/jjskaife.png" width="100px;" alt="jjskaife"/><br /><sub><b>komaneko</b></sub></a><br /></td>
   </tr> 
 </table>
 
