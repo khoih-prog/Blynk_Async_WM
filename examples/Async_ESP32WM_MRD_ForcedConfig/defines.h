@@ -41,7 +41,7 @@
 
 #define BLYNK_PRINT                   Serial
 
-#define BLYNK_WM_DEBUG                3
+#define BLYNK_WM_DEBUG                1
 
 #define USING_MRD                     true
 
@@ -129,11 +129,26 @@
 #define CONFIG_TIMEOUT                            120000L
 
 #define USE_DYNAMIC_PARAMETERS                    true
+
+/////////////////////////////////////////////
+
+#define REQUIRE_ONE_SET_SSID_PW             false
+
+#define SCAN_WIFI_NETWORKS                  true
+
+// To be able to manually input SSID, not from a scanned SSID lists
+#define MANUAL_SSID_INPUT_ALLOWED           true
+
+// From 2-15
+#define MAX_SSID_IN_LIST                    8
+
+/////////////////////////////////////////////
+
 //////////////////////////////////////////
 // Those above #define's must be placed before #include <BlynkSimpleEsp32_Async_WM.h>
 
-//#define USE_SSL   true
-#define USE_SSL   false
+#define USE_SSL   true
+//#define USE_SSL   false
 
 #if USE_SSL
   #include <BlynkSimpleEsp32_SSL_Async_WM.h>      //https://github.com/khoih-prog/Blynk_Async_WM

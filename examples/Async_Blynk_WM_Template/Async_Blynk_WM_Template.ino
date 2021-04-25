@@ -10,7 +10,7 @@
   Based on and modified from Blynk library v0.6.1 (https://github.com/blynkkk/blynk-library/releases)
   Built by Khoi Hoang (https://github.com/khoih-prog/Blynk_Async_WM)
   Licensed under MIT license
-  Version: 1.4.1
+  Version: 1.5.0
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -25,6 +25,7 @@
   1.4.0     K Hoang      19/04/2021 Add LittleFS and SPIFFS support to ESP32-S2. Add support to ESP32-C3 without LittleFS
                                     Fix SSL issue with Blynk Cloud Server
   1.4.1     K Hoang      24/04/2021 Fix issue of custom Blynk port (different from 8080 or 9443) not working on ESP32
+  1.5.0     K Hoang      25/04/2021 Enable scan of WiFi networks for selection in Configuration Portal
  ********************************************************************************************************************************/
 
 // Sketch uses Arduino IDE-selected ESP32 and ESP8266 to select compile choices
@@ -234,6 +235,20 @@
   // Blynk tries to reconnect X times before posting the Config Portal. Default is 10. I like 3.  
   #define CONFIG_TIMEOUT_RETRYTIMES_BEFORE_RESET    3  // Library default is 10 (times 2) - DEBUG SET AT 2
   #define RESET_IF_CONFIG_TIMEOUT                   true
+
+  /////////////////////////////////////////////
+
+  #define REQUIRE_ONE_SET_SSID_PW             false
+  
+  #define SCAN_WIFI_NETWORKS                  true
+  
+  // To be able to manually input SSID, not from a scanned SSID lists
+  #define MANUAL_SSID_INPUT_ALLOWED           true
+  
+  // From 2-15
+  #define MAX_SSID_IN_LIST                    8
+  
+  /////////////////////////////////////////////
 
 
   // NOT NECESSARY TO MODIFY

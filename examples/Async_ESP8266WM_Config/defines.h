@@ -72,6 +72,21 @@
 #define CONFIG_TIMEOUT                            120000L
 
 #define USE_DYNAMIC_PARAMETERS                    true
+
+/////////////////////////////////////////////
+
+#define REQUIRE_ONE_SET_SSID_PW             false
+
+#define SCAN_WIFI_NETWORKS                  true
+
+// To be able to manually input SSID, not from a scanned SSID lists
+#define MANUAL_SSID_INPUT_ALLOWED           true
+
+// From 2-15
+#define MAX_SSID_IN_LIST                    8
+
+/////////////////////////////////////////////
+
 //////////////////////////////////////////
 // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
 
