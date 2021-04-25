@@ -102,7 +102,7 @@
     * [ 6. **AsyncMT_ESP32WM_ForcedConfig**](examples/ESP32_MultiTask/AsyncMT_ESP32WM_ForcedConfig)
 * [So, how it works?](#so-how-it-works)
   * [ 1. Without SCAN_WIFI_NETWORKS](#1-without-scan_wifi_networks)
-  * [ 2. With SCAN_WIFI_NETWORKS]](#2-with-scan_wifi_networks)
+  * [ 2. With SCAN_WIFI_NETWORKS](#2-with-scan_wifi_networks)
 * [Example Async_ESP32WM_MRD_ForcedConfig](#example-async_esp32wm_mrd_forcedconfig)
   * [1. File Async_ESP32WM_MRD_ForcedConfig.ino](#1-file-async_esp32wm_mrd_forcedconfigino)
   * [2. File defines.h](#2-file-definesh) 
@@ -189,9 +189,9 @@ For more information, check [Blynk WiFiManager for ESP8266/ESP32 (including ESP3
 
 This [**BlynkESP32_BT_WF** library](https://github.com/khoih-prog/BlynkESP32_BT_WF) currently supports these following boards:
 
- 1. **ESP32 using EEPROM, SPIFFS or LittleFS**.
- 2. **ESP32-S2 (ESP32-S2 Saola, AI-Thinker ESP-12K, etc.) using EEPROM**
- 3. **ESP8266 using EEPROM, SPIFFS or LittleFS**.
+ 1. **ESP8266 and ESP32-based boards using EEPROM, SPIFFS or LittleFS**.
+ 2. **ESP32-S2 (ESP32-S2 Saola, AI-Thinker ESP-12K, etc.) using EEPROM, SPIFFS or LittleFS**.
+ 3. **ESP32-C3 (ARDUINO_ESP32C3_DEV) using EEPROM or SPIFFS**.
  
 ---
 ---
