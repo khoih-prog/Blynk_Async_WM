@@ -187,7 +187,7 @@ For more information, check [Blynk WiFiManager for ESP8266/ESP32 (including ESP3
 
 #### Currently supported Boards
 
-This [**BlynkESP32_BT_WF** library](https://github.com/khoih-prog/BlynkESP32_BT_WF) currently supports these following boards:
+This [**Blynk_Async_WM** library](https://github.com/khoih-prog/Blynk_Async_WM) currently supports these following boards:
 
  1. **ESP8266 and ESP32-based boards using EEPROM, SPIFFS or LittleFS**.
  2. **ESP32-S2 (ESP32-S2 Saola, AI-Thinker ESP-12K, etc.) using EEPROM, SPIFFS or LittleFS**.
