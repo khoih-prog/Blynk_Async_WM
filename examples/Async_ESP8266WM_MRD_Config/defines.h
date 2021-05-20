@@ -120,8 +120,8 @@
 //////////////////////////////////////////
 // Those above #define's must be placed before #include <BlynkSimpleEsp8266_Async_WM.h>
 
-//#define USE_SSL   true
-#define USE_SSL   false
+#define USE_SSL   true
+//#define USE_SSL   false
 
 #if USE_SSL
   #include <BlynkSimpleEsp8266_SSL_Async_WM.h>        //https://github.com/khoih-prog/Blynk_Async_WM
