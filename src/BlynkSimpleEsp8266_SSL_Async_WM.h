@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.6.0
+  Version: 1.6.1
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -34,6 +34,7 @@
   1.4.1     K Hoang      24/04/2021 Fix issue of custom Blynk port (different from 8080 or 9443) not working on ESP32
   1.5.0     K Hoang      25/04/2021 Enable scan of WiFi networks for selection in Configuration Portal
   1.6.0     K Hoang      19/05/2021 Fix AP connect and SSL issues caused by breaking ESP8266 core v3.0.0
+  1.6.1     K Hoang      15/07/2021 Add configurable connectMultiWiFi parameters. Update for ESP8266 core v3.0.1
  ********************************************************************************************************************************/
 
 #pragma once
@@ -45,13 +46,16 @@
   #error This code is intended to run on the ESP8266 platform! Please check your Tools->Board setting.
 #endif
 
-#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM SSL for ESP8266 v1.6.0"
+#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM SSL for ESP8266 v1.6.1"
 
 #include <version.h>
 
 /////////////////////////////////////////////
 
-#if (ARDUINO_ESP8266_GIT_VER == 0xefb0341a)
+#if (ARDUINO_ESP8266_GIT_VER == 0xcbf44fb3)
+  #define USING_ESP8266_CORE_VERSION    30001
+  #define ESP8266_CORE_VERSION          "ESP8266 core v3.0.1"
+#elif (ARDUINO_ESP8266_GIT_VER == 0xefb0341a)
   #define USING_ESP8266_CORE_VERSION    30000
   #define ESP8266_CORE_VERSION          "ESP8266 core v3.0.0"
   #warning USING_ESP8266_CORE_VERSION "3.0.0"
@@ -99,6 +103,10 @@
   #define USING_ESP8266_CORE_VERSION    0
   #define ESP8266_CORE_VERSION          "ESP8266 core too old"
   #warning USING_ESP8266_CORE_VERSION "0.0.0"
+#else  
+  #define USING_ESP8266_CORE_VERSION    80808
+  #define ESP8266_CORE_VERSION          "ESP8266 core too new"
+  #warning USING_ESP8266_CORE_VERSION "8.8.8"
 #endif
 
 //////////////////////////////////////////////
@@ -2382,11 +2390,17 @@ class BlynkWifi
     
     //////////////////////////////////////
 
+#ifndef WIFI_MULTI_CONNECT_WAITING_MS
+  // For ESP8266, this better be 3000 to enable connect the 1st time
+  #define WIFI_MULTI_CONNECT_WAITING_MS       3000L
+#endif
+
+#ifndef WIFI_MULTI_CONNECT_WAITING_TIMES
+  #define WIFI_MULTI_CONNECT_WAITING_TIMES    10
+#endif
+
     uint8_t connectMultiWiFi()
     {
-      // For ESP8266, this better be 3000 to enable connect the 1st time
-#define WIFI_MULTI_CONNECT_WAITING_MS      3000L
-
       uint8_t status;
       BLYNK_LOG1(BLYNK_F("Connecting MultiWifi..."));
             
@@ -2398,7 +2412,7 @@ class BlynkWifi
       status = wifiMulti.run();
       delay(WIFI_MULTI_CONNECT_WAITING_MS);
 
-      while ( ( i++ < 10 ) && ( status != WL_CONNECTED ) )
+      while ( ( i++ < WIFI_MULTI_CONNECT_WAITING_TIMES ) && ( status != WL_CONNECTED ) )
       {
         status = wifiMulti.run();
 
