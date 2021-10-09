@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.6.1
+  Version: 1.6.2
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -35,6 +35,7 @@
   1.5.0     K Hoang      25/04/2021 Enable scan of WiFi networks for selection in Configuration Portal
   1.6.0     K Hoang      19/05/2021 Fix AP connect and SSL issues caused by breaking ESP8266 core v3.0.0
   1.6.1     K Hoang      15/07/2021 Add configurable connectMultiWiFi parameters. Update for ESP8266 core v3.0.1
+  1.6.1     K Hoang      13/08/2021 Update `platform.ini` and `library.json`
  ********************************************************************************************************************************/
 
 #pragma once
@@ -52,9 +53,12 @@
 
 /////////////////////////////////////////////
 
-#if (ARDUINO_ESP8266_GIT_VER == 0xcbf44fb3)
+#if (ARDUINO_ESP8266_GIT_VER == 0xcf6ff4c4)
+  #define USING_ESP8266_CORE_VERSION    30002
+  #define ESP8266_CORE_VERSION          "ESP8266 core v3.0.2"
+#elif (ARDUINO_ESP8266_GIT_VER == 0xcbf44fb3)
   #define USING_ESP8266_CORE_VERSION    30001
-  #define ESP8266_CORE_VERSION          "ESP8266 core v3.0.1"
+  #define ESP8266_CORE_VERSION          "ESP8266 core v3.0.1"  
 #elif (ARDUINO_ESP8266_GIT_VER == 0xefb0341a)
   #define USING_ESP8266_CORE_VERSION    30000
   #define ESP8266_CORE_VERSION          "ESP8266 core v3.0.0"

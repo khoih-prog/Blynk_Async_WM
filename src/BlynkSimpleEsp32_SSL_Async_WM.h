@@ -17,7 +17,7 @@
   @date       Jan 2015
   @brief
 
-  Version: 1.6.1
+  Version: 1.6.2
 
   Version    Modified By   Date      Comments
   -------    -----------  ---------- -----------
@@ -35,6 +35,7 @@
   1.5.0     K Hoang      25/04/2021 Enable scan of WiFi networks for selection in Configuration Portal
   1.6.0     K Hoang      19/05/2021 Fix AP connect and SSL issues caused by breaking ESP8266 core v3.0.0
   1.6.1     K Hoang      15/07/2021 Add configurable connectMultiWiFi parameters. Update for ESP8266 core v3.0.1
+  1.6.1     K Hoang      13/08/2021 Update `platform.ini` and `library.json`
  ********************************************************************************************************************************/
 
 #pragma once
@@ -46,7 +47,7 @@
   #error This code is intended to run on the ESP32 platform! Please check your Tools->Board setting.
 #endif
 
-#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM SSL for ESP32 v1.6.1"
+#define BLYNK_ASYNC_WM_VERSION      "Blynk_Async_WM SSL for ESP32 v1.6.2"
 
 //////////////////////////////////////////////
 // From v1.6.0 to display correct BLYNK_INFO_DEVICE
